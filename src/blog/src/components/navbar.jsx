@@ -2,8 +2,27 @@ import React from 'react';
 
 const NavBar = () => {
   return (
-    <div>
-    </div>
+	<nav className="nav">
+	  <div className="nav-left">
+	  </div>
+	  <div className="nav-center">
+	    <a className="nav-item" href="/">
+	      <small>geekodour blog</small>
+	    </a>
+	    <a className="nav-item" href=""></a>
+	    <a className="nav-item" href=""></a>
+	  </div>
+	  <span id="nav-toggle" className="nav-toggle">
+	    <span></span>
+	    <span></span>
+	    <span></span>
+	  </span>
+	  <div id="nav-menu" className="nav-right nav-menu">
+	    <a className="nav-item" href="">projects</a>
+	    <a className="nav-item" href="">favorites</a>
+	    <a className="nav-item" href="">contact</a>
+	  </div>
+	</nav>
   );
 }
 

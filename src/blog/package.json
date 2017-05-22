@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "https://geekodour.github.io/gitpushblog/",
   "dependencies": {
+    "github-blog-api": "1.0.1",
     "react": "^15.5.4",
     "react-dom": "^15.5.4"
   },
