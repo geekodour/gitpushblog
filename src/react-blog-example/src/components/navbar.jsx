@@ -7,10 +7,8 @@ const NavBar = () => {
 	  </div>
 	  <div className="nav-center">
 	    <a className="nav-item" href="/">
-	      <small>geekodour blog</small>
+	      <small>geekodour's blog</small>
 	    </a>
-	    <a className="nav-item" href=""></a>
-	    <a className="nav-item" href=""></a>
 	  </div>
 	  <span id="nav-toggle" className="nav-toggle">
 	    <span></span>

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import blog from 'github-blog-api';
 import NavBar from './components/navbar';
 import InfoBox from './components/infoBox';
+import CategoryBox from './components/categoryBox';
 
 class App extends Component {
   constructor() {
@@ -21,7 +22,9 @@ class App extends Component {
       <div className="App">
           <NavBar/>
           <div className="columns">
-                  <div className="column"></div>
+                  <div className="column">
+                    <CategoryBox/>
+                  </div>
                   <div className="column">
                     Recent Blogposts
                     {this.state.posts

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}blog{% endblock title %}</title>
+    <meta name="description" content="">
+    <meta name="author" content="Hrishikesh Barman">
+
+    {% block css %}
+    <!-- Your stuff: Third-party CSS libraries go here -->
+    <!-- This file stores project-specific CSS -->
+    <link href="/main.css" rel="stylesheet">
+    {% endblock %}
+
+  </head>
+
+  <body class="">
+      {% include 'navbar.html' %}
+      <div class="container"></div>
+      {% block page_content %}{% endblock %}
+      {% block javascript %}
+      <!--<script src=""></script>-->
+      {% endblock javascript %}
+  </body>
+</html>

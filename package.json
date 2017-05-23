@@ -1,0 +1,23 @@
+{
+  "name": "gitpushblog",
+  "version": "1.0.0",
+  "description": "a git based blog engine - (currently using react)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geekodour/gitpushblog.git"
+  },
+  "author": "Hrishikesh Barman <Hrishikesh Barman> (https://geekodour.github.io/)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/geekodour/gitpushblog/issues"
+  },
+  "homepage": "https://github.com/geekodour/gitpushblog#readme",
+  "dependencies": {
+    "github-blog-api": "1.0.1",
+    "nunjucks": "3.0.0"
+  }
+}
