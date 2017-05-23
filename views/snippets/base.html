@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}blog{% endblock title %}</title>
+    <meta name="description" content="">
+    <meta name="author" content="Hrishikesh Barman">
+
+    {% block css %}
+    <link href="/assets/main.css" rel="stylesheet">
+    {% endblock %}
+
+  </head>
+
+  <body class="">
+      {% include 'snippets/navbar.html' %}
+
+      <div class="container">
+        {% block page_content %}{% endblock %}
+      </div>
+
+      {% block javascript %}
+      <!--<script src=""></script>-->
+      {% endblock javascript %}
+  </body>
+</html>
