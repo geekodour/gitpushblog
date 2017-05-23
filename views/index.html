@@ -7,12 +7,16 @@
           things i write about..
           </div>
           <div class="column">
+            <ul>
             {% for post in posts %}
-            <li>{{ post.title }}</li>
+            <li>
+              <a href="/posts/{{ post.title|slug }}">{{ post.title }}</a>
+            </li>
             {% endfor %}
+            </ul>
           </div>
           <div class="column">
-          a little about me
+            {% include 'snippets/aboutbox.html' %}
           </div>
   </div>
 {% endblock page_content %}

@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/geekodour/gitpushblog#readme",
   "dependencies": {
+    "bulma": "0.4.1",
     "github-blog-api": "1.0.1",
     "nunjucks": "3.0.0",
     "webpack": "2.6.0"
@@ -32,6 +33,7 @@
     "babel-preset-es2015": "6.24.1",
     "css-loader": "0.28.2",
     "extract-text-webpack-plugin": "2.1.0",
+    "mkdirp": "0.5.1",
     "node-sass": "4.5.3",
     "postcss-loader": "2.0.5",
     "postcss-smart-import": "0.7.2",

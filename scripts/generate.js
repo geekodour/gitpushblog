@@ -2,36 +2,57 @@
 
 process.env.NODE_ENV = 'production';
 
-//require('dotenv').config({silent: true});
 //var chalk = require('chalk');
 var fs = require('fs');
+var mkdirp = require('mkdirp');
 var path = require('path');
-var blog = require('github-blog-api');
+var gitblog = require('github-blog-api');
 var blog_config = require('../blog_config.json');
-var nunjucks = require('nunjucks');
+var _nunjucks = require('nunjucks');
 
 var ROOT_DIR = path.resolve('.');
 
-nunjucks.configure(ROOT_DIR+'/views', { autoescape: true, trimBlocks: true, lstripBlocks: true});
-console.log(path.dirname(require.main.filename));
 
-var myblog = blog({author:'geekodour',repo:'gitpushblog'});
+var nunjucks = _nunjucks.configure(ROOT_DIR+'/views', { autoescape: true, trimBlocks: true, lstripBlocks: true});
+
+nunjucks.addFilter('slug', function(str, count) {
+    return str.toLowerCase().split(' ').join('-')+".html";
+});
+
+// initiate the blog
+var blog = gitblog({author:'geekodour',repo:'gitpushblog'});
+
+// template generation
 function generatePostTemplate(post){
-        var renderContent = nunjucks.render('post_page.html',{post:post});
-        var fileName = post.title.toLowerCase().split(' ').join('-');
-        fs.writeFile(ROOT_DIR+"/build/"+fileName+".html", renderContent, function(err) {
+        var fileName = post.title.toLowerCase().split(' ').join('-')+".html";
+        var renderContent = nunjucks.render('post_page.html',{post: post});
+        fs.writeFile(ROOT_DIR+"/build/posts/"+fileName, renderContent, function(err) {
             if(err) { return console.log(err); }
             console.log(post.title+" was created");
         });
 }
 
-myblog.fetchBlogPosts().then(function(posts){
+function generateIndexTemplate(posts){
+        var renderContent = nunjucks.render('index.html',{posts:posts});
+        fs.writeFile(ROOT_DIR+"/build/index.html", renderContent, function(err) {
+            if(err) { return console.log(err); }
+            console.log("index was created");
+        });
+}
+
+blog.fetchBlogPosts().then(function(posts){
+        // index.html
+        generateIndexTemplate(posts);
+        // make `posts` directory
+        mkdirp(ROOT_DIR+'/build/posts', function (err) {
+            if (err) console.error(err);
+        });
+        // post_page.html
         posts.forEach(function(post){
                 generatePostTemplate(post);
         });
+        // other pages
 });
-
-console.log(blog_config);
 
 /*
  * - fetch all blogposts from github
