@@ -19,9 +19,6 @@ nunjucks.addFilter('slug', function(str, count) {
     return str.toLowerCase().split(' ').join('-')+".html";
 });
 
-// initiate the blog
-var blog = gitblog({author:'geekodour',repo:'gitpushblog'});
-
 // template generation
 function generatePostTemplate(post){
         var fileName = post.title.toLowerCase().split(' ').join('-')+".html";
@@ -40,17 +37,31 @@ function generateIndexTemplate(posts){
         });
 }
 
+function createdir(dirpath){
+        mkdirp(dirpath, function (err) {
+            if (err) console.error(err);
+        });
+}
+
+
+
+// initiate the blog
+var blog = gitblog({author:'geekodour',repo:'gitpushblog'});
+// creation of the blog variable better be sync and put the author fetch to another function
+//eg. blog.fetchAuthorInfo().then();
+
 blog.fetchBlogPosts().then(function(posts){
         // index.html
         generateIndexTemplate(posts);
-        // make `posts` directory
-        mkdirp(ROOT_DIR+'/build/posts', function (err) {
-            if (err) console.error(err);
-        });
+
+        // make `posts` directory; otherwise fs.writeFile throws error
+        createdir(ROOT_DIR+'/build/posts');
+
         // post_page.html
         posts.forEach(function(post){
                 generatePostTemplate(post);
         });
+
         // other pages
 });
 

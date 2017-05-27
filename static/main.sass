@@ -1,9 +1,10 @@
 @import "../node_modules/bulma/sass/utilities/_all"
 @import "../node_modules/bulma/sass/grid/columns"
-@import "../node_modules/bulma/sass/layout/section"
+@import "../node_modules/bulma/sass/layout/_all.sass"
 @import "../node_modules/bulma/sass/components/nav"
 @import "../node_modules/bulma/sass/base/_all"
 @import "../node_modules/bulma/sass/elements/title"
+@import "../node_modules/bulma/sass/elements/content"
 
 .nav
   background: #484848
@@ -12,10 +13,12 @@
   	&:hover
   		color: white
   		border-bottom: 2px solid red
-  p
+  h1
   	color: white
+
 .info-box
   border: 1px solid #484848
+  border-radius: 1em
   padding: 1em
   margin: 0em 4em 4em 4em
   font-size: 0.8em

@@ -4,7 +4,9 @@
 {% block page_content %}
   <div class="columns">
           <div class="column">
-          things i write about..
+            <div class="section">
+              {% include 'snippets/aboutbox.html' %}
+            </div>
           </div>
           <div class="column">
             <ul>
@@ -16,7 +18,9 @@
             </ul>
           </div>
           <div class="column">
-            {% include 'snippets/aboutbox.html' %}
+            <div class="section">
+              {% include 'snippets/aboutbox.html' %}
+            </div>
           </div>
   </div>
 {% endblock page_content %}
