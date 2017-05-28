@@ -8,14 +8,16 @@
               {% include 'snippets/aboutbox.html' %}
             </div>
           </div>
-          <div class="column">
-            <ul>
-            {% for post in posts %}
-            <li>
-              <a href="/posts/{{ post.title|slug }}">{{ post.title }}</a>
-            </li>
-            {% endfor %}
-            </ul>
+          <div class="column is-half">
+            {% block post_content %}
+              <ul>
+              {% for post in posts %}
+              <li>
+                <a href="/posts/{{ post.title|slug }}">{{ post.title }}</a>
+              </li>
+              {% endfor %}
+              </ul>
+            {% endblock %}
           </div>
           <div class="column">
             <div class="section">

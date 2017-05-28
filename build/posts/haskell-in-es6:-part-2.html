@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haskell in ES6: Part 2</title>
+    <meta name="description" content="">
+    <meta name="author" content="Hrishikesh Barman">
+
+    <link href="/assets/main.css" rel="stylesheet">
+
+  </head>
+
+  <body class="">
+<nav class="nav">
+  <div class="nav-left"></div>
+  <div class="nav-center">
+  <a class="nav-item title is-5" href="/">
+    geekodour's blog
+  </a>
+  </div>
+  <span id="nav-toggle" class="nav-toggle">
+  <span></span>
+  <span></span>
+  <span></span>
+  </span>
+  <div id="nav-menu" class="nav-right nav-menu">
+  <a class="nav-item" href="">projects</a>
+  <a class="nav-item" href="">favorites</a>
+  <a class="nav-item" href="">contact</a>
+  </div>
+</nav>
+
+      <div class="container">
+  <div class="columns">
+          <div class="column">
+            <div class="section">
+<div class="info-box">
+I am a dea kid
+</div>
+            </div>
+          </div>
+          <div class="column is-half">
+<div class="section">
+<div class="container">
+<div class="content">
+<h1>Haskell in es6: part 2</h1>
+<p>Originally posted <code>2015-11-17</code>.</p>
+<p><a href="https://casualjavascript.com/?133491646">Read the first part here.</a></p>
+<p>This is the second post dedicated to implementing native versions of Haskell
+functions according to JavaScript ES6 standards. You can see the full source code with unit tests <a href="https://github.com/casualjs/f">in this GitHub repo</a>.</p>
+<p>Thanks for all the contributions! I have set up an email address, <a href="mailto:casualjavascript@gmail.com">casualjavascript@gmail.com</a>, for feedback or post suggestions.</p>
+<h1 id="infinite-lists">Infinite lists</h1>
+<p>Trying to replicate the behaviour of Haskell&#39;s infinite lists, we can use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy">ES6 proxies</a>. They allow us to hook to a getter function which will execute every time one of the proxy&#39;s properties are accessed.</p>
+<p>A setback with proxies is that regular JavaScript array operations will not work. To (kind of) mitigate this, we will return <code>Infinity</code> for any property that is not an index. That way, when we check for the <code>length</code> property, we will get <code>Infinity</code> and we know that we are handling an infinite array.</p>
+<blockquote>
+<p><code>iterate f x</code> returns an infinite list of repeated applications of <code>f</code> to <code>x</code>.</p>
+<p><code>repeat x</code> is an infinite list, with <code>x</code> the value of every element.</p>
+<p><code>cycle</code> ties a finite list into a circular one, or equivalently, the infinite repetition of the original list. It is the identity on infinite lists.</p>
+</blockquote>
+<pre><code class="lang-haskell">iterate :: (a -&gt; a) -&gt; a -&gt; [a]
+repeat :: a -&gt; [a]
+cycle :: [a] -&gt; [a]
+</code></pre>
+<pre><code class="lang-javascript">/**
+ * Returns an infinite list of repeated applications of f to x
+ * @param f function to iterate with
+ * @param x initial value
+ **/
+export function iterate (f, x) {
+  return Proxy.create({
+    get: (_, property) =&gt; {
+      if (isNaN(property))
+        return Infinity;
+
+      var r = x;
+      for (var i = 0; i &lt; property; i++)
+        r = f(r);
+      return r;
+    }
+  });
+}
+
+/**
+ * Returns an infinite list, with x the value of every element
+ * @param x value
+ **/
+export function repeat (x) {
+  return Proxy.create({
+    get: (_, property) =&gt;
+      isNaN(property) ?
+        Infinity : x
+  });
+}
+
+/**
+ * Ties a finite list into a circular one, or equivalently,
+ * the infinite repetition of the original list
+ * @param xs list to be cycled
+ **/
+export function cycle (xs) {
+  return Proxy.create({
+    get: (_, property) =&gt;
+      isNaN(property) ?
+        Infinity : xs[property % xs.length]
+  });
+}
+</code></pre>
+<h4 id="examples">Examples</h4>
+<pre><code class="lang-javascript">var iterate = ƒ.iterate(x =&gt; x * 2, 1),
+    repeat = ƒ.repeat(10),
+    cycle = ƒ.cycle([0, 1, 2]);
+
+iterate[0]; // =&gt; 1
+iterate[1]; // =&gt; 2
+iterate[4]; // =&gt; 16
+iterate[7]; // =&gt; 128
+
+repeat[0]; // =&gt; 10
+repeat[10]; // =&gt; 10
+repeat[9999]; // =&gt; 10
+
+cycle[1]; // =&gt; 1
+cycle[3]; // =&gt; 0
+cycle[4]; // =&gt; 1
+cycle[5]; // =&gt; 2
+</code></pre>
+<h3 id="sublists">Sublists</h3>
+<p>The following sublist functions have been constructed to work with the above implementation of infinite lists.</p>
+<blockquote>
+<p><code>take n xs</code>, returns the prefix of <code>xs</code> of length <code>n</code>, or <code>xs</code> itself if <code>n &gt; length xs</code>.</p>
+<p><code>drop n xs</code> returns the suffix of <code>xs</code> after the first <code>n</code> elements, or <code>[]</code> if <code>n &gt; length xs</code>.</p>
+<p><code>splitAt n xs</code> returns a tuple where first element is <code>xs</code> prefix of length <code>n</code> and second element is the remainder of the list.</p>
+<p><code>takeWhile</code>, applied to a predicate <code>p</code> and a list <code>xs</code>, returns the longest prefix (possibly empty) of <code>xs</code> of elements that satisfy <code>p</code>.</p>
+<p><code>dropWhile p xs</code> returns the suffix remaining after <code>takeWhile p xs</code>.</p>
+</blockquote>
+<pre><code class="lang-haskell">take :: Int -&gt; [a] -&gt; [a]
+drop :: Int -&gt; [a] -&gt; [a]
+splitAt :: Int -&gt; [a] -&gt; ([a], [a])
+takeWhile :: (a -&gt; Bool) -&gt; [a] -&gt; [a]
+dropWhile :: (a -&gt; Bool) -&gt; [a] -&gt; [a]
+</code></pre>
+<pre><code class="lang-javascript">/**
+ * Applied to a list xs, returns the prefix of xs of length n
+ * @param n number of elements to take
+ * @param xs list to take from
+ **/
+export function take (n, xs) {
+  if (n &lt;= 0)         return [];
+  if (n &gt;= xs.length) return xs;
+
+  var r = [];
+  for (var i = 0; i &lt; n; i++)
+    r.push(xs[i]);
+
+  return r;
+}
+
+/**
+ * Returns the suffix of xs after the first n elements
+ * @param n number of elements to drop
+ * @param xs list to drop from
+ **/
+export function drop (n, xs) {
+  if (n &lt;= 0)         return xs;
+  if (n &gt;= xs.length) return [];
+
+  if (xs.length === Infinity)
+    return Proxy.create({
+      get: (_, property) =&gt;
+        isNaN(property) ?
+          Infinity : xs[property + n]
+    });
+
+  var r = [];
+  for (var i = n; i &lt; xs.length; i++)
+    r.push(xs[i]);
+
+  return r;
+}
+
+/**
+ * Returns a tuple where first element is xs prefix of length n and
+ * second element is the remainder of the list
+ * @param n index to split at
+ * @param xs list to split
+ **/
+export function splitAt (n, xs) {
+  return [take(n, xs), drop(n, xs)];
+}
+
+/**
+ * Applied to a predicate f and a list xs, returns the longest
+ * prefix (possibly empty) of xs of elements that satisfy f
+ * @param f predicate to satisfy
+ * @param xs list to take from
+ **/
+export function takeWhile (f, xs) {
+  var r = [];
+  for (var i = 0; i &lt; xs.length; i++) {
+    if (!f(xs[i]))
+      return r;
+    r.push(xs[i]);
+  }
+
+  return r;
+}
+
+/**
+ * Returns the suffix remaining after takeWhile
+ * @param f predicate to satisfy
+ * @param xs list to drop from
+ **/
+export function dropWhile (f, xs) {
+  return drop(takeWhile(f, xs).length, xs);
+}
+</code></pre>
+<h4 id="examples">Examples</h4>
+<pre><code class="lang-javascript">var list = [0, 1, 2, 3],
+    infiniteList = ƒ.cycle(list);
+
+ƒ.take(3, list); // =&gt; [0, 1, 2]
+ƒ.take(6, infiniteList); // =&gt; [0, 1, 2, 3, 0, 1]
+
+ƒ.drop(3, list); // =&gt; [3]
+ƒ.drop(5, infiniteList)[0]; // =&gt; 1
+
+ƒ.splitAt(2, list); // =&gt; [[0, 1], [2, 3]]
+ƒ.splitAt(3, list); // =&gt; [[0, 1, 2], [3]]
+
+ƒ.takeWhile(x =&gt; x &lt; 2, list); // =&gt; [0, 1]
+ƒ.takeWhile(x =&gt; x &lt; 2, infiniteList); // =&gt; [0, 1]
+
+ƒ.dropWhile(x =&gt; x &lt; 2, list); // =&gt; [2, 3]
+ƒ.dropWhile(x =&gt; x &lt; 2, infiniteList)[0]; // =&gt; 2
+</code></pre>
+<p>Happy hacking.</p>
+
+</div>
+</div>
+</div>
+          </div>
+          <div class="column">
+            <div class="section">
+<div class="info-box">
+I am a dea kid
+</div>
+            </div>
+          </div>
+  </div>
+      </div>
+
+      <script src="/assets/prism.js"></script>
+  </body>
+</html>

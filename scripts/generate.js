@@ -4,6 +4,7 @@ process.env.NODE_ENV = 'production';
 
 //var chalk = require('chalk');
 var fs = require('fs');
+var marked = require('marked');
 var mkdirp = require('mkdirp');
 var path = require('path');
 var gitblog = require('github-blog-api');
@@ -12,16 +13,22 @@ var _nunjucks = require('nunjucks');
 
 var ROOT_DIR = path.resolve('.');
 
-
+/* * * * * * * * * * * * *
+ * nunjucks configuration
+ * * * * * * * * * * * * * */
 var nunjucks = _nunjucks.configure(ROOT_DIR+'/views', { autoescape: true, trimBlocks: true, lstripBlocks: true});
 
 nunjucks.addFilter('slug', function(str, count) {
     return str.toLowerCase().split(' ').join('-')+".html";
 });
 
-// template generation
+
+/* * * * * * * * * * * *
+ * template generation
+ * * * * * * * * * * * */
 function generatePostTemplate(post){
         var fileName = post.title.toLowerCase().split(' ').join('-')+".html";
+        post.html = marked(post.body);
         var renderContent = nunjucks.render('post_page.html',{post: post});
         fs.writeFile(ROOT_DIR+"/build/posts/"+fileName, renderContent, function(err) {
             if(err) { return console.log(err); }
@@ -46,7 +53,9 @@ function createdir(dirpath){
 
 
 // initiate the blog
-var blog = gitblog({author:'geekodour',repo:'gitpushblog'});
+// chjj/marked/
+//var blog = gitblog({author:'geekodour',repo:'gitpushblog'});
+var blog = gitblog({author:'casualjavascript',repo:'blog'});
 // creation of the blog variable better be sync and put the author fetch to another function
 //eg. blog.fetchAuthorInfo().then();
 

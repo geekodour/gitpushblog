@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getting clever with λ-calculus</title>
+    <meta name="description" content="">
+    <meta name="author" content="Hrishikesh Barman">
+
+    <link href="/assets/main.css" rel="stylesheet">
+
+  </head>
+
+  <body class="">
+<nav class="nav">
+  <div class="nav-left"></div>
+  <div class="nav-center">
+  <a class="nav-item title is-5" href="/">
+    geekodour's blog
+  </a>
+  </div>
+  <span id="nav-toggle" class="nav-toggle">
+  <span></span>
+  <span></span>
+  <span></span>
+  </span>
+  <div id="nav-menu" class="nav-right nav-menu">
+  <a class="nav-item" href="">projects</a>
+  <a class="nav-item" href="">favorites</a>
+  <a class="nav-item" href="">contact</a>
+  </div>
+</nav>
+
+      <div class="container">
+  <div class="columns">
+          <div class="column">
+            <div class="section">
+<div class="info-box">
+I am a dea kid
+</div>
+            </div>
+          </div>
+          <div class="column is-half">
+<div class="section">
+<div class="container">
+<div class="content">
+<h1>Getting clever with λ-calculus</h1>
+<p>Originally posted <code>2015-12-18</code>.</p>
+<p>In this article we will delve into the depths of JavaScript lambda calculus and how it can help us increase both productivity and code brevity.</p>
+<h1 id="-">λ</h1>
+<blockquote>
+<p>Lambda calculus (also written as λ-calculus) is a formal system in mathematical logic for expressing computation based on function abstraction and application using variable binding and substitution.</p>
+</blockquote>
+<p>The <strong>first</strong> requisite of lambda calculus is <em>anonymous</em> functions. JavaScript has featured these as long as I can remember.</p>
+<pre><code class="lang-javascript">function() {
+  return &#39;I am anonymous.&#39;;
+}
+
+var f = function(x) {
+  // anonymous function bound to a variable f
+  return x * 2;
+}
+
+// anonymous functions can be mapped to an array
+[1, 2, 3].map(function(x) { return x * 2; });
+[1, 2, 3].map(f);
+</code></pre>
+<p>Anonymous functions can also be (and is extensively) used as <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures">closures</a>.</p>
+<p>The <strong>second</strong> simplification that lambda calculus offers is currying, which can be accomplished in JavaScript (see e.g. <a href="http://www.2ality.com/2011/09/currying-vs-part-eval.html">currying vs partial application</a>). I won&#39;t go into detail, because at the time of writing I don&#39;t find currying very useful in JavaScript.</p>
+<h1 id="arrow-function">Arrow function</h1>
+<p>A big – well, at least in terms of brevity – problem with anonymous functions: It was necessary to type both <code>function</code> and <code>return</code>, which lead to space issues when passing the functions as <em>function arguments</em>.</p>
+<p>Enter the arrow function. <a href="https://developer.mozilla.org/">Mozilla Developer Network</a>, the #1 JavaScript resource, has a great code snippet of the arrow function&#39;s syntax:</p>
+<pre><code class="lang-javascript">// Basic syntax:
+(param1, param2, paramN) =&gt; { statements }
+(param1, param2, paramN) =&gt; expression
+   // equivalent to:  =&gt; { return expression; }
+
+// Parentheses are optional when there&#39;s only one argument:
+(singleParam) =&gt; { statements }
+singleParam =&gt; { statements }
+
+// A function with no arguments requires parentheses:
+() =&gt; { statements }
+
+// Advanced:
+// Parenthesize the body to return an object literal expression:
+params =&gt; ({foo: bar})
+
+// Rest parameters are supported
+(param1, param2, ...rest) =&gt; { statements }
+</code></pre>
+<p>Compare <code>function (x) { return x; }</code> (21 characters, not counting spaces) with <code>x =&gt; x</code> (4 characters).</p>
+<h1 id="the-code">The code</h1>
+<p>Long introduction? Let&#39;s get down to business. We&#39;ll build a wrapper to be able to pass arrow functions as arguments. To do this we need some knowledge about the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions">function prototype</a>.</p>
+<p>We note that <code>Function.prototype.toString()</code> returns the source code of a function instance. I&#39;ll write the wrapper around <a href="https://github.com/mateogianolio/nblas">nBLAS</a>, a Node.js C++ binding I wrote for BLAS (Basic Linear Algebra Subsystems), but you can pick any library you want.</p>
+<p>The aim with the wrapper is being able to use the following syntax:</p>
+<pre><code class="lang-javascript">// export is to be able to resolve variable names to variables
+var a = exports.a = new Float64Array([1, 2]);
+var b = exports.b = new Float64Array([3, 4]);
+
+// addition
+λ((a, b) =&gt; a += b); // a := [4, 6]
+λ((a, b) =&gt; a + b); // [4, 6]
+
+// dot product
+λ((a, b) =&gt; a * b); // 36
+
+// scaling
+λ(a =&gt; a *= 5); // a:= [20, 30]
+λ(a =&gt; a * 5); // [20, 30]
+</code></pre>
+<p>I have only implemented the above functionality for demonstrative purposes.</p>
+<pre><code class="lang-javascript">var nblas = require(&#39;nblas&#39;);
+
+function λ(f) {
+  // (a, b) =&gt; a + b to [&#39;a,b&#39;, &#39;a+b&#39;]
+  var args = f
+    .toString()
+    .replace(/[ \(\)]/g, &#39;&#39;)
+    .split(&#39;=&gt;&#39;);
+
+  // get vars from &#39;a,b&#39;, switch &#39;export&#39; to &#39;window&#39; for browser
+  var vars = args
+    .shift()
+    .split(&#39;,&#39;)
+    .map(arg =&gt; exports[arg])
+    .reverse();
+
+  args = args.join(&#39;&#39;);
+  var tmp;
+
+  // hook behaviour
+  if (args.indexOf(&#39;+=&#39;) !== -1) {
+    return nblas.axpy(...vars);
+  } else if (args.indexOf(&#39;+&#39;) !== -1) {
+    tmp = new vars[0].constructor(vars[1]);
+    nblas.axpy(vars[1], tmp);
+    return tmp;
+  } else if (args.indexOf(&#39;*&#39;) !== -1) {
+    if (vars.length === 2)
+      return nblas.dot(...vars);
+
+    if (args.indexOf(&#39;=&#39;) !== -1)
+      return nblas.scal(...args.split(&#39;*=&#39;));
+
+    tmp = new vars[0].constructor(vars[0]);
+    nblas.scal(tmp, Number(args.split(&#39;*&#39;)[1]));
+    return tmp;
+  } else
+    return f(...vars); // fallback to executing supplied function if no hook found
+}
+</code></pre>
+<p>There you go, (kind of) operator overloading in JavaScript! To use the spread operator (<code>...</code>) you&#39;ll need to use babel or run the script with <code>node --harmony</code>. Otherwise you can switch <code>f(...x)</code> to <code>f.apply(null, x)</code>.</p>
+<p>Merry christmas and happy hacking.</p>
+
+</div>
+</div>
+</div>
+          </div>
+          <div class="column">
+            <div class="section">
+<div class="info-box">
+I am a dea kid
+</div>
+            </div>
+          </div>
+  </div>
+      </div>
+
+      <script src="/assets/prism.js"></script>
+  </body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promise generators</title>
+    <meta name="description" content="">
+    <meta name="author" content="Hrishikesh Barman">
+
+    <link href="/assets/main.css" rel="stylesheet">
+
+  </head>
+
+  <body class="">
+<nav class="nav">
+  <div class="nav-left"></div>
+  <div class="nav-center">
+  <a class="nav-item title is-5" href="/">
+    geekodour's blog
+  </a>
+  </div>
+  <span id="nav-toggle" class="nav-toggle">
+  <span></span>
+  <span></span>
+  <span></span>
+  </span>
+  <div id="nav-menu" class="nav-right nav-menu">
+  <a class="nav-item" href="">projects</a>
+  <a class="nav-item" href="">favorites</a>
+  <a class="nav-item" href="">contact</a>
+  </div>
+</nav>
+
+      <div class="container">
+  <div class="columns">
+          <div class="column">
+            <div class="section">
+<div class="info-box">
+I am a dea kid
+</div>
+            </div>
+          </div>
+          <div class="column is-half">
+<div class="section">
+<div class="container">
+<div class="content">
+<h1>Promise generators</h1>
+<p>Hey, continuing on the generator trail today we&#39;ll write a promise generator.</p>
+<p>Let&#39;s create a function that will return a <code>Promise</code>.</p>
+<pre><code class="lang-javascript">var request = require(&#39;request&#39;);
+
+function get(url) {
+  return new Promise(function (resolve, reject) {
+    request(url, function (error, response, body) {
+      if (error || response.statusCode !== 200)
+        return reject();
+      resolve(body);
+    });
+  });
+}
+</code></pre>
+<p>OK, so how do we use it?</p>
+<pre><code class="lang-javascript">get(&#39;http://en.wikipedia.org&#39;).then(function (body) {
+  // resolved
+}, function () {
+  // rejected
+});
+</code></pre>
+<p>Now, if we want to visit multiple urls the code quickly gets messy as hell. The solution? Generators.</p>
+<pre><code class="lang-javascript">function requester(urls) {
+  return (function* () {
+    for (var url of urls)
+      yield get(url);
+  }());
+}
+</code></pre>
+<p>Usage:</p>
+<pre><code class="lang-javascript">var requests = requester([
+  &#39;https://en.wikipedia.org&#39;,
+  &#39;https://en.wikipedia.org/wiki/Web_scraping&#39;
+]);
+
+for (var page of requests) {
+  page.then(function (body) {
+    // resolved
+  }, function () {
+    // rejected
+  });
+}
+</code></pre>
+<p>Looking for a practical implementation? Check out <a href="https://github.com/mateogianolio/domp">domp</a>, a web scraper I wrote using this technique.</p>
+
+</div>
+</div>
+</div>
+          </div>
+          <div class="column">
+            <div class="section">
+<div class="info-box">
+I am a dea kid
+</div>
+            </div>
+          </div>
+  </div>
+      </div>
+
+      <script src="/assets/prism.js"></script>
+  </body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haskell in ES6: Part 1</title>
+    <meta name="description" content="">
+    <meta name="author" content="Hrishikesh Barman">
+
+    <link href="/assets/main.css" rel="stylesheet">
+
+  </head>
+
+  <body class="">
+<nav class="nav">
+  <div class="nav-left"></div>
+  <div class="nav-center">
+  <a class="nav-item title is-5" href="/">
+    geekodour's blog
+  </a>
+  </div>
+  <span id="nav-toggle" class="nav-toggle">
+  <span></span>
+  <span></span>
+  <span></span>
+  </span>
+  <div id="nav-menu" class="nav-right nav-menu">
+  <a class="nav-item" href="">projects</a>
+  <a class="nav-item" href="">favorites</a>
+  <a class="nav-item" href="">contact</a>
+  </div>
+</nav>
+
+      <div class="container">
+  <div class="columns">
+          <div class="column">
+            <div class="section">
+<div class="info-box">
+I am a dea kid
+</div>
+            </div>
+          </div>
+          <div class="column is-half">
+<div class="section">
+<div class="container">
+<div class="content">
+<h1>Haskell in es6: part 1</h1>
+<p>Originally posted <code>2015-11-12</code>.</p>
+<p>This post is the first in a series that will be dedicated to implementating native versions of <a href="http://haskell.org">Haskell</a> functions according to JavaScript ES6 standards. Full source can be found <a href="https://github.com/casualjs/f">in this GitHub repo</a>. You are more than welcome to contribute!</p>
+<h1 id="-comp">ƒ.comp</h1>
+<blockquote>
+<p>Function composition.</p>
+</blockquote>
+<pre><code class="lang-haskell">(.) :: (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+</code></pre>
+<pre><code class="lang-javascript">/**
+ * Function composition
+ * @param ...fs functions to compose
+ * @return composed function
+ **/
+export function comp (...fs) {
+  return (v, ...args) =&gt;
+    fs.reduceRight(
+      (g, f) =&gt; f(g, ...args), v
+    );
+}
+</code></pre>
+<h4 id="examples">Examples</h4>
+<pre><code class="lang-javascript">var add = x =&gt; x + x,
+    pow = x =&gt; x * x,
+    inv = x =&gt; 1 / x;
+
+var comp = ƒ.comp(add, pow, inv);
+
+comp(1); // =&gt; 2
+/**
+ * Explained:
+ * 1) inv 1 / 1 =&gt; 1
+ * 2) pow 1 * 1 =&gt; 1
+ * 3) add 1 + 1 =&gt; 2
+ **/
+
+comp(4); // =&gt; 1/8
+</code></pre>
+<h1 id="-flip">ƒ.flip</h1>
+<blockquote>
+<p><code>flip f</code> takes its (first) two arguments in the reverse order of <code>f</code>.</p>
+</blockquote>
+<pre><code class="lang-haskell">flip :: (a -&gt; b -&gt; c) -&gt; b -&gt; a -&gt; c
+</code></pre>
+<pre><code class="lang-javascript">/**
+ * Flip function arguments
+ * @param f function to flip
+ * @return f applied with args in reverse order
+ **/
+export function flip (f) {
+  return (a, b, ...args) =&gt;
+    f(b, a, ...args);
+}
+</code></pre>
+<h4 id="examples">Examples</h4>
+<pre><code class="lang-javascript">var add = (a, b) =&gt; a / b,
+    three = (a, b, c) =&gt; [a, b, c],
+    flip = ƒ.flip(add);
+
+flip(10, 5); // =&gt; 1/2
+flip(1, 10); // =&gt; 10
+
+flip = ƒ.flip(three);
+flip(1, 2, 3); // =&gt; [2, 1, 3]
+</code></pre>
+<h1 id="-until">ƒ.until</h1>
+<blockquote>
+<p><code>until p f</code> yields the result of applying <code>f</code> until <code>p</code> holds.</p>
+</blockquote>
+<pre><code class="lang-haskell">until :: (a -&gt; Bool) -&gt; (a -&gt; a) -&gt; a -&gt; a
+</code></pre>
+<pre><code class="lang-javascript">/**
+ * Applies a function which is passed as the second argument to
+ * the third argument and it comapares the result with the condition,
+ * if the condition evaluates to true, it prints the result, if not,
+ * it passes the result to the function and repeats the cycle as long
+ * as the condition is matched
+ * @param condition condition to be applied to f
+ * @param f function to match against
+ * @return result if condition is true else repeat cycle
+ **/
+export function until (condition, f) {
+  return (...args) =&gt; {
+    var r = f(...args);
+    return condition(r) ? r : until(condition, f)(r);
+  };
+}
+</code></pre>
+<h4 id="examples">Examples</h4>
+<pre><code class="lang-javascript">var condition = x =&gt; x &gt; 100,
+    inc = x =&gt; x + 1,
+    until = ƒ.until(condition, inc);
+
+until(0); // =&gt; 101
+
+condition = x =&gt; x === 5;
+until = ƒ.until(condition, inc);
+
+until(3); // =&gt; 5
+</code></pre>
+<h1 id="list-operations">List operations</h1>
+<blockquote>
+<p><code>head</code> extracts the first element of a list, which must be non-empty.</p>
+<p><code>last</code> extracts the last element of a list, which must be finite and non-empty.</p>
+<p><code>tail</code> extracts the elements after the head of a list, which must be non-empty.</p>
+<p><code>init</code> returns all the elements of a list except the last one. The list must be non-empty.</p>
+</blockquote>
+<pre><code class="lang-haskell">head :: [a] -&gt; a
+last :: [a] -&gt; a
+tail :: [a] -&gt; [a]
+init :: [a] -&gt; [a]
+</code></pre>
+<pre><code class="lang-javascript">export function head (xs) { return xs[0]; }
+export function last (xs) { return xs[xs.length - 1]; }
+export function tail (xs) { return xs.slice(1); }
+export function init (xs) { return xs.slice(0, -1); }
+</code></pre>
+<h4 id="examples">Examples</h4>
+<pre><code class="lang-javascript">ƒ.head([5, 27, 3, 1]); // =&gt; 5
+ƒ.last([5, 27, 3, 1]); // =&gt; 1
+ƒ.tail([5, 27, 3, 1]); // =&gt; [27, 3, 1]
+ƒ.init([5, 27, 3, 1]); // =&gt; [5, 27, 3]
+</code></pre>
+<h1 id="special-folds">Special folds</h1>
+<blockquote>
+<p><code>concat</code> yields the concatenation of all the elements of a container of lists.</p>
+<p><code>concatMap</code> maps a function over all the elements of a container and concatenate the resulting lists.</p>
+</blockquote>
+<pre><code class="lang-haskell">concat :: Foldable t =&gt; t [a] -&gt; [a]
+concatMap :: Foldable t =&gt; (a -&gt; [b]) -&gt; t a -&gt; [b]
+</code></pre>
+<pre><code class="lang-javascript">export function concat (...xs) {
+  return xs.reduce(
+    (a, b) =&gt; a.concat(b)
+  );
+}
+
+export function concatMap (f, ...xs) {
+  return concat(xs.map(f));
+}
+</code></pre>
+<h4 id="examples">Examples</h4>
+<pre><code class="lang-javascript">ƒ.concat([5], [27], [3]); // =&gt; [5, 27, 3]
+ƒ.concatMap(x =&gt; &#39;hi &#39; + x, 1, [[2]], 3); // =&gt; [&#39;hi 1&#39;, &#39;hi 2&#39;, &#39;hi 3&#39;]
+</code></pre>
+<h1 id="-zip-and-zipwith">ƒ.zip and ƒ.zipWith</h1>
+<blockquote>
+<p><code>zip</code> takes two lists and returns a list of corresponding pairs. If one input list is short, excess elements of the longer list are discarded.&quot;</p>
+<p><code>zipWith</code> generalises <code>zip</code> by zipping with the function given as the first argument, instead of a tupling function. For example, <code>zipWith (+)</code> is applied to two lists to produce the list of corresponding sums.&quot;</p>
+</blockquote>
+<pre><code class="lang-haskell">zip :: [a] -&gt; [b] -&gt; [(a, b)]
+zipWith :: (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
+</code></pre>
+<pre><code class="lang-javascript">/**
+ * Zip two arrays into a list of n-ples
+ * @param ...xs arrays to zip
+ * @return a list of of n-ples
+ **/
+export function zip (...xs) {
+  var r = [],
+      nple = [],
+      length = Math.min(null, ...xs.map(x =&gt; x.length));
+
+  for (var i = 0; i &lt; length; i++) {
+    xs.forEach(
+      x =&gt; nple.push(x[i])
+    );
+
+    r.push(nple);
+    nple = [];
+  }
+
+  return r;
+}
+
+/**
+ * Generalises zip by zipping with the function given
+ * as the first argument, instead of a tupling function.
+ * @param op function to zip with
+ * @param ...xs arrays to zip
+ * @return array zipped with the op function
+ **/
+export function zipWith (op, ...xs) {
+  zip(...xs).map(
+    (x) =&gt; x.reduce(op)
+  );
+}
+</code></pre>
+<h4 id="examples">Examples</h4>
+<pre><code class="lang-javascript">var a = [0, 1, 2],
+    b = [3, 4, 5],
+    c = [6, 7, 8];
+
+ƒ.zip(a, b); // =&gt; [[0, 3], [1, 4], [2, 5]]
+ƒ.zipWith((a, b) =&gt; a + b, a, b, c); // =&gt; [9, 12, 15]
+</code></pre>
+
+</div>
+</div>
+</div>
+          </div>
+          <div class="column">
+            <div class="section">
+<div class="info-box">
+I am a dea kid
+</div>
+            </div>
+          </div>
+  </div>
+      </div>
+
+      <script src="/assets/prism.js"></script>
+  </body>
+</html>
