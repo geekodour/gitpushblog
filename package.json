@@ -24,7 +24,8 @@
   "dependencies": {
     "bulma": "0.4.1",
     "cp": "0.2.0",
-    "github-blog-api": "1.1.0"
+    "github-blog-api": "1.1.0",
+    "slug": "0.9.1"
   },
   "devDependencies": {
     "autoprefixer": "7.1.1",

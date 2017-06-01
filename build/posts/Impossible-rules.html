@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Identify moot ESLint comments</title>
+    <title>Impossible rules</title>
     <meta name="description" content="">
     <meta name="author" content="Hrishikesh Barman">
 
@@ -36,25 +36,26 @@
   <div class="columns">
           <div class="column">
             <div class="section">
-              <ul>
-              </ul>
+<div class="">
+  <ul>
+  </ul>
+</div>
             </div>
           </div>
           <div class="column is-half">
 <div class="section">
 <div class="container">
 <div class="content">
-<h1>Identify moot eslint comments</h1>
-<p>I often use ESLint comments to ignore some special cases and work around ESLint bugs / missing features. Sometimes the latter gets fixed, but I still have those ESLint comments littered in my source files. Would be useful to be able to identify such comments and error about them. Same with <code>/* globals */</code> entries that are no longer needed.</p>
-<p>I haven&#39;t really thought through how this will work exactly or if it even makes sense here.</p>
-<p>## </p>
-<p>See:</p>
+<h1>Impossible rules</h1>
+<p>I thought I&#39;d collect some rules I&#39;d like to see that are impossible with the current ESLint. For posterity.</p>
 <ul>
-<li><a href="https://github.com/eslint/eslint/issues/5659">https://github.com/eslint/eslint/issues/5659</a></li>
-<li><a href="https://github.com/eslint/eslint/issues/5202">https://github.com/eslint/eslint/issues/5202</a>
+<li><a href="https://github.com/eslint/eslint/issues/3477">Prefer <code>RegExp#exec()</code> over <code>String#match()</code></a> - Requires type analysis.</li>
+<li><a href="https://github.com/sindresorhus/eslint-plugin-xo/issues/8">Prefer <code>.includes()</code> over <code>.indexOf()</code></a> - While it&#39;s possible today with some assumption. It&#39;s not perfect and would be improved with some type analysis.</li>
+<li><a href="https://github.com/sindresorhus/eslint-plugin-xo/issues/13">Prefer <code>.startsWith()</code>/<code>.endsWith()</code> over regex/indexOf/slice/etc</a> - Only the regex case is possible today. With type analysis, we could do all the cases in that issue.</li>
+<li>Require braces for arrow functions that doesn&#39;t return anything. Would need to know the return value of any called function in the arrow function body.
 ## </li>
 </ul>
-<p>// @jamestalmage @jfmengels </p>
+<p>Comment on other things that would be cool if ESLint didn&#39;t have its current limits.</p>
 
 </div>
 </div>

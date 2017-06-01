@@ -3,6 +3,7 @@
 process.env.NODE_ENV = 'production';
 
 var chalk = require('chalk');
+var slug = require('slug');
 var fs = require('fs');
 var marked = require('marked');
 var mkdirp = require('mkdirp');
@@ -23,7 +24,8 @@ var nunjucks = _nunjucks.configure(ROOT_DIR+'/views', { autoescape: true, trimBl
 
 // slug filter
 nunjucks.addFilter('slug', function(str, count) {
-    return str.toLowerCase().split(' ').join('-')+".html";
+   //return str.toLowerCase().split(' ').join('-')+".html";
+   return slug(str)+".html";
 });
 
 
@@ -31,7 +33,8 @@ nunjucks.addFilter('slug', function(str, count) {
  * template generation
  * * * * * * * * * * * */
 function generatePostTemplate(post){
-        var fileName = post.title.toLowerCase().split(' ').join('-')+".html";
+        //var fileName = post.title.toLowerCase().split(' ').join('-')+".html";
+        var fileName = slug(post.title)+".html";
         post.html = marked(post.body);
         var renderContent = nunjucks.render('post_page.html',{post: post});
         fs.writeFile(ROOT_DIR+"/build/posts/"+fileName, renderContent, function(err) {
