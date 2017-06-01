@@ -5,7 +5,11 @@
   <div class="columns">
           <div class="column">
             <div class="section">
-              {% include 'snippets/aboutbox.html' %}
+              <ul>
+              {% for label in labels %}
+              <li>{{ label.name }}</li>
+              {% endfor %}
+              </ul>
             </div>
           </div>
           <div class="column is-half">

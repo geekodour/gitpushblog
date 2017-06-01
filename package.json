@@ -7,8 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "pregenerate": "npm run clean:dist",
     "generate": "node scripts/generate.js",
-    "postgenerate": "webpack",
-    "clean:dist": "rimraf './build/*'"
+    "postgenerate": "webpack && npm run copy:vendor",
+    "clean:dist": "rimraf './build/*'",
+    "copy:vendor": "cp ./static/vendor/*.js ./build/assets/"
   },
   "repository": {
     "type": "git",
@@ -22,25 +23,27 @@
   "homepage": "https://github.com/geekodour/gitpushblog#readme",
   "dependencies": {
     "bulma": "0.4.1",
-    "github-blog-api": "1.0.1"
+    "cp": "0.2.0",
+    "github-blog-api": "1.1.0"
   },
   "devDependencies": {
     "autoprefixer": "7.1.1",
     "babel-cli": "6.24.1",
-    "marked": "0.3.6",
-    "nunjucks": "3.0.0",
-    "webpack": "2.6.0",
     "babel-loader": "7.0.0",
     "babel-preset-es2015": "6.24.1",
+    "chalk": "1.1.3",
     "css-loader": "0.28.2",
     "extract-text-webpack-plugin": "2.1.0",
+    "marked": "0.3.6",
     "mkdirp": "0.5.1",
     "node-sass": "4.5.3",
+    "nunjucks": "3.0.0",
     "postcss-loader": "2.0.5",
     "postcss-smart-import": "0.7.2",
     "precss": "1.4.0",
     "rimraf": "2.6.1",
     "sass-loader": "6.0.5",
-    "style-loader": "0.18.0"
+    "style-loader": "0.18.0",
+    "webpack": "2.6.0"
   }
 }

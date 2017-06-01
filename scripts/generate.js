@@ -2,7 +2,7 @@
 
 process.env.NODE_ENV = 'production';
 
-//var chalk = require('chalk');
+var chalk = require('chalk');
 var fs = require('fs');
 var marked = require('marked');
 var mkdirp = require('mkdirp');
@@ -13,11 +13,15 @@ var _nunjucks = require('nunjucks');
 
 var ROOT_DIR = path.resolve('.');
 
+
+var pageno = 1; // needed for generating pagination
+
 /* * * * * * * * * * * * *
  * nunjucks configuration
  * * * * * * * * * * * * * */
 var nunjucks = _nunjucks.configure(ROOT_DIR+'/views', { autoescape: true, trimBlocks: true, lstripBlocks: true});
 
+// slug filter
 nunjucks.addFilter('slug', function(str, count) {
     return str.toLowerCase().split(' ').join('-')+".html";
 });
@@ -32,15 +36,15 @@ function generatePostTemplate(post){
         var renderContent = nunjucks.render('post_page.html',{post: post});
         fs.writeFile(ROOT_DIR+"/build/posts/"+fileName, renderContent, function(err) {
             if(err) { return console.log(err); }
-            console.log(post.title+" was created");
+            console.log(chalk.bold.green('==>')+chalk.white(' %s was created'), post.title);
         });
 }
 
-function generateIndexTemplate(posts){
-        var renderContent = nunjucks.render('index.html',{posts:posts});
-        fs.writeFile(ROOT_DIR+"/build/index.html", renderContent, function(err) {
+function generateIndexTemplate(postsData,fileName){
+        var renderContent = nunjucks.render('index.html',{posts:postsData[0],labels:postsData[1]});
+        fs.writeFile(ROOT_DIR+"/build/"+fileName+".html", renderContent, function(err) {
             if(err) { return console.log(err); }
-            console.log("index was created");
+            console.log(chalk.green('%s was created'), fileName);
         });
 }
 
@@ -50,40 +54,37 @@ function createdir(dirpath){
         });
 }
 
+function fetchAndGenarateTemplates(){
+        Promise.all([blog.fetchBlogPosts(),blog.fetchAllLabels()])
+          .then(function(postsData){
+                pageno += 1;
+
+                if(!blog.settings.posts.next_page_url){
+                  generateIndexTemplate(postsData,'index');
+                }
+                else{
+                  generateIndexTemplate(postsData,pageno);
+                }
+
+                // make `posts` directory; otherwise fs.writeFile throws error
+                createdir(ROOT_DIR+'/build/posts');
+
+                // post_page.html
+                postsData[0].forEach(function(post){
+                        generatePostTemplate(post);
+                });
+
+                if(!blog.settings.posts.last_reached){
+                        fetchAndGenarateTemplates();
+                }
+          })
+          .catch(function(err){
+                console.log(err);
+          });
+}
 
 
 // initiate the blog
-// chjj/marked/
-//var blog = gitblog({author:'geekodour',repo:'gitpushblog'});
-var blog = gitblog({author:'casualjavascript',repo:'blog'});
-// creation of the blog variable better be sync and put the author fetch to another function
-//eg. blog.fetchAuthorInfo().then();
-
-blog.fetchBlogPosts().then(function(posts){
-        // index.html
-        generateIndexTemplate(posts);
-
-        // make `posts` directory; otherwise fs.writeFile throws error
-        createdir(ROOT_DIR+'/build/posts');
-
-        // post_page.html
-        posts.forEach(function(post){
-                generatePostTemplate(post);
-        });
-
-        // other pages
-});
-
-/*
- * - fetch all blogposts from github
- * - for each blogpost, generate 'post-title.html' from 'post-page' template with blog data
- *   and put them in build folder
- * - from blog.json, get pages and page template paths
- * - generate those pages and put them in build folder
- */
-
-
-// Warn and crash if required files are missing [WILL THIS WORK]
-//if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
-//  process.exit(1);
-//}
+var blog = gitblog({username:'sindresorhus',repo:'xo'});
+blog.setPost({per_page:10});
+fetchAndGenarateTemplates();
