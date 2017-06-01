@@ -17,6 +17,7 @@ process.env.NODE_ENV = 'development';
 * */
 
 var chokidar = require('chokidar');
+var rimraf = require('rimraf');
 var chalk = require('chalk');
 var slug = require('slug');
 var fs = require('fs');
@@ -64,6 +65,30 @@ function fetchAndStoreData(){
           });
 }
 
+
+function generatePostTemplate(post){
+        var fileName = slug(post.title)+".html";
+        post.html = marked(post.body);
+        var renderContent = nunjucks.render('post_page.html',{post: post});
+        fs.writeFile(ROOT_DIR+"/tempbuild/posts/"+fileName, renderContent, function(err) {
+            if(err) { return console.log(err); }
+            console.log(chalk.bold.green('==>')+chalk.white(' %s was created'), post.title);
+        });
+}
+
+function generateIndexTemplate(postsData,fileName){
+        var renderContent = nunjucks.render('index.html',{posts:postsData[0],labels:postsData[1]});
+        fs.writeFile(ROOT_DIR+"/tempbuild/"+fileName+".html", renderContent, function(err) {
+            if(err) { return console.log(err); }
+            console.log(chalk.green('%s was created'), fileName);
+        });
+}
+
+function generateTemplates(){
+        // clean `tempbuild`
+        rimraf(ROOT_DIR+"/tempbuild/*");
+}
+
 var blog = gitblog({username:'casualjavascript',repo:'blog',author:'mateogianolio'});
 blog.setPost({per_page:10});
 
@@ -71,6 +96,10 @@ fetchAndStoreData()
         .then(function(){
                 chokidar.watch(ROOT_DIR+'/views', {ignored: /(^|[\/\\])\../}).on('all', (event, path) => {
                   console.log(event, path);
+                  // because generating templates is a non timeconsuming task
+                  // generate all templates on change detection
+                  // otherwise will have to setup file detections
+                  generateTemplates();
                 });
         })
         .catch(function(e){
