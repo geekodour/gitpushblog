@@ -8,9 +8,8 @@
     "pregenerate": "npm run clean:dist",
     "generate": "node scripts/generate.js",
     "postgenerate": "webpack",
-    "dev:watch": "webpack --watch",
-    "clean:dist": "rimraf './build/*'",
-    "copy:vendor": "cp ./static/vendor/*.js ./build/assets/"
+    "dev:watch": "node scripts/dev.js",
+    "clean:dist": "rimraf './build/*'"
   },
   "repository": {
     "type": "git",
