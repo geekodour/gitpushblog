@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "pregenerate": "npm run clean:dist",
     "generate": "node scripts/generate.js",
-    "postgenerate": "webpack && npm run copy:vendor",
+    "postgenerate": "webpack",
+    "dev:watch": "webpack --watch",
     "clean:dist": "rimraf './build/*'",
     "copy:vendor": "cp ./static/vendor/*.js ./build/assets/"
   },
@@ -23,8 +24,9 @@
   "homepage": "https://github.com/geekodour/gitpushblog#readme",
   "dependencies": {
     "bulma": "0.4.1",
+    "chokidar": "1.7.0",
     "cp": "0.2.0",
-    "github-blog-api": "1.1.0",
+    "github-blog-api": "1.1.2",
     "slug": "0.9.1"
   },
   "devDependencies": {

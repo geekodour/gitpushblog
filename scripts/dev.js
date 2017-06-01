@@ -1,6 +1,21 @@
 'use strict';
 
-process.env.NODE_ENV = 'production';
+process.env.NODE_ENV = 'development';
+
+/*
+ * the dev build will be done in a temporay folder
+ * ctrl+c should delete the temp folder,
+ * also the folder should be cleaned before starting this script
+ *
+ * github data will be fetched once on script run and stored in variables
+ * chokidar will see for changes in nunjucks templates
+ * and webpack will see for changes in stactic files
+ * vendor files to be copied
+ *
+ * on each change chokidar detects it should update all html files of that template
+ * with relevant data from stored github data
+ *
+ * */
 
 var chalk = require('chalk');
 var slug = require('slug');
@@ -24,7 +39,6 @@ var nunjucks = _nunjucks.configure(ROOT_DIR+'/views', { autoescape: true, trimBl
 
 // slug filter
 nunjucks.addFilter('slug', function(str, count) {
-   //return str.toLowerCase().split(' ').join('-')+".html";
    return slug(str)+".html";
 });
 
@@ -33,7 +47,6 @@ nunjucks.addFilter('slug', function(str, count) {
  * template generation
  * * * * * * * * * * * */
 function generatePostTemplate(post){
-        //var fileName = post.title.toLowerCase().split(' ').join('-')+".html";
         var fileName = slug(post.title)+".html";
         post.html = marked(post.body);
         var renderContent = nunjucks.render('post_page.html',{post: post});
@@ -88,7 +101,6 @@ function fetchAndGenarateTemplates(){
 
 
 // initiate the blog
-//var blog = gitblog({username:'sindresorhus',repo:'xo'});
-var blog = gitblog({username:'casualjavascript',repo:'blog',author:'mateogianolio'});
-blog.setPost({per_page:4});
+var blog = gitblog({username:'sindresorhus',repo:'xo'});
+blog.setPost({per_page:10});
 fetchAndGenarateTemplates();

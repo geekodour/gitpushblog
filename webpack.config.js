@@ -9,6 +9,7 @@ const extractSass = new ExtractTextPlugin({
 module.exports = {
   entry: {
         main: './static/main.js',
+        prism: './static/vendor/prism.js'
   },
   output: {
     path: path.join(__dirname,'./build/assets/'),
