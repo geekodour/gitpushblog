@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools for 2017: LuaJIT, DynASM, R, Nix, Pharo</title>
+    <meta name="description" content="">
+    <meta name="author" content="Hrishikesh Barman">
+
+    <link href="/assets/main.css" rel="stylesheet">
+
+  </head>
+
+  <body class="">
+<nav class="nav">
+  <div class="nav-left"></div>
+  <div class="nav-center">
+  <a class="nav-item title is-5" href="/">
+    geekodour's blog
+  </a>
+  </div>
+  <span id="nav-toggle" class="nav-toggle">
+  <span></span>
+  <span></span>
+  <span></span>
+  </span>
+  <div id="nav-menu" class="nav-right nav-menu">
+  <a class="nav-item" href="">projects</a>
+  <a class="nav-item" href="">favorites</a>
+  <a class="nav-item" href="">contact</a>
+  </div>
+</nav>
+
+      <div class="container">
+  <div class="columns">
+          <div class="column">
+            <div class="section">
+<div class="">
+  <ul>
+  </ul>
+</div>
+            </div>
+          </div>
+          <div class="column is-half">
+<div class="section">
+<div class="container">
+<div class="content">
+<h1>Tools for 2017: luajit, dynasm, r, nix, pharo</h1>
+<p>Here is a little braindump on the programming tools I am excited about using in 2017 for my ongoing <a href="http://snabb.co/">Snabb</a> hacking.</p>
+<ul>
+<li><a href="http://github.com/luajit/luajit">LuaJIT</a> for general purpose system programming. Simple high-level language, blazing fast JIT, and fantastic FFI. I suspect that LuaJIT is the root of a new family tree of trace-based language implementations, analogous to <a href="http://www.softwarepreservation.org/projects/LISP/maclisp_family/">MACLISP</a> in the 1960s, and I am eager to participate in the evolution.</li>
+<li><a href="https://luapower.com/dynasm">DynASM (Lua-mode) assembler</a> for accessing special x86 instructions like CRC32, AES-NI, RDPMC, SIMD, etc. This is a macro-assembler that is powerful and operates Just-In-Time. I enjoy writing assembler code directly, referring to manuals from Intel and Anger Fog, much more so than writing it indirectly using C compiler intrinsics.</li>
+<li><a href="http://r4ds.had.co.nz">R for data science</a> and for <a href="http://www.mosaic-web.org/go/StatisticalModeling/">statistical modeling</a>. Lately it seems like every interesting test or benchmark produces thousands of data points to interpret, for example from a matrix of platforms/versions/configurations/workloads. I find ggplot2 and dplyr especially versatile and pleasant to work with.</li>
+<li><a href="https://nixos.org/">Nix</a> for automation. Nix takes a task - build a program, deploy a server, run a test, run a series of benchmarks, etc - and makes it scalable and repeatable. This is indispensible for running large software testing campaigns: scheduling the builds, archiving the raw results, post-processing to create reports, and making each case immediately reproducible. It&#39;s also great for programming-in-the-small like avoiding dependency hell for shell scripts.</li>
+<li><a href="http://pharo.org/">Pharo</a> for inspection. This is speculative: I want to build application-specific development tools with a frontend based on <a href="http://gtoolkit.org">Glamour</a> and a backend based on Nix that can call out to the plethora of tools in nixpkgs (R for stats, gas for disassembly, gdb to locate objects via DWARF, wireshark to decode network traffic, etc.)</li>
+</ul>
+<p>I am enjoying working with a collection of complementary domain-specific tools. Gonna be another fun year of hacking :-).</p>
+
+</div>
+</div>
+</div>
+          </div>
+          <div class="column">
+            <div class="section">
+<div class="">
+Hello, welcome to my blog
+Here we have fun
+</div>
+            </div>
+          </div>
+  </div>
+      </div>
+
+      <script src="/assets/prism.js"></script>
+      <script src="/assets/main.js"></script>
+  </body>
+</html>

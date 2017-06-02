@@ -49,6 +49,7 @@ function createdir(dirpath){
 
 function generatePostTemplate(post){
         var fileName = slug(post.title)+".html";
+        // marked is required for offline support in dev mode
         post.html = marked(post.body);
         var renderContent = nunjucks.render('post_page.html',{post: post});
         fs.writeFile(ROOT_DIR+"/dev/posts/"+fileName, renderContent, function(err) {
@@ -82,7 +83,7 @@ function generateTemplates(){
                 generatePostTemplate(post);
         });
         rev++;
-        console.log("generated rev "+rev);
+        console.log("REVISION "+rev+" GENERATED.");
 }
 
 /* * * * * * * * * * * *
@@ -97,7 +98,7 @@ function fetchAndStoreData(_labels){
 
             if(!blog.settings.posts.last_reached){
 
-                    console.log(chalk.bold.yellow('Fetching...'));
+                    console.log(chalk.bold.yellow('\nFetching posts...'));
                     fetchAndStoreData(_labels);
             }
             else {
@@ -193,8 +194,6 @@ blog.fetchAllLabels()
                 .then(data=>{
                   let fileContents = prepareFileContents();
                   Promise.all(fileContents).then(()=>{
-                    console.log("LIST OF FILES:");
-                    console.log(listOfFiles);
                     fetchAndStoreData(_labels);
                   });
                 })

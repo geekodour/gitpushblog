@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributed systems in an alternative universe</title>
+    <meta name="description" content="">
+    <meta name="author" content="Hrishikesh Barman">
+
+    <link href="/assets/main.css" rel="stylesheet">
+
+  </head>
+
+  <body class="">
+<nav class="nav">
+  <div class="nav-left"></div>
+  <div class="nav-center">
+  <a class="nav-item title is-5" href="/">
+    geekodour's blog
+  </a>
+  </div>
+  <span id="nav-toggle" class="nav-toggle">
+  <span></span>
+  <span></span>
+  <span></span>
+  </span>
+  <div id="nav-menu" class="nav-right nav-menu">
+  <a class="nav-item" href="">projects</a>
+  <a class="nav-item" href="">favorites</a>
+  <a class="nav-item" href="">contact</a>
+  </div>
+</nav>
+
+      <div class="container">
+  <div class="columns">
+          <div class="column">
+            <div class="section">
+<div class="">
+  <ul>
+  </ul>
+</div>
+            </div>
+          </div>
+          <div class="column is-half">
+<div class="section">
+<div class="container">
+<div class="content">
+<h1>Distributed systems in an alternative universe</h1>
+<p>Consider distributed system programming in this universe:</p>
+<ul>
+<li>Computers have 8 cores, 64KB of RAM, and 256KB of SSD.</li>
+<li>Computers communicate with each other via NFS access to a common file server.</li>
+<li>NFS servers can be clustered in order to connect a few LANs together. (Each NFS server supports around a dozen computers.)</li>
+<li>Network interfaces are high-speed: between 100 Gbps and 1 Tbps.</li>
+</ul>
+<p>Do you recognize that universe? If you are into <a href="https://dzone.com/articles/mechanical-sympathy">mechanical sympathy</a> then you might because this is a description of a normal x86 server when viewed through the lens of 90s computing:</p>
+<ul>
+<li>The 8 &quot;cores&quot; are the <a href="http://www.anandtech.com/show/6355/intels-haswell-architecture/8">execution ports</a> of the Haswell CPU. That is, each x86 core internally has 8 asymmetric cores that execute micro-instructions.</li>
+<li>The 64KB RAM is L1 cache and the 256KB of SSD is L2 cache.</li>
+<li>The NFS server is L3 cache. This is shared storage for all of the cores with high throughput and medium latency. The protocol used to access this is not NFS but <a href="https://en.wikipedia.org/wiki/MESIF_protocol">MESIF</a>.</li>
+<li>The I/O interfaces really are fast. The ones that are private to each core, like L1 and L2 cache, can consistently deliver nearly 1Tbps of throughput without any contention.</li>
+</ul>
+<p>I find this a useful mental model for thinking about software performance. The way we would optimize distributed systems software for a network like this is also the way we should optimize application software running on x86 servers.</p>
+<p>For example, considering <a href="snabbco/snabbswitch#648">Are packet copies cheap or expensive?</a> is like comparing the performance of <code>mv</code>, <code>cat</code>, and <code>cp</code> over NFS. We might expect <code>mv</code> to be fast because the data never has to pass over the wire. How about <code>cat</code> and <code>cp</code> though? This is complicated: you have to consider the relative cost of the latency to request data, the cost of the bandwidth (remembering that the network is full-duplex), the wider implications of taking a read vs write lock on the data, and what else you are planning to do with the data (<code>cp</code> may actually speed up the application if it copies the file onto local storage for further operations).</p>
+<p>Next thought: I would never try to troubleshoot network performance problems without access to basic tools like Wireshark. That is where you can see problems due to Nagle&#39;s algorithm, delayed acks, small congestion windows, zero windows, and so on. So what is the Wireshark for MESIF?</p>
+
+</div>
+</div>
+</div>
+          </div>
+          <div class="column">
+            <div class="section">
+<div class="">
+Hello, welcome to my blog
+Here we have fun
+</div>
+            </div>
+          </div>
+  </div>
+      </div>
+
+      <script src="/assets/prism.js"></script>
+      <script src="/assets/main.js"></script>
+  </body>
+</html>
