@@ -2,20 +2,6 @@
 
 process.env.NODE_ENV = 'development';
 
-/*
-* the dev build will be done in a temporay folder
-* ctrl+c should delete the temp folder,
-* also the folder should be cleaned before starting this script
-*
-* github data will be fetched once on script run and stored in variables
-* chokidar will see for changes in nunjucks templates
-* and webpack will see for changes in stactic files
-*
-* on each change chokidar detects it should update all html files of that template
-* with relevant data from stored github data
-*
-* */
-
 var chokidar = require('chokidar');
 var rimraf = require('rimraf');
 var chalk = require('chalk');
@@ -30,9 +16,6 @@ var _nunjucks = require('nunjucks');
 
 var ROOT_DIR = path.resolve('.');
 
-
-var pageno = 1; // needed for generating pagination
-
 /* * * * * * * * * * * * *
  * nunjucks configuration
  * * * * * * * * * * * * * */
@@ -43,30 +26,20 @@ nunjucks.addFilter('slug', function(str, count) {
    return slug(str)+".html";
 });
 
+
+
 /* * * * * * * * * * * *
- * fetch github data
+ * Template generation
  * * * * * * * * * * * */
-var pageno = 1;
-var posts = [];
-var labels = [];
-function fetchAndStoreData(){
-  return Promise.all([blog.fetchBlogPosts(),blog.fetchAllLabels()])
-          .then(function(postsData){
 
-                posts = posts.concat(postsData[0]);
-                labels = postsData[1];
-
-                if(!blog.settings.posts.last_reached){
-                        fetchAndStoreData();
-                }
-          })
-          .catch(function(err){
-                console.log(err);
-          });
+function createdir(dirpath){
+        mkdirp(dirpath, function (err) {
+            if (err) console.error(err);
+        });
 }
 
-
 function generatePostTemplate(post){
+        //var fileName = post.title.toLowerCase().split(' ').join('-')+".html";
         var fileName = slug(post.title)+".html";
         post.html = marked(post.body);
         var renderContent = nunjucks.render('post_page.html',{post: post});
@@ -76,8 +49,8 @@ function generatePostTemplate(post){
         });
 }
 
-function generateIndexTemplate(postsData,fileName){
-        var renderContent = nunjucks.render('index.html',{posts:postsData[0],labels:postsData[1]});
+function generateIndexTemplate(posts,fileName,labels){
+        var renderContent = nunjucks.render('index.html',{posts:posts,labels:labels});
         fs.writeFile(ROOT_DIR+"/tempbuild/"+fileName+".html", renderContent, function(err) {
             if(err) { return console.log(err); }
             console.log(chalk.green('%s was created'), fileName);
@@ -85,31 +58,81 @@ function generateIndexTemplate(postsData,fileName){
 }
 
 function generateTemplates(){
-        // clean `tempbuild`
-        rimraf(ROOT_DIR+"/tempbuild/*");
-}
+        let flatPosts = posts.reduce((posts_prev,posts_next)=>posts_prev.concat(posts_next));
 
-var blog = gitblog({username:'casualjavascript',repo:'blog',author:'mateogianolio'});
-blog.setPost({per_page:10});
-
-fetchAndStoreData()
-        .then(function(){
-                chokidar.watch(ROOT_DIR+'/views', {ignored: /(^|[\/\\])\../}).on('all', (event, path) => {
-                  console.log(event, path);
-                  // because generating templates is a non timeconsuming task
-                  // generate all templates on change detection
-                  // otherwise will have to setup file detections
-                  generateTemplates();
-                });
-        })
-        .catch(function(e){
-                console.log(e);
+        posts.forEach(function(post_arr,i){
+                if(i==0){
+                  generateIndexTemplate(post_arr,'index',labels);
+                }
+                else{
+                  generateIndexTemplate(post_arr,i+1,labels);
+                }
         });
 
+        // post_page.html
+        flatPosts.forEach(function(post){
+                generatePostTemplate(post);
+        });
+}
 
 /* * * * * * * * * * * *
- * template generation
+ * fetch github data
  * * * * * * * * * * * */
 
+function fetchAndStoreData(_labels){
+  blog.fetchBlogPosts()
+      .then(function(_posts){
 
-// initiate the blog
+            posts.push(_posts);
+
+            if(!blog.settings.posts.last_reached){
+
+                    console.log(chalk.bold.yellow('Fetching...'));
+                    fetchAndStoreData(_labels);
+            }
+            else {
+                    console.log(chalk.bold.green('Fetching finished!'));
+                    labels = _labels;
+                    startDevMode();
+            }
+      })
+      .catch(function(err){
+            console.log(err);
+      });
+}
+
+/* * * * * * * * * * * *
+ * Dev mode
+ * * * * * * * * * * * */
+
+function startDevMode(){
+                // empty out `tempbuild` directory
+                rimraf(ROOT_DIR+"/tempbuild/*",function(){
+                        console.log(chalk.bold.red('Cleared contents of /tempbuild'));
+                });
+
+                // make `posts` directory; otherwise fs.writeFile throws error
+                createdir(ROOT_DIR+'/tempbuild/posts');
+
+                // generate first templates
+                generateTemplates();
+
+                // watch for changes and regenerate on change
+                chokidar.watch(ROOT_DIR+'/views', {ignored: /(^|[\/\\])\../}).on('all', (event, path) => {
+                  console.log(event, path);
+                  if(event === "change"){
+                    generateTemplates();
+                  }
+                });
+}
+
+// start the dev thing
+var posts = [];
+var labels = [];
+var blog = gitblog({username:'casualjavascript',repo:'blog',author:'mateogianolio'});
+blog.setPost({per_page:blog_config.posts_per_page});
+
+blog.fetchAllLabels()
+        .then(_labels=>{
+                fetchAndStoreData(_labels);
+        });

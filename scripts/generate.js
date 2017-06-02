@@ -43,8 +43,8 @@ function generatePostTemplate(post){
         });
 }
 
-function generateIndexTemplate(postsData,fileName){
-        var renderContent = nunjucks.render('index.html',{posts:postsData[0],labels:postsData[1]});
+function generateIndexTemplate(posts,fileName,labels){
+        var renderContent = nunjucks.render('index.html',{posts:posts,labels:labels});
         fs.writeFile(ROOT_DIR+"/build/"+fileName+".html", renderContent, function(err) {
             if(err) { return console.log(err); }
             console.log(chalk.green('%s was created'), fileName);
@@ -57,28 +57,28 @@ function createdir(dirpath){
         });
 }
 
-function fetchAndGenarateTemplates(){
-        Promise.all([blog.fetchBlogPosts(),blog.fetchAllLabels()])
-          .then(function(postsData){
+function fetchAndGenerateTemplates(_labels){
+      blog.fetchBlogPosts()
+          .then(function(posts){
                 pageno += 1;
 
                 if(!blog.settings.posts.next_page_url){
-                  generateIndexTemplate(postsData,'index');
+                  generateIndexTemplate(posts,'index',_labels);
                 }
                 else{
-                  generateIndexTemplate(postsData,pageno);
+                  generateIndexTemplate(posts,pageno,_labels);
                 }
 
                 // make `posts` directory; otherwise fs.writeFile throws error
                 createdir(ROOT_DIR+'/build/posts');
 
                 // post_page.html
-                postsData[0].forEach(function(post){
+                posts.forEach(function(post){
                         generatePostTemplate(post);
                 });
 
                 if(!blog.settings.posts.last_reached){
-                        fetchAndGenarateTemplates();
+                        fetchAndGenerateTemplates(_labels);
                 }
           })
           .catch(function(err){
@@ -88,7 +88,10 @@ function fetchAndGenarateTemplates(){
 
 
 // initiate the blog
-//var blog = gitblog({username:'sindresorhus',repo:'xo'});
 var blog = gitblog({username:'casualjavascript',repo:'blog',author:'mateogianolio'});
-blog.setPost({per_page:4});
-fetchAndGenarateTemplates();
+blog.setPost({per_page:2});
+
+blog.fetchAllLabels()
+        .then(_labels=>{
+                fetchAndGenerateTemplates(_labels);
+        });
