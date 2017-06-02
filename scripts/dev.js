@@ -172,6 +172,9 @@ function prepareFileContents(){
                 return new Promise((resolve)=>{
                        let content = fs.readFileSync(ROOT_DIR+"/content/"+fileName,{encoding:"utf8"});
                        let post = {};
+                       // The parsing done here is very bad probably
+                       // please suggest improvements
+                       // also might add a post.labels property?
                        post.title = content.split("\n")[0].split(" ").slice(1).join(' ').trim();
                        post.body = content.split("\n").slice(1).join("\n");
                        listOfFiles.push(post);
