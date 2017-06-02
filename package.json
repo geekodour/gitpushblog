@@ -4,16 +4,15 @@
   "description": "a git based blog engine - (currently using react)",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "pregenerate": "npm run clean:dist",
-    "generate": "node scripts/generate.js",
-    "postgenerate": "npm run build:dist",
+    "test": "node scripts/test.js",
+    "generate": "npm-run-all clean:dist build:dist webpack:dist",
+    "dev": "npm-run-all --parallel clean:dev build:dev webpack:dev",
     "build:dev": "node scripts/dev.js",
-    "watch:dev": "npm-run-all --parallel clean:dev build:dev webpack:dev",
+    "build:dist": "node scripts/generate.js",
     "webpack:dev": "webpack --env=dev --progress --colors --watch",
     "webpack:dist": "webpack --env=prod --progress --colors",
-    "clean:dist": "rimraf './build/*'",
-    "clean:dev": "rimraf './tempbuild/*'"
+    "clean:dev": "rimraf './dev/*'",
+    "clean:dist": "rimraf './dist/*'"
   },
   "repository": {
     "type": "git",

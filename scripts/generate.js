@@ -9,7 +9,7 @@ var marked = require('marked');
 var mkdirp = require('mkdirp');
 var path = require('path');
 var gitblog = require('github-blog-api');
-var blog_config = require('../blog_config.json');
+var bc = require('../blog_config.json');
 var _nunjucks = require('nunjucks');
 
 var ROOT_DIR = path.resolve('.');
@@ -24,7 +24,6 @@ var nunjucks = _nunjucks.configure(ROOT_DIR+'/views', { autoescape: true, trimBl
 
 // slug filter
 nunjucks.addFilter('slug', function(str, count) {
-   //return str.toLowerCase().split(' ').join('-')+".html";
    return slug(str)+".html";
 });
 
@@ -33,11 +32,9 @@ nunjucks.addFilter('slug', function(str, count) {
  * template generation
  * * * * * * * * * * * */
 function generatePostTemplate(post){
-        //var fileName = post.title.toLowerCase().split(' ').join('-')+".html";
         var fileName = slug(post.title)+".html";
-        post.html = marked(post.body);
         var renderContent = nunjucks.render('post_page.html',{post: post});
-        fs.writeFile(ROOT_DIR+"/build/posts/"+fileName, renderContent, function(err) {
+        fs.writeFile(ROOT_DIR+"/dist/posts/"+fileName, renderContent, function(err) {
             if(err) { return console.log(err); }
             console.log(chalk.bold.green('==>')+chalk.white(' %s was created'), post.title);
         });
@@ -45,17 +42,24 @@ function generatePostTemplate(post){
 
 function generateIndexTemplate(posts,fileName,labels){
         var renderContent = nunjucks.render('index.html',{posts:posts,labels:labels});
-        fs.writeFile(ROOT_DIR+"/build/"+fileName+".html", renderContent, function(err) {
+        fs.writeFile(ROOT_DIR+"/dist/"+fileName+".html", renderContent, function(err) {
             if(err) { return console.log(err); }
             console.log(chalk.green('%s was created'), fileName);
         });
 }
 
 function createdir(dirpath){
-        mkdirp(dirpath, function (err) {
-            if (err) console.error(err);
-        });
+        return new Promise((resolve,reject)=>{
+                mkdirp(dirpath, function (err) {
+                    if (err) reject(err);
+                    resolve();
+                });
+        })
 }
+
+
+
+
 
 function fetchAndGenerateTemplates(_labels){
       blog.fetchBlogPosts()
@@ -69,8 +73,6 @@ function fetchAndGenerateTemplates(_labels){
                   generateIndexTemplate(posts,pageno,_labels);
                 }
 
-                // make `posts` directory; otherwise fs.writeFile throws error
-                createdir(ROOT_DIR+'/build/posts');
 
                 // post_page.html
                 posts.forEach(function(post){
@@ -88,10 +90,14 @@ function fetchAndGenerateTemplates(_labels){
 
 
 // initiate the blog
-var blog = gitblog({username:'casualjavascript',repo:'blog',author:'mateogianolio'});
-blog.setPost({per_page:2});
+var blog = gitblog({username:bc.username,repo:bc.repo,author:bc.author});
+blog.setPost({per_page:bc.posts_per_page});
 
 blog.fetchAllLabels()
         .then(_labels=>{
-                fetchAndGenerateTemplates(_labels);
+                // make `posts` directory; otherwise fs.writeFile throws error
+                createdir(ROOT_DIR+'/dist/posts')
+                        .then(e=>{
+                                fetchAndGenerateTemplates(_labels);
+                        })
         });

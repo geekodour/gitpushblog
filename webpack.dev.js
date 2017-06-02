@@ -15,7 +15,7 @@ module.exports = {
   },
 
   output: {
-    path: path.join(__dirname, './tempbuild/assets'),
+    path: path.join(__dirname, './dev/assets'),
     filename: '[name].js',
     sourceMapFilename: '[name].map'
   },
