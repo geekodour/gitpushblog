@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haskell in ES6: Project Euler 1-5</title>
+    <meta name="description" content="">
+    <meta name="author" content="Hrishikesh Barman">
+
+    <link href="/assets/main.css" rel="stylesheet">
+
+  </head>
+
+  <body class="">
+<nav class="nav">
+  <div class="nav-left"></div>
+  <div class="nav-center">
+  <a class="nav-item title is-5" href="/">
+    geekodour's blog
+  </a>
+  </div>
+  <span id="nav-toggle" class="nav-toggle">
+  <span></span>
+  <span></span>
+  <span></span>
+  </span>
+  <div id="nav-menu" class="nav-right nav-menu">
+  <a class="nav-item" href="">projects</a>
+  <a class="nav-item" href="">favorites</a>
+  <a class="nav-item" href="">contact</a>
+  </div>
+</nav>
+
+      <div class="container">
+  <div class="columns">
+          <div class="column">
+            <div class="section">
+<div class="">
+  <ul>
+  </ul>
+</div>
+            </div>
+          </div>
+          <div class="column is-half">
+<div class="section">
+<div class="container">
+<div class="content">
+<h1>Haskell in es6: project euler 1-5</h1>
+<p>Originally posted <code>2015-11-20</code>.</p>
+<p>In this exercise we will use node.js 5.0.0 and</p>
+<ul>
+<li><a href="https://github.com/casualjs/f"><code>ƒ</code></a> for Haskell-style functions,</li>
+<li><a href="https://github.com/mateogianolio/vectorious"><code>vectorious</code></a> for creating ranges.</li>
+</ul>
+<p>Install above libraries with <a href="https://npmjs.com">npm</a>:</p>
+<pre><code class="lang-bash">$ npm install casualjs/f
+$ npm install vectorious
+</code></pre>
+<p>Then include them in your project:</p>
+<pre><code class="lang-javascript">var ƒ = require(&#39;f&#39;),
+    vectorious = require(&#39;vectorious&#39;);
+
+// returns an array containing the range of numbers [m, n)
+var range =
+  (m, n) =&gt; vectorious.Vector.range(m, n).toArray();
+
+// will hold our answers
+var ans;
+</code></pre>
+<p>A great resource for functional problems is <a href="http://projecteuler.net">Project Euler</a>,
+so let&#39;s go ahead and solve the first five problems.</p>
+<p>Full source is available in <a href="https://github.com/casualjs/f-euler">this GitHub repo</a>.
+Most of the code is self-explanatory, but you should at least have knowledge of basic <code>Array</code>
+operations (i.e. <code>map</code>, <code>reduce</code>, <code>filter</code>, <code>forEach</code>, <code>concat</code>) and how to use them.</p>
+<h3 id="multiples-of-3-and-5">Multiples of 3 and 5</h3>
+<blockquote>
+<p>Find the sum of all the multiples of 3 or 5 below 1000.</p>
+</blockquote>
+<pre><code class="lang-javascript">// add two numbers
+var add =
+  (a, b) =&gt; a + b;
+
+// check if number is multiple of 5 or 3
+var multiple =
+  (x) =&gt; (x % 5 === 0 || x % 3 === 0);
+
+ans = range(0, 1000)
+  .filter(multiple)
+  .reduce(add);
+
+console.log(&#39;Multiples of 3 and 5:&#39;, ans);
+</code></pre>
+<h3 id="even-fibonacci-numbers">Even fibonacci numbers</h3>
+<blockquote>
+<p>By considering the terms in the Fibonacci sequence whose values do not exceed four million, find the sum of the even-valued terms.</p>
+</blockquote>
+<pre><code class="lang-javascript">// check if number is even
+var even =
+  (x) =&gt; x % 2 === 0;
+
+var fib = [1, 2];
+while (ƒ.last(fib) &lt; 4000000)
+  fib = ƒ.concat([1, 2], ƒ.zipWith(add, fib, ƒ.tail(fib)));
+
+ans = fib
+  .filter(even)
+  .reduce(add);
+
+console.log(&#39;Even fibonacci numbers:&#39;, ans);
+</code></pre>
+<h3 id="largest-prime-factor">Largest prime factor</h3>
+<blockquote>
+<p>What is the largest prime factor of the number 600851475143?</p>
+</blockquote>
+<pre><code class="lang-javascript">// integer square root
+var isqrt =
+  (x) =&gt; Math.floor(Math.sqrt(x));
+
+// integer division
+var idiv =
+  (a, b) =&gt; Math.floor(a / b);
+
+// check n mod x
+var mod =
+  (n) =&gt; (x) =&gt; n % x === 0;
+
+// get prime factors from arbitrary number
+var factors =
+  (n) =&gt; {
+    var prime = ƒ.take(1, range(2, isqrt(n) + 2).filter(mod(n)));
+    if (!prime.length)
+      return n === 1 ? [] : [n];
+    return prime.concat(factors(idiv(n, prime)));
+  };
+
+ans = ƒ.last(factors(600851475143));
+
+console.log(&#39;Largest prime factor:&#39;, ans);
+</code></pre>
+<h3 id="largest-palindrome-product">Largest palindrome product</h3>
+<blockquote>
+<p>Find the largest palindrome made from the product of two 3-digit numbers.</p>
+</blockquote>
+<pre><code class="lang-javascript">// check if number is palindrome
+var palindrome =
+  (n) =&gt; n === parseInt((&#39;&#39; + n).split(&#39;&#39;).reverse().join(&#39;&#39;));
+
+ans = [];
+range(100, 1000).forEach(
+  x =&gt; range(x, 1000).forEach(
+    y =&gt; ans.push(x * y)
+  )
+);
+
+ans = Math.max(...ans.filter(palindrome));
+
+console.log(&#39;Largest palindrome product:&#39;, ans);
+</code></pre>
+<h3 id="smallest-multiple">Smallest multiple</h3>
+<blockquote>
+<p>What is the smallest positive number that is evenly divisible by all of the numbers from 1 to 20?</p>
+</blockquote>
+<pre><code class="lang-javascript">// product of two numbers
+var product =
+  (a, b) =&gt; a * b;
+
+// reduce an array of arrays with product
+var productReduce =
+  (xs) =&gt; xs.reduce(product);
+
+// check if array is homogeneous
+// i.e. [2, 2, 2] is homogeneous, [2, 2, 3] is not.
+var homogeneous =
+  (xs) =&gt; ƒ.head(xs) === ƒ.last(xs);
+
+// if array contains duplicates with differing lengths,
+// keep the one that is longest
+// i.e. if array contains [2], [2, 2] and [2, 2, 2] only keep [2, 2, 2]
+var duplicates =
+  (xs, _, self) =&gt;
+    self.filter(
+      (ys) =&gt;
+        ƒ.head(xs) === ƒ.head(ys) &amp;&amp;
+        xs.length &lt; ys.length
+    ).length ?
+      false : true;
+
+ans = range(2, 20)
+  .map(factors)
+  .filter(homogeneous)
+  .filter(duplicates)
+  .map(productReduce)
+  .reduce(product);
+
+console.log(&#39;Smallest multiple:&#39;, ans);
+</code></pre>
+<p>I&#39;ve added a comment section below where you can ask questions or highlight any
+errors with the code.</p>
+
+</div>
+</div>
+</div>
+          </div>
+          <div class="column">
+            <div class="section">
+<div class="">
+Hello, welcome to my blog
+Here we have fun
+</div>
+            </div>
+          </div>
+  </div>
+      </div>
+
+      <script src="/assets/prism.js"></script>
+      <script src="/assets/main.js"></script>
+  </body>
+</html>

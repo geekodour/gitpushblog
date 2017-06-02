@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imitating the DOM tree</title>
+    <meta name="description" content="">
+    <meta name="author" content="Hrishikesh Barman">
+
+    <link href="/assets/main.css" rel="stylesheet">
+
+  </head>
+
+  <body class="">
+<nav class="nav">
+  <div class="nav-left"></div>
+  <div class="nav-center">
+  <a class="nav-item title is-5" href="/">
+    geekodour's blog
+  </a>
+  </div>
+  <span id="nav-toggle" class="nav-toggle">
+  <span></span>
+  <span></span>
+  <span></span>
+  </span>
+  <div id="nav-menu" class="nav-right nav-menu">
+  <a class="nav-item" href="">projects</a>
+  <a class="nav-item" href="">favorites</a>
+  <a class="nav-item" href="">contact</a>
+  </div>
+</nav>
+
+      <div class="container">
+  <div class="columns">
+          <div class="column">
+            <div class="section">
+<div class="">
+  <ul>
+  </ul>
+</div>
+            </div>
+          </div>
+          <div class="column is-half">
+<div class="section">
+<div class="container">
+<div class="content">
+<h1>Imitating the dom tree</h1>
+<p>The document object model (DOM) is essentially a <a href="https://en.wikipedia.org/wiki/Tree_(data_structure)">tree (data structure)</a>, containing <strong>nodes</strong> with a number of optional attributes such as <code>id</code> or <code>class</code>.</p>
+<p>Each <strong>node</strong> in the tree can have <em>one</em> parent and <em>several</em> children and these properties connect the nodes together to form a tree. </p>
+<p>Consider this boilerplate HTML (left) and its corresponding tree (right):</p>
+<table>
+  <tr valign="top">
+    <td><pre>&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;&lt;/title&gt;
+    &lt;script&gt;&lt;script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</pre></td>
+    <td><pre>
+        html
+        /  \
+   head      body
+   /  \
+title script
+</pre></td>
+  </tr>
+</table>
+
+
+<p>Note that the entire tree structure can be derived from any node in the tree by visiting all of its parents and children. This means that one single node will suffice to describe the entire tree.</p>
+<p>So let&#39;s make a <code>Node</code> class:</p>
+<pre><code class="lang-javascript">class Node {
+  constructor(name, attribs) {
+    this.name = name;
+    this.children = [];
+    this.attribs = attribs;
+  }
+}
+</code></pre>
+<pre><code class="lang-javascript">var html = new Node(&#39;html&#39;);
+
+console.log(html);
+// Node { name: &#39;html&#39;, children: [] }
+</code></pre>
+<p>For inheritance to work we need to extend <code>Node</code> with a method that allows us to append child nodes:</p>
+<pre><code class="lang-javascript">append(node) {
+  node.parent = this;
+  this.children.push(node);
+}
+</code></pre>
+<pre><code class="lang-javascript">var html = new Node(&#39;html&#39;);
+html.append(new Node(&#39;head&#39;));
+
+console.log(html);
+/* Node {
+  name: &#39;html&#39;,
+  children: [ Node { name: &#39;head&#39;, children: [], parent: [Circular] } ] } */
+</code></pre>
+<p>Neat! We just learned how to make a circular object. How do we traverse it? With <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*">generators</a>, we can do it recursively in a few lines of code:</p>
+<pre><code class="lang-javascript">*traverse(node) {
+  if (node === undefined)
+    node = this;
+
+  yield node;
+  for (var child of node.children)
+    yield *this.traverse(child);
+}
+</code></pre>
+<pre><code class="lang-javascript">var html = new Node(&#39;html&#39;);
+var head = new Node(&#39;head&#39;);
+
+head.append(new Node(&#39;title&#39;));
+html.append(head);
+html.append(new Node(&#39;body&#39;));
+
+for (var node of html.traverse())
+  console.log(node.name);
+
+// html
+// head
+// title
+// body
+</code></pre>
+<p>Finally, we can add a simple rendering method:</p>
+<pre><code class="lang-javascript">toString(node) {
+  if (node === undefined)
+    node = this;
+
+  var out = &#39;&lt;&#39; + node.name,
+      attributes = [];
+
+  for (var key in node.attribs)
+    if (node.attribs.hasOwnProperty(key))
+      attributes.push(&#39; &#39; + key + &#39;=&quot;&#39; + node.attribs[key] + &#39;&quot;&#39;);
+
+  out += attributes.join(&#39;&#39;) + &#39;&gt;&#39;;
+
+  for (var child of node.children)
+    out += this.toString(child);
+
+  out += &#39;&lt;/&#39; + node.name + &#39;&gt;&#39;;
+  return out;
+}
+</code></pre>
+<pre><code class="lang-javascript">var html = new Node(&#39;html&#39;, { class: &#39;cool&#39; });
+var head = new Node(&#39;head&#39;);
+
+head.append(new Node(&#39;title&#39;));
+html.append(head);
+html.append(new Node(&#39;body&#39;));
+
+console.log(html.toString());
+// &lt;html class=&quot;cool&quot;&gt;&lt;head&gt;&lt;title&gt;&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;
+</code></pre>
+
+</div>
+</div>
+</div>
+          </div>
+          <div class="column">
+            <div class="section">
+<div class="">
+Hello, welcome to my blog
+Here we have fun
+</div>
+            </div>
+          </div>
+  </div>
+      </div>
+
+      <script src="/assets/prism.js"></script>
+      <script src="/assets/main.js"></script>
+  </body>
+</html>

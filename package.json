@@ -7,9 +7,13 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "pregenerate": "npm run clean:dist",
     "generate": "node scripts/generate.js",
-    "postgenerate": "webpack",
-    "dev:watch": "node scripts/dev.js",
-    "clean:dist": "rimraf './build/*'"
+    "postgenerate": "npm run build:dist",
+    "build:dev": "node scripts/dev.js",
+    "watch:dev": "npm-run-all --parallel clean:dev build:dev webpack:dev",
+    "webpack:dev": "webpack --env=dev --progress --colors --watch",
+    "webpack:dist": "webpack --env=prod --progress --colors",
+    "clean:dist": "rimraf './build/*'",
+    "clean:dev": "rimraf './tempbuild/*'"
   },
   "repository": {
     "type": "git",
@@ -26,6 +30,7 @@
     "chokidar": "1.7.0",
     "cp": "0.2.0",
     "github-blog-api": "1.1.2",
+    "npm-run-all": "4.0.2",
     "slug": "0.9.1"
   },
   "devDependencies": {

@@ -1,5 +1,12 @@
 'use strict';
 
+/*
+ *
+ *  STYLE IS INCONSISTET
+ *  SOULD I MAKE THE SCRIPT ES6 OR ES5???
+ *
+ * */
+
 process.env.NODE_ENV = 'development';
 
 var chokidar = require('chokidar');
@@ -19,7 +26,7 @@ var ROOT_DIR = path.resolve('.');
 /* * * * * * * * * * * * *
  * nunjucks configuration
  * * * * * * * * * * * * * */
-var nunjucks = _nunjucks.configure(ROOT_DIR+'/views', { autoescape: true, trimBlocks: true, lstripBlocks: true});
+var nunjucks = _nunjucks.configure(ROOT_DIR+'/views', { autoescape: true, trimBlocks: true, lstripBlocks: true, watch: true});
 
 // slug filter
 nunjucks.addFilter('slug', function(str, count) {
@@ -33,9 +40,12 @@ nunjucks.addFilter('slug', function(str, count) {
  * * * * * * * * * * * */
 
 function createdir(dirpath){
-        mkdirp(dirpath, function (err) {
-            if (err) console.error(err);
-        });
+        return new Promise((resolve,reject)=>{
+                mkdirp(dirpath, function (err) {
+                    if (err) reject(err);
+                    resolve();
+                });
+        })
 }
 
 function generatePostTemplate(post){
@@ -106,22 +116,18 @@ function fetchAndStoreData(_labels){
  * * * * * * * * * * * */
 
 function startDevMode(){
-                // empty out `tempbuild` directory
-                rimraf(ROOT_DIR+"/tempbuild/*",function(){
-                        console.log(chalk.bold.red('Cleared contents of /tempbuild'));
-                });
 
                 // make `posts` directory; otherwise fs.writeFile throws error
-                createdir(ROOT_DIR+'/tempbuild/posts');
-
-                // generate first templates
-                generateTemplates();
+                createdir(ROOT_DIR+'/tempbuild/posts')
+                        .then(e=>{
+                                generateTemplates();
+                        });
 
                 // watch for changes and regenerate on change
                 chokidar.watch(ROOT_DIR+'/views', {ignored: /(^|[\/\\])\../}).on('all', (event, path) => {
                   console.log(event, path);
                   if(event === "change"){
-                    generateTemplates();
+                          generateTemplates();
                   }
                 });
 }
