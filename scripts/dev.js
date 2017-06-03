@@ -8,6 +8,7 @@
 process.env.NODE_ENV = 'development';
 
 var chokidar = require('chokidar');
+var server = require('pushstate-server');
 var rimraf = require('rimraf');
 var chalk = require('chalk');
 var slug = require('slug');
@@ -201,3 +202,9 @@ blog.fetchAllLabels()
                   });
                 })
         });
+
+// start the dev server silently
+server.start({
+  port: 3000,
+  directory: ROOT_DIR+'/dev'
+});
