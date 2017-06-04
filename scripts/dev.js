@@ -56,7 +56,7 @@ function generatePostTemplate(post){
         var fileName = slug(post.title)+".html";
         // marked is required for offline support in dev mode
         post.html = marked(post.body);
-        var renderContent = nunjucks.render('post_page.html',{post: post, comment_system: bc.comment_system});
+        var renderContent = nunjucks.render('post_page.html',{post: post, comment_system: bc.comment_system, disqus_id: bc.disqus_id});
         fs.writeFile(ROOT_DIR+"/dev/posts/"+fileName, renderContent, function(err) {
             if(err) { return console.log(err); }
         });

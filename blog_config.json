@@ -3,6 +3,7 @@
   "author": "lukego",
   "repo": "blog",
   "posts_per_page": "6",
-  "comments_per_page": "",
-  "comment_system": "github"
+  "comments_per_page": "3",
+  "comment_system": "github",
+  "disqus_id": "geekodour"
 }

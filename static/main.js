@@ -9,6 +9,7 @@ myblog.setComment({per_page:3});
 
 
 const generateComment = (comment)=>{
+        // return html needed for comments
         switch(window.blogInfo.comment_system){
                 case "github":
                         return `<div class="box">
@@ -30,17 +31,6 @@ const generateComment = (comment)=>{
                         </div>`
                         break;
                 case "disqus":
-                        let disqus_developer = 1;
-                        let disqus_config = function () {
-                        this.page.url = "${location.href}"
-                        this.page.identifier = "${location.href}";
-                        };
-                        (function() { // DON'T EDIT BELOW THIS LINE
-                        var d = document, s = d.createElement('script');
-                        s.src = 'https://geekodour.disqus.com/embed.js';
-                        s.setAttribute('data-timestamp', +new Date());
-                        (d.head || d.body).appendChild(s);
-                        })();
                         return `<div id="disqus_thread"></div>`
                         break;
                 default:
@@ -49,16 +39,19 @@ const generateComment = (comment)=>{
 }
 
 const generatePostListItem = (post)=>{
+        // return html needed for post listing
         return ` <h4 class="title is-4"> ${post.title} </h4> `
 }
 
 const loadMoreButton = (iterator)=>{
-                return `
-                  <div class="button is-danger" id="loadmore_button">Load more ${iterator}s</div>
-                `
+        // return html for loadMoreButton
+        return `
+          <div class="button is-danger" id="loadmore_button">Load more ${iterator}s</div>
+        `
 }
 
 const generateLoadMoreButton = (iterator)=>{
+        // assign events and loadMoreButton based on iterator type
         let loadMoreContainer = document.getElementById('loadmore_container');
         switch(iterator){
                 case "post":
@@ -95,6 +88,18 @@ const insertComments = ()=>{
   }
   else if(window.blogInfo.comment_system === "disqus"){
     commentsContainer.innerHTML += generateComment();
+
+    let disqus_config = function () {
+      this.page.url = location.href;
+      this.page.identifier = location.href;
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+    s.src = `https://${window.blogInfo.disqus_id}.disqus.com/embed.js`;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+
     document.querySelector('body').innerHTML += `<script id="dsq-count-scr" src="//geekodour.disqus.com/count.js" async></script>`;
   }
   else{
@@ -103,6 +108,7 @@ const insertComments = ()=>{
 }
 
 const insertCategoryMatches = ()=>{
+  // calls fetchBlogPosts with label as the parameter
   let label = window.blogInfo.label;
   let postsContainer = document.getElementById('category_posts_container');
   myblog.fetchBlogPosts([label]).then(posts=>{
@@ -113,6 +119,7 @@ const insertCategoryMatches = ()=>{
   });
 }
 
+// run instructions based on pageType
 switch(window.blogInfo.pageType){
         case "index":
                 break;
@@ -121,5 +128,7 @@ switch(window.blogInfo.pageType){
                 break;
         case "category":
                 insertCategoryMatches();
+                break;
+        default:
                 break;
 }
