@@ -25,6 +25,9 @@
       </div>
 
       {% block javascript %}
+      {% if firebaseEnabled %}
+      <script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>
+      {% endif %}
       <script src="/assets/prism.js"></script>
       <script src="/assets/main.js"></script>
       {% endblock javascript %}

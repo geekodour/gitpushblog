@@ -4,6 +4,9 @@
   "repo": "blog",
   "posts_per_page": "6",
   "comments_per_page": "3",
-  "comment_system": "github",
-  "disqus_id": "geekodour"
+  "comment": {
+    "system": "github",
+    "disqus_id": "geekodour",
+    "firebaseEnabled": true
+  }
 }

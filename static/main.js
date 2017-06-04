@@ -7,6 +7,46 @@ myblog.setComment({per_page:3});
 // we put `window.blogInfo` object when
 // generating the nunjucks templates
 
+const initDisqus = ()=>{
+    let disqus_config = function () {
+      this.page.url = location.href;
+      this.page.identifier = location.href;
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+    s.src = `https://${window.blogInfo.disqus_id}.disqus.com/embed.js`;
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+}
+
+const initFirebase = ()=>{
+  let config = {
+    apiKey: "AIzaSyAZSJ1d1Sr9MnTK-__3D8SrwXjjQf6EML4",
+    authDomain: "myblog-2b0ba.firebaseapp.com",
+    databaseURL: "https://myblog-2b0ba.firebaseio.com",
+    projectId: "myblog-2b0ba",
+    storageBucket: "myblog-2b0ba.appspot.com",
+    messagingSenderId: "20890326099"
+  };
+  firebase.initializeApp(config);
+}
+
+const signInFlow = ()=>{
+  let provider = new firebase.auth.GithubAuthProvider();
+  firebase.auth().signInWithPopup(provider).then(function(result) {
+    let token = result.credential.accessToken;
+          console.log(token);
+    let user = result.user;
+  }).catch(function(error) {
+    // handle this, right now it's just copy paste from docs
+    let errorCode = error.code;
+    let errorMessage = error.message;
+    let email = error.email;
+    let credential = error.credential;
+  });
+}
+
 
 const generateComment = (comment)=>{
         // return html needed for comments
@@ -85,21 +125,15 @@ const insertComments = ()=>{
               commentsContainer.innerHTML += generateComment(comment);
             });
     });
+
+    if(window.blogInfo.firebaseEnabled){
+            initFirebase();
+            document.getElementById("signin_button").addEventListener("click", signInFlow);
+    }
   }
   else if(window.blogInfo.comment_system === "disqus"){
     commentsContainer.innerHTML += generateComment();
-
-    let disqus_config = function () {
-      this.page.url = location.href;
-      this.page.identifier = location.href;
-    };
-    (function() {
-    var d = document, s = d.createElement('script');
-    s.src = `https://${window.blogInfo.disqus_id}.disqus.com/embed.js`;
-    s.setAttribute('data-timestamp', +new Date());
-    (d.head || d.body).appendChild(s);
-    })();
-
+    initDisqus();
     document.querySelector('body').innerHTML += `<script id="dsq-count-scr" src="//geekodour.disqus.com/count.js" async></script>`;
   }
   else{

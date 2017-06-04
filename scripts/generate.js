@@ -47,7 +47,14 @@ function createdir(dirpath){
  * * * * * * * * * * * */
 function generatePostTemplate(post){
         var fileName = slug(post.title)+".html";
-        var renderContent = nunjucks.render('post_page.html',{post: post, comment_system: bc.comment_system, disqus_id: bc.disqus_id});
+        var renderContent = nunjucks.render('post_page.html',
+          {
+            post: post,
+            comment_system: bc.comment.system,
+            disqus_id: bc.comment.disqus_id,
+            firebaseEnabled: bc.comment.firebaseEnabled
+          }
+        );
         fs.writeFile(ROOT_DIR+"/dist/posts/"+fileName, renderContent, function(err) {
             if(err) { return console.log(err); }
             console.log(chalk.bold.green('==>')+chalk.white(' %s was created'), post.title);

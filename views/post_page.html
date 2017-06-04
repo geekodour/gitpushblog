@@ -7,7 +7,8 @@
           pageType: 'post',
           postId: {{post.id}},
           comment_system: "{{ comment_system }}",
-          disqus_id: "{{ disqus_id }}"
+          disqus_id: "{{ disqus_id }}",
+          firebaseEnabled: {{firebaseEnabled}}
   };
   </script>
 {% endblock %}
@@ -21,8 +22,21 @@
     </div>
   </div>
 </div>
-<div class="section">
+<div class="">
   <div class="container">
+          {% if firebaseEnabled %}
+          <div class="section has-text-centered is-fluid">
+            <button id="signin_button" class="button is-medium is-success">Sign In to Comment!</button>
+            <div id="comment_box">
+              <div class="field">
+              <label class="label">Your Comment</label>
+              <p class="control">
+                <textarea class="textarea" placeholder="Write something.."></textarea>
+              </p>
+              </div>
+            </div>
+          </div>
+          {% endif %}
           <div id="comments_container"></div>
           <div id="loadmore_container" class="has-text-centered"></div>
   </div>
