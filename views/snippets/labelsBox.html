@@ -1,7 +1,7 @@
 <div class="">
   <ul>
   {% for label in labels %}
-  <li>{{ label.name }}</li>
+  <li><a href="/category/{{ label.name }}">{{ label.name }}</a></li>
   {% endfor %}
   </ul>
 </div>

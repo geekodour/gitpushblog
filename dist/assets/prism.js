@@ -244,4 +244,3 @@ Prism.languages.javascript = Prism.languages.extend("clike", { keyword: /\b(as|a
 /***/ })
 
 /******/ });
-//# sourceMappingURL=prism.map

@@ -1,6 +1,14 @@
 {% extends 'snippets/base.html' %}
 {% block title %}geekodour's blog{% endblock title %}
 
+{% block inlinejavascript %}
+  <script>
+  window.blogInfo = {
+          pageType: 'index'
+  };
+  </script>
+{% endblock %}
+
 {% block page_content %}
   <div class="columns">
           <div class="column">

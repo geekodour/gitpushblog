@@ -2,6 +2,7 @@
   "username": "lukego",
   "author": "lukego",
   "repo": "blog",
-  "posts_per_page": "2",
-  "comments_per_page": ""
+  "posts_per_page": "6",
+  "comments_per_page": "",
+  "comment_system": "github"
 }

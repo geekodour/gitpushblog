@@ -1,13 +1,29 @@
 {% extends 'index.html' %}
 {% block title %}{{ post.title }}{% endblock title %}
 
+{% block inlinejavascript %}
+  <script>
+  window.blogInfo = {
+          pageType: 'post',
+          postId: {{post.id}},
+          comment_system: "{{ comment_system }}"
+  };
+  </script>
+{% endblock %}
+
 {% block post_content %}
 <div class="section">
-<div class="container">
-<div class="content">
-<h1>{{ post.title | capitalize }}</h1>
-{{ post.html | safe }}
+  <div class="container">
+    <div class="content">
+      <h1>{{ post.title | capitalize }}</h1>
+      {{ post.html | safe }}
+    </div>
+  </div>
 </div>
-</div>
+<div class="section">
+  <div class="container">
+          <div id="comments_container"></div>
+          <div id="loadmore_container" class="has-text-centered"></div>
+  </div>
 </div>
 {% endblock %}

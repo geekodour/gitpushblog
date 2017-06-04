@@ -28,12 +28,26 @@ nunjucks.addFilter('slug', function(str, count) {
 });
 
 
+
+/* * * * * * * * * * * *
+ * helper functions
+ * * * * * * * * * * * */
+
+function createdir(dirpath){
+        return new Promise((resolve,reject)=>{
+                mkdirp(dirpath, function (err) {
+                    if (err) reject(err);
+                    resolve();
+                });
+        })
+}
+
 /* * * * * * * * * * * *
  * template generation
  * * * * * * * * * * * */
 function generatePostTemplate(post){
         var fileName = slug(post.title)+".html";
-        var renderContent = nunjucks.render('post_page.html',{post: post});
+        var renderContent = nunjucks.render('post_page.html',{post: post, comment_system : bc.comment_system});
         fs.writeFile(ROOT_DIR+"/dist/posts/"+fileName, renderContent, function(err) {
             if(err) { return console.log(err); }
             console.log(chalk.bold.green('==>')+chalk.white(' %s was created'), post.title);
@@ -48,18 +62,23 @@ function generateIndexTemplate(posts,fileName,labels){
         });
 }
 
-function createdir(dirpath){
-        return new Promise((resolve,reject)=>{
-                mkdirp(dirpath, function (err) {
-                    if (err) reject(err);
-                    resolve();
+function generateCategoryTemplates(labels){
+        return labels.map(function(label){
+                return new Promise(function(resolve,reject){
+                        var renderContent = nunjucks.render('category_page.html',{label:label});
+                        fs.writeFileSync(ROOT_DIR+"/dist/category/"+label.name+".html", renderContent);
+                        resolve();
                 });
-        })
+        });
 }
 
-
-
-
+function generatePageTemplate(){
+        var pageTemplatesFiles = fs.readdirSync(ROOT_DIR+"/views/pages");
+        pageTemplatesFiles.forEach(function(fileName){
+          var renderContent = nunjucks.render('pages/'+fileName,{});
+          fs.writeFileSync(ROOT_DIR+"/dist/"+fileName, renderContent);
+        });
+}
 
 function fetchAndGenerateTemplates(_labels){
       blog.fetchBlogPosts()
@@ -94,10 +113,21 @@ var blog = gitblog({username:bc.username,repo:bc.repo,author:bc.author});
 blog.setPost({per_page:bc.posts_per_page});
 
 blog.fetchAllLabels()
-        .then(_labels=>{
-                // make `posts` directory; otherwise fs.writeFile throws error
-                createdir(ROOT_DIR+'/dist/posts')
-                        .then(e=>{
-                                fetchAndGenerateTemplates(_labels);
-                        })
-        });
+  .then(_labels=>{
+    // create category directory
+    createdir(ROOT_DIR+'/dist/category')
+      .then(e=>{
+        // create category pages
+        Promise.all(generateCategoryTemplates(_labels))
+                .then(()=>{
+                        // create posts directory
+                        createdir(ROOT_DIR+'/dist/posts')
+                                .then(e=>{
+                                        // create index and post pages
+                                        fetchAndGenerateTemplates(_labels);
+                                        // create other pages
+                                        generatePageTemplate();
+                                })
+                });
+      })
+  });

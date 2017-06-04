@@ -33,9 +33,8 @@ nunjucks.addFilter('slug', function(str, count) {
 });
 
 
-
 /* * * * * * * * * * * *
- * Template generation
+ * Helper functions
  * * * * * * * * * * * */
 
 function createdir(dirpath){
@@ -47,27 +46,52 @@ function createdir(dirpath){
         })
 }
 
+/* * * * * * * * * * * *
+ * Template generation
+ * * * * * * * * * * * */
 
 function generatePostTemplate(post){
+        // post_page template generation
+
         var fileName = slug(post.title)+".html";
         // marked is required for offline support in dev mode
         post.html = marked(post.body);
-        var renderContent = nunjucks.render('post_page.html',{post: post});
+        var renderContent = nunjucks.render('post_page.html',{post: post, comment_system: bc.comment_system});
         fs.writeFile(ROOT_DIR+"/dev/posts/"+fileName, renderContent, function(err) {
             if(err) { return console.log(err); }
-            //console.log(chalk.bold.green('==>')+chalk.white(' %s was created'), post.title);
         });
 }
 
 function generateIndexTemplate(posts,fileName,labels){
+        // index template generation
+
         var renderContent = nunjucks.render('index.html',{posts:posts,labels:labels});
         fs.writeFile(ROOT_DIR+"/dev/"+fileName+".html", renderContent, function(err) {
             if(err) { return console.log(err); }
-            //console.log(chalk.green('%s was created'), fileName);
+        });
+}
+
+function generateCategoryTemplates(labels){
+        return labels.map(function(label){
+                return new Promise(function(resolve,reject){
+                        var renderContent = nunjucks.render('category_page.html',{label:label});
+                        fs.writeFileSync(ROOT_DIR+"/dev/category/"+label.name+".html", renderContent);
+                        resolve();
+                });
+        });
+}
+
+function generatePageTemplate(){
+        var pageTemplatesFiles = fs.readdirSync(ROOT_DIR+"/views/pages");
+        pageTemplatesFiles.forEach(function(fileName){
+          var renderContent = nunjucks.render('pages/'+fileName,{});
+          fs.writeFileSync(ROOT_DIR+"/dev/"+fileName, renderContent);
         });
 }
 
 function generateTemplates(){
+        // use the generateTemplate functions
+
         let flatPosts = posts.reduce((posts_prev,posts_next)=>posts_prev.concat(posts_next));
 
         posts.forEach(function(post_arr,i){
@@ -86,6 +110,7 @@ function generateTemplates(){
         rev++;
         console.log("REVISION "+rev+" GENERATED.");
 }
+
 
 /* * * * * * * * * * * *
  * fetch github data
@@ -110,7 +135,9 @@ function fetchAndStoreData(_labels){
             }
       })
       .catch(function(err){
-            console.log(err);
+            console.log(chalk.bold.green('Could not fetch github data for some reason\nUsing offline data.'));
+            posts.push(listOfFiles)
+            startDevMode();
       });
 }
 
@@ -153,11 +180,22 @@ function readFiles(dirname, onFileContent, onError) {
 
 function startDevMode(){
 
-                // make `posts` directory; otherwise fs.writeFile throws error
-                createdir(ROOT_DIR+'/dev/posts')
-                        .then(e=>{
-                                generateTemplates();
-                        });
+              // create category directory
+              createdir(ROOT_DIR+'/dev/category')
+                .then(e=>{
+                  // create category pages
+                  Promise.all(generateCategoryTemplates(labels))
+                          .then(()=>{
+                                  // create posts directory
+                                  createdir(ROOT_DIR+'/dev/posts')
+                                          .then(e=>{
+                                                  // create index and post pages
+                                                  generateTemplates();
+                                                  // generate other pages
+                                                  generatePageTemplate();
+                                          })
+                          });
+                })
 
                 // watch for changes and regenerate on change
                 chokidar.watch(ROOT_DIR+'/views', {ignored: /(^|[\/\\])\../}).on('all', (event, path) => {
@@ -166,6 +204,8 @@ function startDevMode(){
                   }
                 });
 }
+
+
 
 function prepareFileContents(){
         var fileNames = fs.readdirSync(ROOT_DIR+"/content");
@@ -184,6 +224,8 @@ function prepareFileContents(){
         });
 }
 
+
+
 // start the dev thing
 var posts = [];
 var labels = [];
@@ -192,6 +234,7 @@ var rev = 0;
 var blog = gitblog({username:bc.username,repo:bc.repo,author:bc.author});
 blog.setPost({per_page:bc.posts_per_page});
 
+console.log("STARTING DEV SCRIPT");
 blog.fetchAllLabels()
         .then(_labels=>{
                 fetchFilesAndStoreData()
@@ -201,7 +244,18 @@ blog.fetchAllLabels()
                     fetchAndStoreData(_labels);
                   });
                 })
-        });
+        })
+        .catch(err=>{
+                console.log("Could not fetch label data due to network error.")
+                fetchFilesAndStoreData()
+                .then(()=>{
+                  let fileContents = prepareFileContents();
+                  Promise.all(fileContents).then(()=>{
+                    fetchAndStoreData(labels);
+                  });
+                })
+        })
+
 
 // start the dev server silently
 server.start({
