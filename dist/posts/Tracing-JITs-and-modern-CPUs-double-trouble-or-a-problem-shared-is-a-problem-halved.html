@@ -14,15 +14,16 @@
   window.blogInfo = {
           pageType: 'post',
           postId: 5,
-          comment_system: "github",
+          comment: {"disabled":false,"isGithub":true,"isDisqus":false,"system":"disqus","disqus_id":"geekodour","firebaseEnabled":false},
+          comment_system: "disqus",
           disqus_id: "geekodour",
-          firebaseEnabled: true
+          firebaseEnabled: false
   };
   </script>
 
   </head>
 
-  <body class="">
+  <body>
 <nav class="nav">
   <div class="nav-left"></div>
   <div class="nav-center">
@@ -42,20 +43,19 @@
   </div>
 </nav>
 
-      <div class="container">
   <div class="columns">
           <div class="column">
-            <div class="section">
-<div class="">
-  <ul>
-  </ul>
-</div>
-            </div>
+            <div class=""></div>
           </div>
           <div class="column is-half">
 <div class="section">
   <div class="container">
     <div class="content">
+      <div class="post-header">
+      <span class="tag">luajit</span>
+      <span class="tag">tech</span>
+      <span class="is-pulled-right">24/6/2015</span>
+      </div>
       <h1>Tracing jits and modern cpus: double trouble, or, a problem shared is a problem halved?</h1>
       <p>Lately while hacking <a href="https://github.com/SnabbCo/snabbswitch/">Snabb Switch</a> I am spending a lot of time getting familiar with two mysterious technologies: trace-based just-in-time compilers and the latest Intel CPU microarchitectures.</p>
 <p>Each one is complex enough to make your head hurt. Is it madness to have to contend with both at the same time? Maybe. However, I am starting to see symmetry and to enjoy thinking about them both in combination rather than separately in isolation.</p>
@@ -96,36 +96,57 @@
     </div>
   </div>
 </div>
-<div class="">
-  <div class="container">
-          <div class="section has-text-centered is-fluid">
-            <button id="signin_button" class="button is-medium is-success">Sign In to Comment!</button>
-            <div id="comment_box">
-              <div class="field">
-              <label class="label">Your Comment</label>
-              <p class="control">
-                <textarea class="textarea" placeholder="Write something.."></textarea>
-              </p>
-              </div>
-            </div>
-          </div>
-          <div id="comments_container"></div>
-          <div id="loadmore_container" class="has-text-centered"></div>
-  </div>
+<div class="section">
+  <div id="comments_container"></div>
+  <div id="loadmore_container" class="has-text-centered"></div>
 </div>
           </div>
           <div class="column">
-            <div class="section">
-<div class="">
-Hello, welcome to my blog
-Here we have fun
+            <div class="hidden-mobile">
+<div class="card">
+  <div class="card-content">
+    <div class="media">
+      <div class="media-left">
+        <figure class="image is-48x48">
+          <img src="http://bulma.io/images/placeholders/96x96.png" alt="Image">
+        </figure>
+      </div>
+      <div class="media-content">
+        <p class="title is-4">Hrishikesh Barman</p>
+        <p class="subtitle is-6">@geekodour</p>
+      </div>
+    </div>
+
+    <div class="content">
+      <small>I am Hrishikesh</small>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-content">
+    <div class="content">
+      <small>categories</small>
+      <ul>
+      <li><a href="/category/hacking">hacking</a></li>
+      <li><a href="/category/life">life</a></li>
+      <li><a href="/category/luajit">luajit</a></li>
+      <li><a href="/category/snabb">snabb</a></li>
+      <li><a href="/category/tech">tech</a></li>
+      </ul>
+    </div>
+  </div>
 </div>
             </div>
           </div>
   </div>
-      </div>
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p>github is love, github is life</p>
+    </div>
+  </div>
+</footer>
 
-      <script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>
       <script src="/assets/prism.js"></script>
       <script src="/assets/main.js"></script>
   </body>

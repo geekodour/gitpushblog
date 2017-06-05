@@ -17,12 +17,11 @@
 
   </head>
 
-  <body class="">
+  <body>
       {% include 'snippets/navbar.html' %}
 
-      <div class="container">
-        {% block page_content %}{% endblock %}
-      </div>
+      {% block page_content %}{% endblock %}
+      {% include 'snippets/footer.html' %}
 
       {% block javascript %}
       {% if firebaseEnabled %}

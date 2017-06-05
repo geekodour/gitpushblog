@@ -2,6 +2,7 @@ import './main.sass';
 import gitBlog from 'github-blog-api';
 
 const myblog = gitBlog({username:'lukego',repo:'blog',author:'lukego'});
+myblog.setPost({per_page:3});
 myblog.setComment({per_page:3});
 
 // we put `window.blogInfo` object when

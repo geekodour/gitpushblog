@@ -1,3 +1,4 @@
+$primary: black
 @import "../node_modules/bulma/sass/utilities/_all"
 @import "../node_modules/bulma/sass/base/_all"
 @import "../node_modules/bulma/sass/layout/_all"
@@ -7,17 +8,50 @@
 @import "../node_modules/bulma/sass/elements/form"
 @import "../node_modules/bulma/sass/elements/button"
 @import "../node_modules/bulma/sass/elements/image"
+@import "../node_modules/bulma/sass/elements/tag"
 @import "../node_modules/bulma/sass/elements/content"
-@import url('https://fonts.googleapis.com/css?family=Montserrat')
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:800')
+@import url('https://fonts.googleapis.com/css?family=Merriweather+Sans:300')
+@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed')
 @import "./prism.css"
+
+body
+  background-color: #FFFF83
 
 .nav
   background: #484848
-  .nav-right a
-  	color: white
-  	&:hover
-  		color: white
-  		border-bottom: 2px solid red
+  a
+    font-family: 'Merriweather Sans', sans-serif
+    color: white
+    &:hover
+      color: white
+      text-decoration: underline
+
+#comments_container
+  margin-top: 2em
+#loadmore_container
+  margin-top: 2em
+
+
+.content
+  h1,h2,h3,h4
+    font-family: 'Open Sans', sans-serif
+  p,li
+    font-family: 'Merriweather Sans', sans-serif
+    font-size: 0.8em
+  a
+    text-decoration: underline
+
+.post-header
+  font-family: 'Merriweather Sans', sans-serif
+
+.post-content
+
+.post_list_item
+  padding-top: 1em
+  font-family: 'Merriweather Sans', sans-serif
+  font-weight: 300
+  font-size: 0.9em
 
 .info-box
   border: 1px solid #484848

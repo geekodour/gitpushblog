@@ -5,8 +5,11 @@
   "posts_per_page": "6",
   "comments_per_page": "3",
   "comment": {
+    "disabled": false,
+    "isGithub": true,
+    "isDisqus": false,
     "system": "github",
     "disqus_id": "geekodour",
-    "firebaseEnabled": true
+    "firebaseEnabled": false
   }
 }

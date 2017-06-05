@@ -12,24 +12,34 @@
 {% block page_content %}
   <div class="columns">
           <div class="column">
-            <div class="section">
-            {% include 'snippets/labelsBox.html' %}
-            </div>
+            <div class=""></div>
           </div>
           <div class="column is-half">
             {% block post_content %}
-              <ul>
-              {% for post in posts %}
-              <li>
-                <a href="/posts/{{ post.title|slug }}">{{ post.title }}</a>
-              </li>
-              {% endfor %}
-              </ul>
+              <div class="section post_content">
+                <div class="post-header">
+                        recent posts
+                </div>
+                <ul>
+                {% for post in posts %}
+                <li class="post_list_item">
+                  <a href="/posts/{{ post.title|slug }}">{{ post.title }}</a>
+                  <span class="is-pulled-right">{{ post.date|date }}</span>
+                </li>
+                {% endfor %}
+                </ul>
+                <div class="container has-text-centered">
+                {% if pagination.next %}
+                <a class="" href="{{pagination.next}}">next</a>
+                {% endif %}
+                </div>
+              </div>
             {% endblock %}
           </div>
           <div class="column">
-            <div class="section">
+            <div class="hidden-mobile">
               {% include 'snippets/aboutbox.html' %}
+              {% include 'snippets/labelsBox.html' %}
             </div>
           </div>
   </div>

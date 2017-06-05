@@ -14,15 +14,16 @@
   window.blogInfo = {
           pageType: 'post',
           postId: 4,
-          comment_system: "github",
+          comment: {"disabled":false,"isGithub":true,"isDisqus":false,"system":"disqus","disqus_id":"geekodour","firebaseEnabled":false},
+          comment_system: "disqus",
           disqus_id: "geekodour",
-          firebaseEnabled: true
+          firebaseEnabled: false
   };
   </script>
 
   </head>
 
-  <body class="">
+  <body>
 <nav class="nav">
   <div class="nav-left"></div>
   <div class="nav-center">
@@ -42,20 +43,19 @@
   </div>
 </nav>
 
-      <div class="container">
   <div class="columns">
           <div class="column">
-            <div class="section">
-<div class="">
-  <ul>
-  </ul>
-</div>
-            </div>
+            <div class=""></div>
           </div>
           <div class="column is-half">
 <div class="section">
   <div class="container">
     <div class="content">
+      <div class="post-header">
+      <span class="tag">luajit</span>
+      <span class="tag">tech</span>
+      <span class="is-pulled-right">21/6/2015</span>
+      </div>
       <h1>Code reading: luajit</h1>
       <p>I have started reading LuaJIT sources. I like the fact that the source code is compact and it is reasonable to print and read a whole file (or read it an iPad with <a href="http://ioctocat.com">iOctocat</a>).</p>
 <p>The parts I am reading now are the <a href="https://github.com/SnabbCo/luajit/blob/v2.1/src/jit/p.lua">profiler</a>, the <a href="https://github.com/SnabbCo/luajit/blob/v2.1/src/jit/dump.lua">dumper</a>, and the <a href="https://github.com/SnabbCo/luajit/blob/v2.1/src/lj_asm.c">trace assembler</a>. I have a basic mental model of tracing JITs from <a href="https://www.reddit.com/r/snabb/comments/1y8b9u/tracebased_justintime_compilation_for_lazy/">Thomas Schilling&#39;s thesis</a>.</p>
@@ -71,36 +71,57 @@
     </div>
   </div>
 </div>
-<div class="">
-  <div class="container">
-          <div class="section has-text-centered is-fluid">
-            <button id="signin_button" class="button is-medium is-success">Sign In to Comment!</button>
-            <div id="comment_box">
-              <div class="field">
-              <label class="label">Your Comment</label>
-              <p class="control">
-                <textarea class="textarea" placeholder="Write something.."></textarea>
-              </p>
-              </div>
-            </div>
-          </div>
-          <div id="comments_container"></div>
-          <div id="loadmore_container" class="has-text-centered"></div>
-  </div>
+<div class="section">
+  <div id="comments_container"></div>
+  <div id="loadmore_container" class="has-text-centered"></div>
 </div>
           </div>
           <div class="column">
-            <div class="section">
-<div class="">
-Hello, welcome to my blog
-Here we have fun
+            <div class="hidden-mobile">
+<div class="card">
+  <div class="card-content">
+    <div class="media">
+      <div class="media-left">
+        <figure class="image is-48x48">
+          <img src="http://bulma.io/images/placeholders/96x96.png" alt="Image">
+        </figure>
+      </div>
+      <div class="media-content">
+        <p class="title is-4">Hrishikesh Barman</p>
+        <p class="subtitle is-6">@geekodour</p>
+      </div>
+    </div>
+
+    <div class="content">
+      <small>I am Hrishikesh</small>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-content">
+    <div class="content">
+      <small>categories</small>
+      <ul>
+      <li><a href="/category/hacking">hacking</a></li>
+      <li><a href="/category/life">life</a></li>
+      <li><a href="/category/luajit">luajit</a></li>
+      <li><a href="/category/snabb">snabb</a></li>
+      <li><a href="/category/tech">tech</a></li>
+      </ul>
+    </div>
+  </div>
 </div>
             </div>
           </div>
   </div>
-      </div>
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p>github is love, github is life</p>
+    </div>
+  </div>
+</footer>
 
-      <script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>
       <script src="/assets/prism.js"></script>
       <script src="/assets/main.js"></script>
   </body>
