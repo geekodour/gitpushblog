@@ -14,10 +14,8 @@
   window.blogInfo = {
           pageType: 'post',
           postId: 4,
-          comment: {"disabled":false,"isGithub":true,"isDisqus":false,"system":"disqus","disqus_id":"geekodour","firebaseEnabled":false},
-          comment_system: "disqus",
-          disqus_id: "geekodour",
-          firebaseEnabled: false
+          comment: {"disabled":false,"isGithub":true,"isDisqus":false,"isGithubAuth":false,"disqus_id":"geekodour"},
+          disqus_id: ""
   };
   </script>
 
@@ -71,7 +69,10 @@
     </div>
   </div>
 </div>
-<div class="section">
+<div >
+    <div class="section has-text-centered is-fluid">
+      <button id="signin_button" class="button is-medium is-info">Go to Issue</button>
+    </div>
   <div id="comments_container"></div>
   <div id="loadmore_container" class="has-text-centered"></div>
 </div>

@@ -1,7 +1,6 @@
 'use strict';
 var _nunjucks = require('nunjucks');
 var path = require('path');
-var slug = require('slug');
 
 var ROOT_DIR = path.resolve('.');
 
@@ -14,15 +13,9 @@ else{
 
 var nunjucks = _nunjucks.configure(ROOT_DIR+'/views', nunjucks_opts);
 
-// slug filter
-nunjucks.addFilter('slug', function(str, count) {
-   return slug(str)+".html";
-});
-
 // date filter
 nunjucks.addFilter('date', function(str, count) {
-   // BUGGY, DOES NOT GIVE CORRECT RESULT, DON'T KNOW
-   // HOW TO WORK WITH Date Onject Properly
+   // BUGGY, DOES NOT GIVE CORRECT RESULT
    var dateObj = new Date(str);
    return dateObj.getDate()+"/"+ dateObj.getMonth()+"/"+ dateObj.getFullYear();
 });

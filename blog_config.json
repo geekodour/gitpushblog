@@ -8,8 +8,7 @@
     "disabled": false,
     "isGithub": true,
     "isDisqus": false,
-    "system": "github",
-    "disqus_id": "geekodour",
-    "firebaseEnabled": false
+    "isGithubAuth": false,
+    "disqus_id": "geekodour"
   }
 }

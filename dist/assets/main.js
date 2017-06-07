@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -100,108 +100,123 @@ module.exports = g;
 "use strict";
 
 
-exports.decode = exports.parse = __webpack_require__(10);
-exports.encode = exports.stringify = __webpack_require__(11);
+exports.decode = exports.parse = __webpack_require__(11);
+exports.encode = exports.stringify = __webpack_require__(12);
 
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-var _createClass=function(){function a(a,b){for(var c,d=0;d<b.length;d++)c=b[d],c.enumerable=c.enumerable||!1,c.configurable=!0,'value'in c&&(c.writable=!0),Object.defineProperty(a,c.key,c)}return function(b,c,d){return c&&a(b.prototype,c),d&&a(b,d),b}}(),_isomorphicFetch=__webpack_require__(6),_isomorphicFetch2=_interopRequireDefault(_isomorphicFetch),_marked=__webpack_require__(7),_marked2=_interopRequireDefault(_marked),_parseLinkHeader=__webpack_require__(8),_parseLinkHeader2=_interopRequireDefault(_parseLinkHeader);function _interopRequireDefault(a){return a&&a.__esModule?a:{default:a}}function _toConsumableArray(a){if(Array.isArray(a)){for(var b=0,c=Array(a.length);b<a.length;b++)c[b]=a[b];return c}return Array.from(a)}function _classCallCheck(a,b){if(!(a instanceof b))throw new TypeError('Cannot call a class as a function')}var API_URL='https://api.github.com',Blog=function(){function a(b){if(_classCallCheck(this,a),!(b.username&&b.repo&&b.author))throw new TypeError('Provide a username and repository to create a blog');this.settings={username:b.username||'',repo:b.repo||'',author:b.author||'',posts:{per_page:10,last_reached:!1,next_page_url:''},comments:{per_page:10,cur_post:null,done_posts:[],next_page_url:''},repoUrl:API_URL+'/repos/'+b.username+'/'+b.repo,blogUrl:API_URL+'/repos/'+b.username+'/'+b.repo+'/issues'}}return _createClass(a,[{key:'setPost',value:function setPost(a){this.settings.posts=Object.assign(this.settings.posts,a)}},{key:'setComment',value:function setComment(a){this.settings.comments=Object.assign(this.settings.comments,a)}},{key:'fetchAllLabels',value:function fetchAllLabels(){return(0,_isomorphicFetch2.default)(this.settings.repoUrl+'/labels?per_page=90').then(function(a){return 200===a.status?a.json():Promise.reject(new Error('api responded unexpectedly'))}).then(function(a){return a.map(function(a){return{id:a.id,name:a.name,color:a.color}})}).catch(function(a){throw a&&(a=a.message),a})}},{key:'fetchBlogPosts',value:function fetchBlogPosts(){var a=this,b=0<arguments.length&&void 0!==arguments[0]?arguments[0]:[];if(this.settings.posts.last_reached)return Promise.resolve([]);var c=this.settings.posts.next_page_url||this.settings.blogUrl+'?per_page='+this.settings.posts.per_page+'&page=1&creator='+this.settings.author+'&labels='+b.join(',');return(0,_isomorphicFetch2.default)(c).then(function(b){if(200!==b.status)return Promise.reject(new Error('api responded unexpectedly'));if(b.headers.has('link')){var c=(0,_parseLinkHeader2.default)(b.headers.get('link'));Object.prototype.hasOwnProperty.call(c,'next')?a.settings.posts.next_page_url=c.next.url:(a.settings.posts.next_page_url='',a.settings.posts.last_reached=!0)}else a.settings.posts.next_page_url='',a.settings.posts.last_reached=!0;return b.json()}).then(function(a){return a.map(function(a){return{body:a.body,html:(0,_marked2.default)(a.body),id:a.number,title:a.title,date:a.created_at,labels:a.labels,comments_no:a.comments}})}).catch(function(a){throw a&&(a=a.message),a})}},{key:'fetchBlogPost',value:function fetchBlogPost(a){return(0,_isomorphicFetch2.default)(this.settings.blogUrl+('/'+a)).then(function(a){return 200===a.status?a.json():Promise.reject(new Error('api responded unexpectedly'))}).then(function(a){return{title:a.title,id:a.number,labels:a.labels,comments:a.comments,date:a.created_at,body:a.body,html:(0,_marked2.default)(a.body)}}).catch(function(a){throw a&&(a=a.message),a})}},{key:'fetchBlogPostComments',value:function fetchBlogPostComments(a){var b=this;if(-1!==this.settings.comments.done_posts.indexOf(a))return Promise.resolve([]);a!==this.settings.comments.cur_post&&(this.settings.comments.next_page_url=''),this.settings.comments.cur_post=a;var c=this.settings.comments.next_page_url||this.settings.blogUrl+'/'+a+'/comments?per_page='+this.settings.comments.per_page+'&page=1';return(0,_isomorphicFetch2.default)(c).then(function(c){if(200!==c.status)return Promise.reject(new Error('api responded unexpectedly'));if(c.headers.has('link')){var d=(0,_parseLinkHeader2.default)(c.headers.get('link'));Object.prototype.hasOwnProperty.call(d,'next')?b.settings.comments.next_page_url=d.next.url:(b.settings.comments.next_page_url='',b.settings.comments.done_posts=[].concat(_toConsumableArray(b.settings.comments.done_posts),[a]))}else b.settings.comments.next_page_url='',b.settings.comments.done_posts=[].concat(_toConsumableArray(b.settings.comments.done_posts),[a]);return c.json()}).then(function(a){return a.map(function(a){return{id:a.id,user:{username:a.user.login,avatar_url:a.user.avatar_url},body:a.body,created_at:a.created_at,html:(0,_marked2.default)(a.body)}})}).catch(function(a){throw a&&(a=a.message),a})}},{key:'createPost',value:function createPost(a,b){if(!(a&&b))throw new TypeError('Provide PostObject and AUTH_TOKEN to create posts');return(0,_isomorphicFetch2.default)(API_URL+'/repos/geekodour/gitpushblog/issues',{method:'post',headers:new Headers({'Content-Type':'application/json',Authorization:'Basic '+b}),body:JSON.stringify(a)}).then(function(a){return a.json()}).then(function(a){return a}).catch(function(a){throw a&&(a=a.message),a})}}]),a}();module.exports=function(a){return new Blog(a)};
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var firebaseInit = function firebaseInit() {
+  var config = {
+    apiKey: "AIzaSyAZSJ1d1Sr9MnTK-__3D8SrwXjjQf6EML4",
+    authDomain: "myblog-2b0ba.firebaseapp.com",
+    databaseURL: "https://myblog-2b0ba.firebaseio.com",
+    projectId: "myblog-2b0ba",
+    storageBucket: "myblog-2b0ba.appspot.com",
+    messagingSenderId: "20890326099"
+  };
+  firebase.initializeApp(config);
+};
+
+var githubSignIn = function githubSignIn() {
+  var provider = new firebase.auth.GithubAuthProvider();
+  provider.addScope('repo');
+  firebase.auth().signInWithPopup(provider).then(function (result) {
+    var token = result.credential.accessToken;
+    console.log(token);
+  }).catch(function (error) {
+    // handle this, right now it's just copy paste from docs
+    var errorCode = error.code;
+  });
+};
+
+var disqusInit = function disqusInit() {
+  var disqus_config = function disqus_config() {
+    this.page.url = location.href;
+    this.page.identifier = location.href;
+  };
+  (function () {
+    var d = document,
+        s = d.createElement('script');
+    s.src = "https://" + window.blogInfo.disqus_id + ".disqus.com/embed.js";
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+};
+
+var firebaseService = exports.firebaseService = {
+  init: firebaseInit,
+  signIn: githubSignIn
+};
+
+var disqusService = exports.disqusService = {
+  init: disqusInit
+};
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
 
 /***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+var _createClass=function(){function a(a,b){for(var c,d=0;d<b.length;d++)c=b[d],c.enumerable=c.enumerable||!1,c.configurable=!0,'value'in c&&(c.writable=!0),Object.defineProperty(a,c.key,c)}return function(b,c,d){return c&&a(b.prototype,c),d&&a(b,d),b}}(),_isomorphicFetch=__webpack_require__(7),_isomorphicFetch2=_interopRequireDefault(_isomorphicFetch),_marked=__webpack_require__(8),_marked2=_interopRequireDefault(_marked),_slugify=__webpack_require__(13),_slugify2=_interopRequireDefault(_slugify),_parseLinkHeader=__webpack_require__(9),_parseLinkHeader2=_interopRequireDefault(_parseLinkHeader);function _interopRequireDefault(a){return a&&a.__esModule?a:{default:a}}function _toConsumableArray(a){if(Array.isArray(a)){for(var b=0,c=Array(a.length);b<a.length;b++)c[b]=a[b];return c}return Array.from(a)}function _classCallCheck(a,b){if(!(a instanceof b))throw new TypeError('Cannot call a class as a function')}var API_URL='https://api.github.com',Blog=function(){function a(b){if(_classCallCheck(this,a),!(b.username&&b.repo&&b.author))throw new TypeError('Provide a username and repository to create a blog');this.settings={username:b.username||'',repo:b.repo||'',author:b.author||'',posts:{per_page:10,last_reached:!1,next_page_url:''},comments:{per_page:10,cur_post:null,done_posts:[],next_page_url:''},repoUrl:API_URL+'/repos/'+b.username+'/'+b.repo,blogUrl:API_URL+'/repos/'+b.username+'/'+b.repo+'/issues'}}return _createClass(a,[{key:'setPost',value:function setPost(a){this.settings.posts=Object.assign(this.settings.posts,a)}},{key:'setComment',value:function setComment(a){this.settings.comments=Object.assign(this.settings.comments,a)}},{key:'fetchAllLabels',value:function fetchAllLabels(){return(0,_isomorphicFetch2.default)(this.settings.repoUrl+'/labels?per_page=90').then(function(a){return 200===a.status?a.json():Promise.reject(new Error('api responded unexpectedly'))}).then(function(a){return a.map(function(a){return{name:a.name,color:a.color,slug:(0,_slugify2.default)(a.name)}})}).catch(function(a){throw a&&(a=a.message),a})}},{key:'fetchBlogPosts',value:function fetchBlogPosts(){var a=this,b=0<arguments.length&&void 0!==arguments[0]?arguments[0]:[];if(this.settings.posts.last_reached)return Promise.resolve([]);var c=this.settings.posts.next_page_url||this.settings.blogUrl+'?per_page='+this.settings.posts.per_page+'&page=1&creator='+this.settings.author+'&labels='+b.join(',');return(0,_isomorphicFetch2.default)(c).then(function(b){if(200!==b.status)return Promise.reject(new Error('api responded unexpectedly'));if(b.headers.has('link')){var c=(0,_parseLinkHeader2.default)(b.headers.get('link'));Object.prototype.hasOwnProperty.call(c,'next')?a.settings.posts.next_page_url=c.next.url:(a.settings.posts.next_page_url='',a.settings.posts.last_reached=!0)}else a.settings.posts.next_page_url='',a.settings.posts.last_reached=!0;return b.json()}).then(function(a){return a.map(function(a){return{body:a.body,html:(0,_marked2.default)(a.body),id:a.number,title:a.title,slug:(0,_slugify2.default)(a.title),date:a.created_at,labels:a.labels.map(function(a){return{name:a.name,color:a.color,slug:(0,_slugify2.default)(a.name)}}),comments_no:a.comments}})}).catch(function(a){throw a&&(a=a.message),a})}},{key:'fetchBlogPost',value:function fetchBlogPost(a){return(0,_isomorphicFetch2.default)(this.settings.blogUrl+('/'+a)).then(function(a){return 200===a.status?a.json():Promise.reject(new Error('api responded unexpectedly'))}).then(function(a){return{title:a.title,slug:(0,_slugify2.default)(a.title),id:a.number,labels:a.labels.map(function(a){return{name:a.name,color:a.color,slug:(0,_slugify2.default)(a.name)}}),comments:a.comments,date:a.created_at,body:a.body,html:(0,_marked2.default)(a.body)}}).catch(function(a){throw a&&(a=a.message),a})}},{key:'fetchBlogPostComments',value:function fetchBlogPostComments(a){var b=this;if(-1!==this.settings.comments.done_posts.indexOf(a))return Promise.resolve([]);a!==this.settings.comments.cur_post&&(this.settings.comments.next_page_url=''),this.settings.comments.cur_post=a;var c=this.settings.comments.next_page_url||this.settings.blogUrl+'/'+a+'/comments?per_page='+this.settings.comments.per_page+'&page=1';return(0,_isomorphicFetch2.default)(c).then(function(c){if(200!==c.status)return Promise.reject(new Error('api responded unexpectedly'));if(c.headers.has('link')){var d=(0,_parseLinkHeader2.default)(c.headers.get('link'));Object.prototype.hasOwnProperty.call(d,'next')?b.settings.comments.next_page_url=d.next.url:(b.settings.comments.next_page_url='',b.settings.comments.done_posts=[].concat(_toConsumableArray(b.settings.comments.done_posts),[a]))}else b.settings.comments.next_page_url='',b.settings.comments.done_posts=[].concat(_toConsumableArray(b.settings.comments.done_posts),[a]);return c.json()}).then(function(a){return a.map(function(a){return{id:a.id,user:{username:a.user.login,avatar_url:a.user.avatar_url},body:a.body,created_at:a.created_at,html:(0,_marked2.default)(a.body)}})}).catch(function(a){throw a&&(a=a.message),a})}},{key:'createPost',value:function createPost(a,b){if(!(a&&b))throw new TypeError('Provide PostObject and AUTH_TOKEN to create posts');return(0,_isomorphicFetch2.default)(API_URL+'/repos/geekodour/gitpushblog/issues',{method:'post',headers:new Headers({'Content-Type':'application/json',Authorization:'Basic '+b}),body:JSON.stringify(a)}).then(function(a){return a.json()}).then(function(a){return a}).catch(function(a){throw a&&(a=a.message),a})}}]),a}();module.exports=function(a){return new Blog(a)};
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 
-__webpack_require__(2);
+__webpack_require__(3);
 
-var _githubBlogApi = __webpack_require__(3);
+var _githubBlogApi = __webpack_require__(4);
 
 var _githubBlogApi2 = _interopRequireDefault(_githubBlogApi);
+
+var _services = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var myblog = (0, _githubBlogApi2.default)({ username: 'lukego', repo: 'blog', author: 'lukego' });
+var blogInfo = window.blogInfo;
 myblog.setPost({ per_page: 3 });
 myblog.setComment({ per_page: 3 });
 
 // we put `window.blogInfo` object when
 // generating the nunjucks templates
 
-var initDisqus = function initDisqus() {
-        var disqus_config = function disqus_config() {
-                this.page.url = location.href;
-                this.page.identifier = location.href;
-        };
-        (function () {
-                var d = document,
-                    s = d.createElement('script');
-                s.src = 'https://' + window.blogInfo.disqus_id + '.disqus.com/embed.js';
-                s.setAttribute('data-timestamp', +new Date());
-                (d.head || d.body).appendChild(s);
-        })();
-};
-
-var initFirebase = function initFirebase() {
-        var config = {
-                apiKey: "AIzaSyAZSJ1d1Sr9MnTK-__3D8SrwXjjQf6EML4",
-                authDomain: "myblog-2b0ba.firebaseapp.com",
-                databaseURL: "https://myblog-2b0ba.firebaseio.com",
-                projectId: "myblog-2b0ba",
-                storageBucket: "myblog-2b0ba.appspot.com",
-                messagingSenderId: "20890326099"
-        };
-        firebase.initializeApp(config);
-};
-
-var signInFlow = function signInFlow() {
-        var provider = new firebase.auth.GithubAuthProvider();
-        firebase.auth().signInWithPopup(provider).then(function (result) {
-                var token = result.credential.accessToken;
-                console.log(token);
-                var user = result.user;
-        }).catch(function (error) {
-                // handle this, right now it's just copy paste from docs
-                var errorCode = error.code;
-                var errorMessage = error.message;
-                var email = error.email;
-                var credential = error.credential;
-        });
-};
-
-var generateComment = function generateComment(comment) {
+var getCommentHTML = function getCommentHTML(comment) {
         // return html needed for comments
-        switch (window.blogInfo.comment_system) {
-                case "github":
-                        return '<div class="box">\n                          <article class="media">\n                            <div class="media-left">\n                              <figure class="image is-64x64">\n                                <img src="' + comment.user.avatar_url + '" alt="">\n                              </figure>\n                            </div>\n                            <div class="media-content">\n                              <div class="content">\n                                <p>\n                                  <strong>' + comment.user.username + '</strong>\n                                  ' + comment.html + '\n                                </p>\n                              </div>\n                            </div>\n                          </article>\n                        </div>';
-                        break;
-                case "disqus":
-                        return '<div id="disqus_thread"></div>';
-                        break;
-                default:
-                        break;
+        if (blogInfo.comment.isGithub) {
+                return '<div class="box">\n      <article class="media">\n        <div class="media-left">\n          <figure class="image is-64x64">\n            <img src="' + comment.user.avatar_url + '" alt="">\n          </figure>\n        </div>\n        <div class="media-content">\n          <div class="content">\n            <p>\n              <strong>' + comment.user.username + '</strong>\n              ' + comment.html + '\n            </p>\n          </div>\n        </div>\n      </article>\n    </div>';
+        } else {
+                return '<div id="disqus_thread"></div>';
         }
 };
 
-var generatePostListItem = function generatePostListItem(post) {
-        // return html needed for post listing
-        return ' <h4 class="title is-4"> ' + post.title + ' </h4> ';
+var getPostListItemHTML = function getPostListItemHTML(post) {
+        return '<a href="/posts/' + post.slug + '" class="title is-4">' + post.title + '</a>';
 };
 
-var loadMoreButton = function loadMoreButton(iterator) {
-        // return html for loadMoreButton
-        return '\n          <div class="button is-danger" id="loadmore_button">Load more ' + iterator + 's</div>\n        ';
+var updateLoadMoreButtonHTML = function updateLoadMoreButtonHTML() {
+        var classAttr = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+
+        var loadMoreContainer = document.getElementById('loadmore_container');
+        loadMoreContainer.innerHTML = '<div class="button is-danger ' + classAttr + '" id="loadmore_button">Load more</div>';
 };
 
 var generateLoadMoreButton = function generateLoadMoreButton(iterator) {
@@ -210,16 +225,18 @@ var generateLoadMoreButton = function generateLoadMoreButton(iterator) {
         switch (iterator) {
                 case "post":
                         if (!myblog.settings.posts.last_reached) {
-                                loadMoreContainer.innerHTML = loadMoreButton(iterator);
+                                //loadMoreContainer.innerHTML = getLoadMoreButtonHTML();
+                                updateLoadMoreButtonHTML();
                                 document.getElementById("loadmore_button").addEventListener("click", insertCategoryMatches);
                         } else {
                                 loadMoreContainer.innerHTML = "<p>All posts loaded!</p>";
                         }
                         break;
                 case "comment":
-                        if (myblog.settings.comments.done_posts.indexOf(window.blogInfo.postId) === -1) {
-                                loadMoreContainer.innerHTML = loadMoreButton(iterator);
-                                document.getElementById("loadmore_button").addEventListener("click", insertComments);
+                        if (myblog.settings.comments.done_posts.indexOf(blogInfo.postId) === -1) {
+                                //loadMoreContainer.innerHTML = getLoadMoreButtonHTML();
+                                updateLoadMoreButtonHTML();
+                                document.getElementById("loadmore_button").addEventListener("click", updateComments);
                         } else {
                                 loadMoreContainer.innerHTML = "<p>All comments loaded!</p>";
                         }
@@ -227,40 +244,46 @@ var generateLoadMoreButton = function generateLoadMoreButton(iterator) {
         }
 };
 
-var insertComments = function insertComments() {
+var updateComments = function updateComments() {
         var commentsContainer = document.getElementById('comments_container');
-        if (window.blogInfo.comment_system === "github") {
-                var postId = window.blogInfo.postId;
-                myblog.fetchBlogPostComments(postId).then(function (comments) {
-                        generateLoadMoreButton("comment");
-                        comments.forEach(function (comment) {
-                                commentsContainer.innerHTML += generateComment(comment);
-                        });
+        var postId = blogInfo.postId;
+        updateLoadMoreButtonHTML('is-loading');
+        myblog.fetchBlogPostComments(postId).then(function (comments) {
+                generateLoadMoreButton("comment");
+                comments.forEach(function (comment) {
+                        commentsContainer.innerHTML += getCommentHTML(comment);
                 });
-
-                if (window.blogInfo.firebaseEnabled) {
-                        initFirebase();
-                        document.getElementById("signin_button").addEventListener("click", signInFlow);
-                }
-        } else if (window.blogInfo.comment_system === "disqus") {
-                commentsContainer.innerHTML += generateComment();
-                initDisqus();
-                document.querySelector('body').innerHTML += '<script id="dsq-count-scr" src="//geekodour.disqus.com/count.js" async></script>';
-        } else {
-                // do nothing
-        }
+        });
 };
 
 var insertCategoryMatches = function insertCategoryMatches() {
         // calls fetchBlogPosts with label as the parameter
-        var label = window.blogInfo.label;
         var postsContainer = document.getElementById('category_posts_container');
+        var label = blogInfo.label;
+        updateLoadMoreButtonHTML('is-loading');
         myblog.fetchBlogPosts([label]).then(function (posts) {
                 generateLoadMoreButton("post");
                 posts.forEach(function (post) {
-                        postsContainer.innerHTML += generatePostListItem(post);
+                        postsContainer.innerHTML += getPostListItemHTML(post);
                 });
         });
+};
+
+var initCommentSystem = function initCommentSystem() {
+        if (!blogInfo.comment.disabled) {
+                var commentsContainer = document.getElementById('comments_container');
+
+                if (blogInfo.comment.isGithub) {
+                        updateComments();
+                        if (blogInfo.comment.isGithubAuth) {
+                                _services.firebaseService.init();
+                                document.getElementById("signin_button").addEventListener("click", _services.firebaseService.signIn);
+                        }
+                } else if (blogInfo.comment.isDisqus) {
+                        commentsContainer.innerHTML += getCommentHTML();
+                        _services.disqusService.init();
+                }
+        }
 };
 
 // run instructions based on pageType
@@ -268,7 +291,7 @@ switch (window.blogInfo.pageType) {
         case "index":
                 break;
         case "post":
-                insertComments();
+                initCommentSystem();
                 break;
         case "category":
                 insertCategoryMatches();
@@ -278,20 +301,20 @@ switch (window.blogInfo.pageType) {
 }
 
 /***/ }),
-/* 5 */,
-/* 6 */
+/* 6 */,
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // the whatwg-fetch polyfill installs the fetch() function
 // on the global object (window or self)
 //
 // Return that as the export for use in Webpack, Browserify etc.
-__webpack_require__(15);
+__webpack_require__(17);
 module.exports = self.fetch.bind(self);
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/**
@@ -1584,15 +1607,15 @@ if (true) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var qs = __webpack_require__(1)
-  , url = __webpack_require__(12)
-  , xtend = __webpack_require__(16);
+  , url = __webpack_require__(14)
+  , xtend = __webpack_require__(18);
 
 function hasRel(x) {
   return x && x.rel;
@@ -1647,7 +1670,7 @@ module.exports = function (linkHeader) {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module, global) {var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/punycode v1.4.1 by @mathias */
@@ -2183,10 +2206,10 @@ module.exports = function (linkHeader) {
 
 }(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)(module), __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(16)(module), __webpack_require__(0)))
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2277,7 +2300,7 @@ var isArray = Array.isArray || function (xs) {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2369,7 +2392,119 @@ var objectKeys = Object.keys || function (obj) {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+;(function (name, root, factory) {
+  if (true) {
+    module.exports = factory()
+  }
+  /* istanbul ignore next */
+  else if (typeof define === 'function' && define.amd) {
+    define(factory)
+  }
+  else {
+    root[name] = factory()
+  }
+}('slugify', this, function () {
+  var charMap = {
+    // latin
+    'À': 'A', 'Á': 'A', 'Â': 'A', 'Ã': 'A', 'Ä': 'A', 'Å': 'A', 'Æ': 'AE',
+    'Ç': 'C', 'È': 'E', 'É': 'E', 'Ê': 'E', 'Ë': 'E', 'Ì': 'I', 'Í': 'I',
+    'Î': 'I', 'Ï': 'I', 'Ð': 'D', 'Ñ': 'N', 'Ò': 'O', 'Ó': 'O', 'Ô': 'O',
+    'Õ': 'O', 'Ö': 'O', 'Ő': 'O', 'Ø': 'O', 'Ù': 'U', 'Ú': 'U', 'Û': 'U',
+    'Ü': 'U', 'Ű': 'U', 'Ý': 'Y', 'Þ': 'TH', 'ß': 'ss', 'à': 'a', 'á': 'a',
+    'â': 'a', 'ã': 'a', 'ä': 'a', 'å': 'a', 'æ': 'ae', 'ç': 'c', 'è': 'e',
+    'é': 'e', 'ê': 'e', 'ë': 'e', 'ì': 'i', 'í': 'i', 'î': 'i', 'ï': 'i',
+    'ð': 'd', 'ñ': 'n', 'ò': 'o', 'ó': 'o', 'ô': 'o', 'õ': 'o', 'ö': 'o',
+    'ő': 'o', 'ø': 'o', 'ù': 'u', 'ú': 'u', 'û': 'u', 'ü': 'u', 'ű': 'u',
+    'ý': 'y', 'þ': 'th', 'ÿ': 'y', 'ẞ': 'SS',
+    // greek
+    'α': 'a', 'β': 'b', 'γ': 'g', 'δ': 'd', 'ε': 'e', 'ζ': 'z', 'η': 'h', 'θ': '8',
+    'ι': 'i', 'κ': 'k', 'λ': 'l', 'μ': 'm', 'ν': 'n', 'ξ': '3', 'ο': 'o', 'π': 'p',
+    'ρ': 'r', 'σ': 's', 'τ': 't', 'υ': 'y', 'φ': 'f', 'χ': 'x', 'ψ': 'ps', 'ω': 'w',
+    'ά': 'a', 'έ': 'e', 'ί': 'i', 'ό': 'o', 'ύ': 'y', 'ή': 'h', 'ώ': 'w', 'ς': 's',
+    'ϊ': 'i', 'ΰ': 'y', 'ϋ': 'y', 'ΐ': 'i',
+    'Α': 'A', 'Β': 'B', 'Γ': 'G', 'Δ': 'D', 'Ε': 'E', 'Ζ': 'Z', 'Η': 'H', 'Θ': '8',
+    'Ι': 'I', 'Κ': 'K', 'Λ': 'L', 'Μ': 'M', 'Ν': 'N', 'Ξ': '3', 'Ο': 'O', 'Π': 'P',
+    'Ρ': 'R', 'Σ': 'S', 'Τ': 'T', 'Υ': 'Y', 'Φ': 'F', 'Χ': 'X', 'Ψ': 'PS', 'Ω': 'W',
+    'Ά': 'A', 'Έ': 'E', 'Ί': 'I', 'Ό': 'O', 'Ύ': 'Y', 'Ή': 'H', 'Ώ': 'W', 'Ϊ': 'I',
+    'Ϋ': 'Y',
+    // turkish
+    'ş': 's', 'Ş': 'S', 'ı': 'i', 'İ': 'I', 'ç': 'c', 'Ç': 'C', 'ü': 'u', 'Ü': 'U',
+    'ö': 'o', 'Ö': 'O', 'ğ': 'g', 'Ğ': 'G',
+    // russian
+    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh',
+    'з': 'z', 'и': 'i', 'й': 'j', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o',
+    'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'c',
+    'ч': 'ch', 'ш': 'sh', 'щ': 'sh', 'ъ': 'u', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu',
+    'я': 'ya',
+    'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'Yo', 'Ж': 'Zh',
+    'З': 'Z', 'И': 'I', 'Й': 'J', 'К': 'K', 'Л': 'L', 'М': 'M', 'Н': 'N', 'О': 'O',
+    'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T', 'У': 'U', 'Ф': 'F', 'Х': 'H', 'Ц': 'C',
+    'Ч': 'Ch', 'Ш': 'Sh', 'Щ': 'Sh', 'Ъ': 'U', 'Ы': 'Y', 'Ь': '', 'Э': 'E', 'Ю': 'Yu',
+    'Я': 'Ya',
+    // ukranian
+    'Є': 'Ye', 'І': 'I', 'Ї': 'Yi', 'Ґ': 'G', 'є': 'ye', 'і': 'i', 'ї': 'yi', 'ґ': 'g',
+    // czech
+    'č': 'c', 'ď': 'd', 'ě': 'e', 'ň': 'n', 'ř': 'r', 'š': 's', 'ť': 't', 'ů': 'u',
+    'ž': 'z', 'Č': 'C', 'Ď': 'D', 'Ě': 'E', 'Ň': 'N', 'Ř': 'R', 'Š': 'S', 'Ť': 'T',
+    'Ů': 'U', 'Ž': 'Z',
+    // polish
+    'ą': 'a', 'ć': 'c', 'ę': 'e', 'ł': 'l', 'ń': 'n', 'ó': 'o', 'ś': 's', 'ź': 'z',
+    'ż': 'z', 'Ą': 'A', 'Ć': 'C', 'Ę': 'e', 'Ł': 'L', 'Ń': 'N', 'Ś': 'S',
+    'Ź': 'Z', 'Ż': 'Z',
+    // latvian
+    'ā': 'a', 'č': 'c', 'ē': 'e', 'ģ': 'g', 'ī': 'i', 'ķ': 'k', 'ļ': 'l', 'ņ': 'n',
+    'š': 's', 'ū': 'u', 'ž': 'z', 'Ā': 'A', 'Č': 'C', 'Ē': 'E', 'Ģ': 'G', 'Ī': 'i',
+    'Ķ': 'k', 'Ļ': 'L', 'Ņ': 'N', 'Š': 'S', 'Ū': 'u', 'Ž': 'Z',
+    // currency
+    '€': 'euro', '₢': 'cruzeiro', '₣': 'french franc', '£': 'pound',
+    '₤': 'lira', '₥': 'mill', '₦': 'naira', '₧': 'peseta', '₨': 'rupee',
+    '₩': 'won', '₪': 'new shequel', '₫': 'dong', '₭': 'kip', '₮': 'tugrik',
+    '₯': 'drachma', '₰': 'penny', '₱': 'peso', '₲': 'guarani', '₳': 'austral',
+    '₴': 'hryvnia', '₵': 'cedi', '¢': 'cent', '¥': 'yen', '元': 'yuan',
+    '円': 'yen', '﷼': 'rial', '₠': 'ecu', '¤': 'currency', '฿': 'baht',
+    '$': 'dollar',
+    // symbols
+    '©': '(c)', 'œ': 'oe', 'Œ': 'OE', '∑': 'sum', '®': '(r)', '†': '+',
+    '“': '"', '”': '"', '‘': "'", '’': "'", '∂': 'd', 'ƒ': 'f', '™': 'tm',
+    '℠': 'sm', '…': '...', '˚': 'o', 'º': 'o', 'ª': 'a', '•': '*',
+    '∆': 'delta', '∞': 'infinity', '♥': 'love', '&': 'and', '|': 'or',
+    '<': 'less', '>': 'greater'
+  }
+
+  function replace (string, replacement) {
+    return string.split('').reduce(function (result, ch) {
+      if (charMap[ch]) {
+        ch = charMap[ch]
+      }
+      // allowed
+      ch = ch.replace(/[^\w\s$*_+~.()'"!\-:@]/g, '')
+      result += ch
+      return result
+    }, '')
+      // trim leading/trailing spaces
+      .replace(/^\s+|\s+$/g, '')
+      // convert spaces
+      .replace(/[-\s]+/g, replacement || '-')
+      // remove trailing separator
+      .replace('#{replacement}$', '')
+  }
+
+  replace.extend = function (customMap) {
+    for (var key in customMap) {
+      charMap[key] = customMap[key]
+    }
+  }
+
+  return replace
+}))
+
+
+/***/ }),
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2396,8 +2531,8 @@ var objectKeys = Object.keys || function (obj) {
 
 
 
-var punycode = __webpack_require__(9);
-var util = __webpack_require__(13);
+var punycode = __webpack_require__(10);
+var util = __webpack_require__(15);
 
 exports.parse = urlParse;
 exports.resolve = urlResolve;
@@ -3108,7 +3243,7 @@ Url.prototype.parseHost = function() {
 
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3131,7 +3266,7 @@ module.exports = {
 
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -3159,7 +3294,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports) {
 
 (function(self) {
@@ -3626,7 +3761,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = extend

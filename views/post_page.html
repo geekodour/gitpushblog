@@ -7,9 +7,7 @@
           pageType: 'post',
           postId: {{post.id}},
           comment: {{ comment|stringify|safe }},
-          comment_system: "{{ comment_system }}",
-          disqus_id: "{{ disqus_id }}",
-          firebaseEnabled: {{firebaseEnabled}}
+          disqus_id: "{{ disqus_id }}"
   };
   </script>
 {% endblock %}
@@ -30,23 +28,27 @@
   </div>
 </div>
 <div {% if comment.isDisqus %}class="section"{% endif %}>
+  {% if comment.isGithubAuth and comment.isGithub %}
+    <div class="section has-text-centered is-fluid">
+      <button id="signin_button" class="button is-medium is-success">Sign In to Comment!</button>
+      <div id="comment_box">
+        <div class="field">
+        <label class="label">Your Comment</label>
+        <p class="control">
+          <textarea class="textarea" placeholder="Write something.."></textarea>
+        </p>
+        <p class="control">
+          <button class="button">comment</button>
+        </p>
+        </div>
+      </div>
+    </div>
+  {% elif comment.isGithub %}
+    <div class="section has-text-centered is-fluid">
+      <button id="signin_button" class="button is-medium is-info">Go to Issue</button>
+    </div>
+  {% endif %}
   <div id="comments_container"></div>
   <div id="loadmore_container" class="has-text-centered"></div>
 </div>
 {% endblock %}
-
-<!--
-          {% if firebaseEnabled %}
-          <div class="section has-text-centered is-fluid">
-            <button id="signin_button" class="button is-medium is-success">Sign In to Comment!</button>
-            <div id="comment_box">
-              <div class="field">
-              <label class="label">Your Comment</label>
-              <p class="control">
-                <textarea class="textarea" placeholder="Write something.."></textarea>
-              </p>
-              </div>
-            </div>
-          </div>
-          {% endif %}
--->

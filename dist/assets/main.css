@@ -4243,6 +4243,10 @@ body {
 .nav a:hover {
       color: white;
       text-decoration: underline; }
+#comments_container {
+  margin-top: 2em; }
+#loadmore_container {
+  margin-top: 2em; }
 .content h1, .content h2, .content h3, .content h4 {
   font-family: 'Open Sans', sans-serif; }
 .content p, .content li {

@@ -1,13 +1,9 @@
 'use strict';
 
-var chalk = require('chalk');
 var fs = require('fs');
-var marked = require('marked');
-var mkdirp = require('mkdirp');
 var path = require('path');
 var gitblog = require('github-blog-api');
 var bc = require('../blog_config.json');
-var _nunjucks = require('nunjucks');
 
 var ROOT_DIR = path.resolve('.');
 
@@ -50,4 +46,3 @@ Promise.all(offlineFiles).then(()=>{
                 console.log("posts have been uploaded!")
         });
 });
-
