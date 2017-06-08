@@ -2,6 +2,7 @@ var mkdirp = require('mkdirp');
 var chalk = require('chalk');
 var marked = require('marked');
 var fs = require('fs');
+var slugify = require('slugify');
 var path = require('path');
 var _nunjucks = require('./nunjucks_config.js');
 var bc = require('../blog_config.json');
@@ -12,14 +13,6 @@ var ROOT_DIR = path.resolve('.');
 var nunjucks = _nunjucks.init();
 
 module.exports = {
-  createdir: function(dirpath){
-        return new Promise((resolve,reject)=>{
-                  mkdirp(dirpath, function (err) {
-                      if (err) reject(err);
-                      resolve();
-                  });
-               });
-        },
 
   generatePostTemplate: function(post,labels,dirName){
         var fileName = post.slug+'.html';
@@ -65,6 +58,20 @@ module.exports = {
         pageTemplatesFiles.forEach(function(fileName){
           var renderContent = nunjucks.render('pages/'+fileName,{});
           fs.writeFileSync(ROOT_DIR+"/"+dirName+"/"+fileName, renderContent);
+        });
+        },
+
+  getOfflineFileContents: function(){
+        var fileNames = fs.readdirSync(ROOT_DIR+"/content");
+        return fileNames.map(fileName=>{
+                return new Promise((resolve)=>{
+                       let content = fs.readFileSync(ROOT_DIR+"/content/"+fileName,{encoding:"utf8"});
+                       let post = {};
+                       post.title = content.split("\n")[0].split(" ").slice(1).join(' ').trim();
+                       post.body = content.split("\n").slice(1).join("\n");
+                       post.slug = slugify(post.title);
+                       resolve(post);
+                });
         });
         }
 };

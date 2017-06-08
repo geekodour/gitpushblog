@@ -1,14 +1,40 @@
 import './main.sass';
 import gitBlog from 'github-blog-api';
 import { disqusService, firebaseService } from './services';
+//const bc = require('../blog_config.json');
 
-const myblog = gitBlog({username:'lukego',repo:'blog',author:'lukego'});
+const myblog = gitBlog({username:'geekodour',repo:'gitpushblog',author:'geekodour'});
+//const myblog = gitBlog({username:'lukego',repo:'blog',author:'lukego'});
 const blogInfo = window.blogInfo;
 myblog.setPost({per_page:3});
 myblog.setComment({per_page:3});
+let token;
 
 // we put `window.blogInfo` object when
 // generating the nunjucks templates
+
+
+const handleSignInAndComment = ()=>{
+  // get commentbox
+  let commentEl = document.querySelector('.textarea');
+  if(commentEl.value){
+    document.querySelector('.comment-error-box').classList.add('is-hidden');
+
+    firebaseService.signIn()
+      .then(token=>{
+        // use token to create comment
+        myblog.createComment({body:commentEl.value},blogInfo.postId,token)
+              .then(comment=>{
+                // update comment thread
+                let commentsContainer = document.getElementById('comments_container');
+                commentsContainer.innerHTML += getCommentHTML(comment);
+              });
+      });
+  }
+  else{
+    document.querySelector('.comment-error-box').classList.remove('is-hidden');
+  }
+}
 
 const getCommentHTML = (comment)=>{
   // return html needed for comments
@@ -46,14 +72,13 @@ const updateLoadMoreButtonHTML = (classAttr='')=>{
 }
 
 const generateLoadMoreButton = (iterator)=>{
-        // assign events and loadMoreButton based on iterator type
+        // assign events to loadMoreButton based on iterator type
         let loadMoreContainer = document.getElementById('loadmore_container');
         switch(iterator){
                 case "post":
                         if(!myblog.settings.posts.last_reached){
-                                //loadMoreContainer.innerHTML = getLoadMoreButtonHTML();
                                 updateLoadMoreButtonHTML();
-                                document.getElementById("loadmore_button").addEventListener("click", insertCategoryMatches);
+                                document.getElementById("loadmore_button").addEventListener("click", updateCategoryList);
                         }
                         else{
                                 loadMoreContainer.innerHTML = "<p>All posts loaded!</p>";
@@ -61,9 +86,8 @@ const generateLoadMoreButton = (iterator)=>{
                         break;
                 case "comment":
                         if(myblog.settings.comments.done_posts.indexOf(blogInfo.postId) === -1){
-                                //loadMoreContainer.innerHTML = getLoadMoreButtonHTML();
                                 updateLoadMoreButtonHTML();
-                                document.getElementById("loadmore_button").addEventListener("click", updateComments);
+                                document.getElementById("loadmore_button").addEventListener("click", updateGithubComments);
                         }
                         else{
                                 loadMoreContainer.innerHTML = "<p>All comments loaded!</p>";
@@ -72,28 +96,31 @@ const generateLoadMoreButton = (iterator)=>{
         }
 }
 
-const updateComments = ()=>{
+const updateGithubComments = ()=>{
     let commentsContainer = document.getElementById('comments_container');
     let postId = blogInfo.postId;
     updateLoadMoreButtonHTML('is-loading');
     myblog.fetchBlogPostComments(postId).then(comments=>{
             generateLoadMoreButton("comment");
             comments.forEach(comment=>{
+              // better way to do this?
+              // now we're actually replacing the whole thread
+              // everytime
               commentsContainer.innerHTML += getCommentHTML(comment);
             });
     });
-
 }
 
-const insertCategoryMatches = ()=>{
-  // calls fetchBlogPosts with label as the parameter
+const updateCategoryList = ()=>{
   let postsContainer = document.getElementById('category_posts_container');
-  let label = blogInfo.label;
   updateLoadMoreButtonHTML('is-loading');
-  myblog.fetchBlogPosts([label]).then(posts=>{
+  myblog.fetchBlogPosts([blogInfo.label]).then(posts=>{
           generateLoadMoreButton("post");
           posts.forEach(post=>{
-                  postsContainer.innerHTML += getPostListItemHTML(post);
+             // better way to do this?
+             // now we're actually replacing the whole thread
+             // everytime
+             postsContainer.innerHTML += getPostListItemHTML(post);
           });
   });
 }
@@ -103,10 +130,10 @@ const initCommentSystem = ()=>{
     let commentsContainer = document.getElementById('comments_container');
 
     if(blogInfo.comment.isGithub){
-      updateComments();
+      updateGithubComments();
       if(blogInfo.comment.isGithubAuth){
               firebaseService.init();
-              document.getElementById("signin_button").addEventListener("click", firebaseService.signIn);
+              document.getElementById("signin_button").addEventListener("click", handleSignInAndComment);
       }
     }
 
@@ -125,7 +152,7 @@ switch(window.blogInfo.pageType){
                 initCommentSystem();
                 break;
         case "category":
-                insertCategoryMatches();
+                updateCategoryList();
                 break;
         default:
                 break;

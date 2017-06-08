@@ -29,8 +29,7 @@
 </div>
 <div {% if comment.isDisqus %}class="section"{% endif %}>
   {% if comment.isGithubAuth and comment.isGithub %}
-    <div class="section has-text-centered is-fluid">
-      <button id="signin_button" class="button is-medium is-success">Sign In to Comment!</button>
+    <div class="section">
       <div id="comment_box">
         <div class="field">
         <label class="label">Your Comment</label>
@@ -38,9 +37,12 @@
           <textarea class="textarea" placeholder="Write something.."></textarea>
         </p>
         <p class="control">
-          <button class="button">comment</button>
+          <button id="signin_button" class="button is-medium is-success is-full-width">SignIn and Comment</button>
         </p>
         </div>
+      </div>
+      <div class="comment-error-box is-hidden">
+              <small>Oops! need to write something to post a comment!</small>
       </div>
     </div>
   {% elif comment.isGithub %}

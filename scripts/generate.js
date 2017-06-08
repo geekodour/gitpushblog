@@ -49,7 +49,6 @@ function generateTemplates(){
       var flatPosts = posts.reduce((posts_prev,posts_next)=>posts_prev.concat(posts_next));
       var pagination = {next:null,prev:null};
 
-      // should we make the createdir sync?
       mkdirp.sync(ROOT_DIR+'/dist/category');
       mkdirp.sync(ROOT_DIR+'/dist/posts');
       // category templates

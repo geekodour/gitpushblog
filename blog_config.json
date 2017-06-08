@@ -8,7 +8,15 @@
     "disabled": false,
     "isGithub": true,
     "isDisqus": false,
-    "isGithubAuth": false,
+    "isGithubAuth": true,
     "disqus_id": "geekodour"
+  },
+  "firebaseConfig": {
+    "apiKey": "AIzaSyAZSJ1d1Sr9MnTK-__3D8SrwXjjQf6EML4",
+    "authDomain": "myblog-2b0ba.firebaseapp.com",
+    "databaseURL": "https://myblog-2b0ba.firebaseio.com",
+    "projectId": "myblog-2b0ba",
+    "storageBucket": "myblog-2b0ba.appspot.com",
+    "messagingSenderId": "20890326099"
   }
 }
