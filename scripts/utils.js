@@ -67,6 +67,7 @@ module.exports = {
                 return new Promise((resolve)=>{
                        let content = fs.readFileSync(ROOT_DIR+"/content/"+fileName,{encoding:"utf8"});
                        let post = {};
+                       // this part really need a good fix
                        post.title = content.split("\n")[0].split(" ").slice(1).join(' ').trim();
                        post.body = content.split("\n").slice(1).join("\n");
                        post.slug = slugify(post.title);
