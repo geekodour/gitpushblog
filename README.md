@@ -1,6 +1,6 @@
 # gitpushblog
 a static blog generator with node, nunjucks and the github api.
-well it's does whatever a static blog generator like jekyll does, much less to be honest.
+well it does whatever a static blog generator like jekyll does, much less to be honest.
 but it's a new thing to do just for fun.
 
 
