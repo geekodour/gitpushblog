@@ -66,7 +66,6 @@ function generateTemplates(){
                                :0
                          }
                        );
-                       console.log(cur_page,'-->',pagination);
                        if(cur_page==0){
                          utils.generateIndexTemplate(post_arr,labels,pagination,'dist','index.html');
                        }
