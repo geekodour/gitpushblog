@@ -18,6 +18,7 @@ atleast 'just works'.
 - change the name of the repository if you want.
 - `clone` the forked repository.
 - run `npm install`.
+- create a directory named `content` in project root. **(Will add fix for this soon)**
 - run `npm run dev`
 After it shows `REVISION 0 GENERATED` open `localhost:3000` in your browser.
 check the newly created `dev` directory in the project root, (it's gitignored, so no worries)
@@ -82,6 +83,7 @@ then you can simply run the four commands **generate**,**dev**,**upload** and **
 - change the name of the repository if you want.
 - `clone` the forked repository.
 - run `npm install`
+- create a directory named `content` in project root. (Will add fix for this soon)
 - manually configure `blog_config.json`
 - run the npm scripts as described in the usage section
 
