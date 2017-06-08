@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessing JavaScript binary data in C++</title>
+    <meta name="description" content="">
+    <meta name="author" content="Hrishikesh Barman">
+
+    <link href="/assets/main.css" rel="stylesheet">
+
+  <script>
+  window.blogInfo = {
+          pageType: 'post',
+          postId: 12,
+          comment: {"disabled":false,"isGithub":true,"isDisqus":false,"isGithubAuth":true,"disqus_id":"geekodour"},
+          disqus_id: ""
+  };
+  </script>
+
+  </head>
+
+  <body>
+<nav class="nav">
+  <div class="nav-left"></div>
+  <div class="nav-center">
+  <a class="nav-item title is-5" href="/">
+    geekodour's blog
+  </a>
+  </div>
+  <span id="nav-toggle" class="nav-toggle">
+  <span></span>
+  <span></span>
+  <span></span>
+  </span>
+  <div id="nav-menu" class="nav-right nav-menu">
+  <a class="nav-item" href="">projects</a>
+  <a class="nav-item" href="">favorites</a>
+  <a class="nav-item" href="">contact</a>
+  </div>
+</nav>
+
+  <div class="columns">
+          <div class="column">
+            <div class=""></div>
+          </div>
+          <div class="column is-half">
+<div class="section">
+  <div class="container">
+    <div class="content">
+      <div class="post-header">
+      <span class="tag">c++</span>
+      <span class="tag">data structures</span>
+      <span class="is-pulled-right">31/7/2016</span>
+      </div>
+      <h1>Accessing javascript binary data in c++</h1>
+      <p>Today I thought I&#39;d share a method on how to efficiently work with data structures when making Node.js addons. Specifically, I will show you how to represent a <code>struct</code> in JavaScript and how to access and manipulate this data from v8. Because there is no official documentation for v8 except <a href="http://bespin.cz/~ondras/html/index.html">the reference material generated from v8.h</a>, this post is meant to bridge the language gap between JavaScript and C/C++.</p>
+<h3 id="data-storage">Data storage</h3>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays">Typed arrays</a> were introduced a few years ago and they provide us with a way of accessing and manipulating raw binary data. The different types of typed arrays and their C equivalents are shown in the below table (derived from <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays">the MDN page</a>):</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Type</th>
+<th style="text-align:left">Size in bytes</th>
+<th style="text-align:left">Equivalent C type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array"><code>Int8Array</code></a></td>
+<td style="text-align:left">1</td>
+<td style="text-align:left"><code>int8_t</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array"><code>Uint8Array</code></a></td>
+<td style="text-align:left">1</td>
+<td style="text-align:left"><code>uint8_t</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray"><code>Uint8ClampedArray</code></a></td>
+<td style="text-align:left">1</td>
+<td style="text-align:left"><code>uint8_t</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array"><code>Int16Array</code></a></td>
+<td style="text-align:left">2</td>
+<td style="text-align:left"><code>int16_t</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array"><code>Uint16Array</code></a></td>
+<td style="text-align:left">2</td>
+<td style="text-align:left"><code>uint16_t</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array"><code>Int32Array</code></a></td>
+<td style="text-align:left">4</td>
+<td style="text-align:left"><code>int32_t</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array"><code>Uint32Array</code></a></td>
+<td style="text-align:left">4</td>
+<td style="text-align:left"><code>uint32_t</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array"><code>Float32Array</code></a></td>
+<td style="text-align:left">4</td>
+<td style="text-align:left"><code>float</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array"><code>Float64Array</code></a></td>
+<td style="text-align:left">8</td>
+<td style="text-align:left"><code>double</code></td>
+</tr>
+</tbody>
+</table>
+<p>It&#39;s good to know that the above are only different views on the underlying <code>ArrayBuffer</code> storage. We can initialize typed arrays using regular arrays, like this:</p>
+<pre><code class="lang-javascript">var view = new Int8Array([1, 2, 3]);
+</code></pre>
+<p>We can also initialize them by allocating memory using an <code>ArrayBuffer</code>:</p>
+<pre><code class="lang-javascript">var buffer = new ArrayBuffer(3),
+    view = new Int8Array(buffer);
+
+view.set([1, 2, 3]);
+</code></pre>
+<p>More importantly, we can use the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView"><code>DataView</code></a> interface to read and write arbitrary data to an <code>ArrayBuffer</code>:</p>
+<pre><code class="lang-javascript">var buffer = new ArrayBuffer(3),
+    view = new DataView(buffer);
+
+view.setInt8(0, 1, true);
+view.setInt16(1, 2, true);
+
+console.log(view.getInt8(0, true)); // 1
+console.log(view.getInt16(1, true)); // 2
+</code></pre>
+<p><em>Note: the last argument of <code>setInt8</code> specifies the <a href="https://developer.mozilla.org/en-US/docs/Glossary/Endianness">endianness</a> of the system. A value of <code>true</code> means little endian.</em></p>
+<p>In C++, the <code>Int8Array</code> in the first two examples can be represented with an <code>int8_t</code> array. The same applies to the other types. Just look up the C equivalent in the table above.</p>
+<pre><code class="lang-c++">int8_t data[] = {1, 2, 3};
+</code></pre>
+<p>The <code>DataView</code> in the last example can effectively be represented as a <code>struct</code>:</p>
+<pre><code class="lang-c++">typedef struct {
+    int8_t a;
+    int16_t b;
+} dataView;
+</code></pre>
+<p>So we have established some common ground between JavaScript and C++. The remaining question is how do we read this data into a Node.js addon?</p>
+<h3 id="data-access">Data access</h3>
+<p>Let&#39;s set up a simple example. If you have no idea what a Node.js addon is I suggest you read <a href="https://nodejs.org/api/addons.html">this guide</a>.</p>
+<pre><code class="lang-c++">#include &lt;node.h&gt;
+
+typedef struct {
+    int8_t a;
+    int16_t b;
+} dataView;
+
+void accessInt8Array(const v8::FunctionCallbackInfo&lt;v8::Value&gt;&amp; info) {
+    // make sure the first argument is an Int8Array
+    assert(info[0]-&gt;IsInt8Array());
+
+    // read first argument as an Int8Array.
+    v8::Local&lt;v8::Int8Array&gt; view = info[0].As&lt;v8::Int8Array&gt;();
+
+    // get contents as a void pointer
+    void *data = view-&gt;Buffer()-&gt;GetContents().Data();
+
+    // create a pointer to int8_t and typecast
+    int8_t *contents = static_cast&lt;int8_t*&gt;(data);
+
+    // multiply all elements by 2
+    for (int i = 0; i &lt; view-&gt;Length(); i++)
+        contents[i] *= 2;
+}
+
+void accessDataView(const v8::FunctionCallbackInfo&lt;v8::Value&gt;&amp; info) {
+    assert(info[0]-&gt;IsDataView());
+    v8::Local&lt;v8::DataView&gt; view = info[0].As&lt;v8::DataView&gt;();
+
+    // check size to make sure the data is compatible with our struct
+    assert(view-&gt;ByteLength() == sizeof(dataView));
+
+    void *data = view-&gt;Buffer()-&gt;GetContents().Data();
+    dataView *contents = static_cast&lt;dataView*&gt;(data);
+
+    // multiply both integers by 2
+    contents-&gt;a *= 2;
+    contents-&gt;b *= 2;
+}
+
+
+void init(v8::Local&lt;v8::Object&gt; exports) {
+    NODE_SET_METHOD(exports, &quot;accessInt8Array&quot;, accessInt8Array);
+    NODE_SET_METHOD(exports, &quot;accessDataView&quot;, accessDataView);
+}
+
+NODE_MODULE(addon, init);
+</code></pre>
+<p><em>Note: If you want to have full control over memory and avoid unexpected garbage collection, you should replace <code>GetContents()</code> with <code>Externalize()</code>. You will then lose the ability to manipulate the contents directly and the responsibility to <code>free()</code> the memory lies on you.</em></p>
+<p>Finally, we create a <code>binding.gyp</code> file, compile with <code>node-gyp configure rebuild</code> and try it out!</p>
+<pre><code class="lang-javascript">var addon = require(&#39;./build/Release/addon&#39;),
+    buffer,
+    view;
+
+view = new Int8Array([1, 2, 3]);
+addon.accessInt8Array(view);
+
+console.log(view);
+// Int8Array [ 2, 4, 6 ]
+
+buffer = new ArrayBuffer(3);
+view = new DataView(buffer);
+view.setInt8(0, 1, true);
+view.setInt16(1, 2, true);
+
+addon.accessDataView(view);
+
+console.log(view.getInt8(0, true)); // 2
+console.log(view.getInt16(1, true)); // 4
+</code></pre>
+<p>Now we can work with practically any kind of binary data in both JavaScript and C++. </p>
+<p>Success!</p>
+
+    </div>
+  </div>
+</div>
+<div >
+    <div class="section">
+      <div id="comment_box">
+        <div class="field">
+        <label class="label">Your Comment</label>
+        <p class="control">
+          <textarea class="textarea" placeholder="Write something.."></textarea>
+        </p>
+        <p class="control">
+          <button id="signin_button" class="button is-medium is-success is-full-width">SignIn and Comment</button>
+        </p>
+        </div>
+      </div>
+      <div class="comment-error-box is-hidden">
+              <small>Oops! need to write something to post a comment!</small>
+      </div>
+    </div>
+  <div id="comments_container"></div>
+  <div id="loadmore_container" class="has-text-centered"></div>
+</div>
+          </div>
+          <div class="column">
+            <div class="hidden-mobile">
+<div class="card">
+  <div class="card-content">
+    <div class="media">
+      <div class="media-left">
+        <figure class="image is-48x48">
+          <img src="http://bulma.io/images/placeholders/96x96.png" alt="Image">
+        </figure>
+      </div>
+      <div class="media-content">
+        <p class="title is-4">Hrishikesh Barman</p>
+        <p class="subtitle is-6">@geekodour</p>
+      </div>
+    </div>
+
+    <div class="content">
+      <small>I am Hrishikesh</small>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-content">
+    <div class="content">
+      <small>categories</small>
+      <ul>
+      <li><a href="/category/c++">c++</a></li>
+      <li><a href="/category/data-structures">data structures</a></li>
+      <li><a href="/category/es6">es6</a></li>
+      <li><a href="/category/functional">functional</a></li>
+      <li><a href="/category/hacking">hacking</a></li>
+      <li><a href="/category/html">html</a></li>
+      <li><a href="/category/machine-learning">machine learning</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+            </div>
+          </div>
+  </div>
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p>github is love, github is life</p>
+    </div>
+  </div>
+</footer>
+
+ <script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>       <script src="/assets/prism.js"></script>
+      <script src="/assets/main.js"></script>
+  </body>
+</html>
