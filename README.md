@@ -86,7 +86,7 @@ then you can simply run the four commands **generate**,**dev**,**upload** and **
 Comments are important part of a blog. **gitpushblog** has four comment states.
 - `disabled` : if `true` comments will be disabled completely
 - `isGithub` : if `true` the github comments of the issue will be listed,
-one has to visit the `issue` on github to make a comment like (this blogpost)[http://donw.io/post/github-comments/]
+one has to visit the `issue` on github to make a comment like [this blogpost](http://donw.io/post/github-comments/)
 - `isGithubAuth` : if `true`, a comment box will appear under the post and firebaseAuth for github will
 be there to authenticate the user. (there's an issue with the permissions)
 - `isDisqus` : if `true` Disqus comments will be added
@@ -166,11 +166,11 @@ the `content` directory.
 
 # Todo
 - [ ] Make the `main.sass` file cleaner and organized
-Will add more todo soon.. there's a lot of them.
+- Will add more todo soon.. there's a lot of them.
 
 # Contribute
 - It will be awesome if anyone can help in creating some themes, it's almost just plain HTML and CSS
-will add issues and more contributing info soon.
+- will add issues and more contributing info soon.
 
 # Eating my own dogfood
-created this github api wrapper called (github-blog-api)[https://github.com/geekodour/github-blog-api] to help with the github api calls
+created this github api wrapper called [github-blog-api](https://github.com/geekodour/github-blog-api) to help with the github api calls
