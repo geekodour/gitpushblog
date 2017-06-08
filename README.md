@@ -71,7 +71,7 @@ So, let's start by configuring `blog_config.json`
 
 ### blog_config.json
 HELP NEEDED: ** firebase api
-```
+```json
 {
   "username": "lukego", // repository owner name
   "author": "lukego", // issue creator name
