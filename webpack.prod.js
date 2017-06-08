@@ -2,8 +2,22 @@ const path = require('path');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const webpack = require('webpack');
 
+// plugin inits
 const extractSass = new ExtractTextPlugin({
     filename: "[name].css"
+});
+
+const commonChunkOptimize = new webpack.optimize.CommonsChunkPlugin({
+    name: 'common',
+    filename: 'bundle.common.js',
+    chunks: []
+});
+
+const uglify =   new webpack.optimize.UglifyJsPlugin({
+    compress: {
+      warnings: false,
+      drop_console: false,
+    }
 });
 
 module.exports = {
@@ -30,13 +44,15 @@ module.exports = {
             test: /\.sass$/,
             use: extractSass.extract({
                 use: [{
-                    loader: "css-loader"
+                    loader: "css-loader",
+                    options: { minimize: true }
                 },
                 {
                     loader: "postcss-loader"
                 },
                 {
-                    loader: "sass-loader"
+                    loader: "sass-loader",
+                    options: { minimize: true }
                 }],
                 // use style-loader in development
                 fallback: "style-loader"
@@ -45,13 +61,9 @@ module.exports = {
     ]
   },
   plugins: [
-        new webpack.optimize.CommonsChunkPlugin({
-                name: 'common',
-                filename: 'bundle.common.js',
-                chunks: []
-
-        }),
-        extractSass
+        commonChunkOptimize,
+        extractSass,
+        uglify
   ]
 
 }

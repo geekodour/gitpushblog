@@ -1,10 +1,9 @@
 import './main.sass';
 import gitBlog from 'github-blog-api';
 import { disqusService, firebaseService } from './services';
-//const bc = require('../blog_config.json');
+const bc = require('../blog_config.json');
 
-const myblog = gitBlog({username:'geekodour',repo:'gitpushblog',author:'geekodour'});
-//const myblog = gitBlog({username:'lukego',repo:'blog',author:'lukego'});
+const myblog = gitBlog({username:bc.username,repo:bc.repo,author:bc.author});
 const blogInfo = window.blogInfo;
 myblog.setPost({per_page:3});
 myblog.setComment({per_page:3});
