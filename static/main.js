@@ -26,7 +26,7 @@ const handleSignInAndComment = ()=>{
               .then(comment=>{
                 // update comment thread
                 let commentsContainer = document.getElementById('comments_container');
-                commentsContainer.innerHTML += getCommentHTML(comment);
+                commentsContainer.insertAdjacentHTML('beforeend', getCommentHTML(comment));
               });
       });
   }
@@ -62,7 +62,7 @@ const getCommentHTML = (comment)=>{
 }
 
 const getPostListItemHTML = (post)=>{
-        return `<a href="/posts/${post.slug}" class="title is-4">${post.title}</a>`
+        return `<li><a href="/posts/${post.slug}" class="title is-4">${post.title}</a></li>`
 }
 
 const updateLoadMoreButtonHTML = (classAttr='')=>{
@@ -102,10 +102,7 @@ const updateGithubComments = ()=>{
     myblog.fetchBlogPostComments(postId).then(comments=>{
             generateLoadMoreButton("comment");
             comments.forEach(comment=>{
-              // better way to do this?
-              // now we're actually replacing the whole thread
-              // everytime
-              commentsContainer.innerHTML += getCommentHTML(comment);
+              commentsContainer.insertAdjacentHTML('beforeend', getCommentHTML(comment));
             });
     });
 }
@@ -116,10 +113,7 @@ const updateCategoryList = ()=>{
   myblog.fetchBlogPosts([blogInfo.label]).then(posts=>{
           generateLoadMoreButton("post");
           posts.forEach(post=>{
-             // better way to do this?
-             // now we're actually replacing the whole thread
-             // everytime
-             postsContainer.innerHTML += getPostListItemHTML(post);
+             postsContainer.insertAdjacentHTML('beforeend', getPostListItemHTML(post));
           });
   });
 }
