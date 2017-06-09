@@ -6,8 +6,7 @@ but it's a new thing to do just for fun.
 
 ## NOTE:
 **The README is not written properly, I am not able to explain things properly, I'll improve it later**
-Also there are a lot of issues, i'll add them when I get time. Also you might see a lot of closed issues that are the same.
-just ignore dem closed issues.
+Also there are a lot of issues, i'll add them when I get time.
 Also, this right now probably has 0 SEO optimizations. will have to look into that too, right now just making sure that this
 atleast 'just works'.
 - Also, `npm install` takes a while, mainly to download the postcss libraries, any alternatives?
@@ -109,6 +108,7 @@ So, let's start by configuring `blog_config.json`
 ### blog_config.json
 HELP NEEDED: **firebase api keys public?**. In the repository, I have my firebase app details given in the `blog_config.json`
 so that you can just test out the firebase GithubAuth thing.
+for example we'll use this repository: https://github.com/lukego/blog/issues
 
 a sample is given below:
 - **username**: repository owner github username
