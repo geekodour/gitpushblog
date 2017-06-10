@@ -5,9 +5,9 @@ but it's a new thing to do just for fun.
 
 
 ## NOTE:
-**The README is not written properly, I am not able to explain things properly, I'll improve it later**
-Also there are a lot of issues, i'll add them when I get time.
-Also, this right now probably has 0 SEO optimizations. will have to look into that too, right now just making sure that this
+README needs a lot of improvements, please comment on [this issue for README](https://github.com/geekodour/gitpushblog/issues/25) improvements with questions and suggestions.
+
+This right now probably has 0 SEO optimizations. will have to look into that too, right now just making sure that this
 atleast 'just works'.
 - Also, `npm install` takes a while, mainly to download the postcss libraries, any alternatives?
 
