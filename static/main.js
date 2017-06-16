@@ -7,11 +7,9 @@ const myblog = gitBlog({username:bc.username,repo:bc.repo,author:bc.author});
 const blogInfo = window.blogInfo;
 myblog.setPost({per_page:3});
 myblog.setComment({per_page:3});
-let token;
 
 // we put `window.blogInfo` object when
 // generating the nunjucks templates
-
 
 const handleSignInAndComment = ()=>{
   // get commentbox

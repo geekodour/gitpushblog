@@ -16,7 +16,8 @@ var nunjucks = _nunjucks.configure(ROOT_DIR+'/views', nunjucks_opts);
 // date filter
 nunjucks.addFilter('date', function(str, count) {
    var dateObj = new Date(str);
-   return dateObj.getDate()+"/"+ dateObj.getMonth()+1 +"/"+ dateObj.getFullYear();
+   //return dateObj.getDate()+"/"+ +dateObj.getMonth()+1 +"/"+ dateObj.getFullYear();
+   return `${dateObj.getDate()}/${+dateObj.getMonth()+1}/${dateObj.getFullYear()}`;
 });
 
 // stringify filter
