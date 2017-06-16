@@ -1,4 +1,7 @@
 {
+  "meta": {
+    "blog_name": "geek blog"
+  },
   "username": "lukego",
   "author": "lukego",
   "repo": "blog",

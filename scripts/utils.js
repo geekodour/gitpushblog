@@ -21,6 +21,7 @@ module.exports = {
         post.html = marked(post.body);
         var renderContent = nunjucks.render('post_page.html',
           {
+            meta: bc.meta,
             post: post,
             labels: labels,
             comment: bc.comment
@@ -31,35 +32,52 @@ module.exports = {
         fs.writeFile(ROOT_DIR+"/"+dirName+"/posts/"+fileName, renderContent, function(err) {
             if(err) { return console.log(err); }
         });
-        },
+  },
 
   generateIndexTemplate: function(posts,labels,pagination,dirName,fileName){
         // index template generation
-        var renderContent = nunjucks.render('index.html',{posts:posts,labels:labels,pagination:pagination});
+        var renderContent = nunjucks.render('index.html',
+          {
+            meta: bc.meta,
+            posts:posts,
+            labels:labels,
+            pagination:pagination
+          }
+        );
         fs.writeFile(ROOT_DIR+"/"+dirName+"/"+fileName, renderContent, function(err) {
             if(err) { return console.log(err); }
         });
-        },
+  },
 
   generateCategoryTemplates: function(labels,dirName){
         // takes array of labels
         // creates files with name label.slug.html
         return labels.map(function(label){
-                return new Promise(function(resolve,reject){
-                        var renderContent = nunjucks.render('category_page.html',{label:label,labels:labels});
-                        fs.writeFileSync(ROOT_DIR+"/"+dirName+"/category/"+label.slug+".html", renderContent);
-                        resolve();
-                });
+          return new Promise(function(resolve,reject){
+                  var renderContent = nunjucks.render('category_page.html',
+                    {
+                      meta: bc.meta,
+                      label:label,
+                      labels:labels
+                    }
+                  );
+                  fs.writeFileSync(ROOT_DIR+"/"+dirName+"/category/"+label.slug+".html", renderContent);
+                  resolve();
+          });
         });
-        },
+  },
 
   generatePageTemplate: function(dirName){
         var pageTemplatesFiles = fs.readdirSync(ROOT_DIR+"/views/pages");
         pageTemplatesFiles.forEach(function(fileName){
-          var renderContent = nunjucks.render('pages/'+fileName,{});
+          var renderContent = nunjucks.render('pages/'+fileName,
+            {
+              meta: bc.meta
+            }
+          );
           fs.writeFileSync(ROOT_DIR+"/"+dirName+"/"+fileName, renderContent);
         });
-        },
+  },
 
   getOfflineFileContents: function(){
         var fileNames = fs.readdirSync(ROOT_DIR+"/content");
@@ -74,5 +92,5 @@ module.exports = {
                        resolve(post);
                 });
         });
-        }
+  }
 };
