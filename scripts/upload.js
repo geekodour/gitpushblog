@@ -26,7 +26,7 @@ function uploadFiles(offlineFileContents){
          .then(()=>{
            spinner.stop();
            console.log('posts uploaded successfully');
-           rimraf.sync(ROOT_DIR+'/content/*');
+           rimraf.sync(ROOT_DIR+'/drafts/*');
 
          })
          .catch(err=>{

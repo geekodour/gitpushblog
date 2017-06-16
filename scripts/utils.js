@@ -80,10 +80,10 @@ module.exports = {
   },
 
   getOfflineFileContents: function(){
-        var fileNames = fs.readdirSync(ROOT_DIR+"/content");
+        var fileNames = fs.readdirSync(ROOT_DIR+"/drafts");
         return fileNames.map(fileName=>{
                 return new Promise((resolve)=>{
-                       let content = fs.readFileSync(ROOT_DIR+"/content/"+fileName,{encoding:"utf8"});
+                       let content = fs.readFileSync(ROOT_DIR+"/drafts/"+fileName,{encoding:"utf8"});
                        let post = {};
                        // this part really need a good fix
                        post.title = content.split("\n")[0].split(" ").slice(1).join(' ').trim();
