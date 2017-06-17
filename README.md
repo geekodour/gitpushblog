@@ -169,6 +169,13 @@ GITHUB_AUTH_TOKEN=6565THIS_IS_MY_TOKEN65565
 now running `npm run upload` will upload the posts inside `content` directory, after successful upload it will clear up
 the `content` directory.
 
+# Templates details
+The templates are created using nunjucks, though template authors can write templates the way the want
+but for the comment system to work properly they have to add three 
+
+If you're using react or any other javascript framework for making the blog you should
+check the `main.js` file inside
+
 # Todo
 - [ ] Make the `main.sass` file cleaner and organized
 - Will add more todo soon.. there's a lot of them.

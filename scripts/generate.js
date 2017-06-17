@@ -24,6 +24,7 @@ var pagination = {next:0,prev:0};
 
 // nunjucks configuration
 var nunjucks = _nunjucks.init();
+console.log(process.env.ROOT_DIR);
 
 // template generation
 function fetchAndStoreData(){

@@ -1,0 +1,49 @@
+{% extends 'snippets/base.html' %}
+{% block title %}geekodour's blog{% endblock title %}
+
+{% block inlinejavascript %}
+  <script>
+  window.blogInfo = {
+          pageType: 'index'
+  };
+  </script>
+{% endblock %}
+
+{% block page_content %}
+  <div class="columns">
+          <div class="column">
+            <div class=""></div>
+          </div>
+          <div class="column is-half">
+            {% block post_content %}
+              <div class="section post_content">
+                <div class="post-header">
+                  <h4 class="">latest posts</h4>
+                </div>
+                <ul>
+                {% for post in posts %}
+                <li class="post_list_item">
+                  <a href="/posts/{{ post.slug }}">{{ post.title }}</a>
+                  <span class="is-pulled-right">{{ post.date|date }}</span>
+                </li>
+                {% endfor %}
+                </ul>
+                <div class="container has-text-centered">
+                {% if pagination.prev %}
+                  <a class="" href="{{pagination.prev}}">prev</a>
+                {% endif %}
+                {% if pagination.next %}
+                  <a class="" href="{{pagination.next}}">next</a>
+                {% endif %}
+                </div>
+              </div>
+            {% endblock %}
+          </div>
+          <div class="column">
+            <div class="hidden-mobile">
+              {% include 'snippets/aboutbox.html' %}
+              {% include 'snippets/labelsBox.html' %}
+            </div>
+          </div>
+  </div>
+{% endblock page_content %}

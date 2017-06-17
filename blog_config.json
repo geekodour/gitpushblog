@@ -1,6 +1,7 @@
 {
   "meta": {
-    "blog_name": "geek blog"
+    "blog_name": "geek blog",
+    "blog_theme": "bulmadefault"
   },
   "username": "lukego",
   "author": "lukego",

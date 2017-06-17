@@ -15,7 +15,7 @@ const handleSignInAndComment = ()=>{
   // get commentbox
   let commentEl = document.querySelector('.textarea');
   if(commentEl.value){
-    document.querySelector('.comment-error-box').classList.add('is-hidden');
+    document.getElementById('comment-error-box').classList.add('is-hidden');
 
     firebaseService.signIn()
       .then(token=>{
@@ -29,7 +29,7 @@ const handleSignInAndComment = ()=>{
       });
   }
   else{
-    document.querySelector('.comment-error-box').classList.remove('is-hidden');
+    document.getElementById('comment-error-box').classList.remove('is-hidden');
   }
 }
 
@@ -97,6 +97,7 @@ const updateGithubComments = ()=>{
     let commentsContainer = document.getElementById('comments_container');
     let postId = blogInfo.postId;
     updateLoadMoreButtonHTML('is-loading');
+
     myblog.fetchBlogPostComments(postId).then(comments=>{
             generateLoadMoreButton("comment");
             comments.forEach(comment=>{
@@ -108,6 +109,7 @@ const updateGithubComments = ()=>{
 const updateCategoryList = ()=>{
   let postsContainer = document.getElementById('category_posts_container');
   updateLoadMoreButtonHTML('is-loading');
+
   myblog.fetchBlogPosts([blogInfo.label]).then(posts=>{
           generateLoadMoreButton("post");
           posts.forEach(post=>{

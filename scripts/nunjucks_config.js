@@ -1,17 +1,22 @@
 'use strict';
 var _nunjucks = require('nunjucks');
 var path = require('path');
+var bc = require('../blog_config.json');
 
 var ROOT_DIR = path.resolve('.');
 
-if(process.env.NODE_ENV === "production"){
+if( process.env.NODE_ENV === "production" ){
+  var nunjucks_opts = { autoescape: true, trimBlocks: true, lstripBlocks: true, watch: false };
+}
+else if( process.env.NODE_ENV === "test" ){
   var nunjucks_opts = { autoescape: true, trimBlocks: true, lstripBlocks: true, watch: false };
 }
 else{
   var nunjucks_opts = { autoescape: true, trimBlocks: true, lstripBlocks: true, watch: true };
 }
 
-var nunjucks = _nunjucks.configure(ROOT_DIR+'/views', nunjucks_opts);
+//var nunjucks = _nunjucks.configure(ROOT_DIR+'/views', nunjucks_opts);
+var nunjucks = _nunjucks.configure(`${ROOT_DIR}/themes/${bc.meta.blog_theme}`, nunjucks_opts);
 
 // date filter
 nunjucks.addFilter('date', function(str, count) {
