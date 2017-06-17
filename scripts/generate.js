@@ -1,30 +1,24 @@
 'use strict';
 
-/*
- *  STYLE IS INCONSISTET
- *  MAKE THE SCRIPT ES6 OR ES5???
- * */
-
 process.env.NODE_ENV = 'production';
 
-var ora = require('ora');
-var chalk = require('chalk');
-var path = require('path');
-var gitblog = require('github-blog-api');
-var mkdirp = require('mkdirp');
+const ora = require('ora');
+const chalk = require('chalk');
+const path = require('path');
+const gitblog = require('github-blog-api');
+const mkdirp = require('mkdirp');
 
-var bc = require('../blog_config.json');
-var _nunjucks = require('./nunjucks_config.js');
-var utils = require('./utils.js');
+const bc = require('../blog_config.json');
+const _nunjucks = require('./nunjucks_config.js');
+const utils = require('./utils.js');
 
-var ROOT_DIR = path.resolve('.');
-var spinner = ora({text:'Fetching posts',spinner:'line'});
-var pagination = {next:0,prev:0};
+const ROOT_DIR = process.env.ROOT_DIR;
+const spinner = ora({text:'Fetching posts',spinner:'line'});
+const pagination = {next:0,prev:0};
 
 
 // nunjucks configuration
-var nunjucks = _nunjucks.init();
-console.log(process.env.ROOT_DIR);
+const nunjucks = _nunjucks.init();
 
 // template generation
 function fetchAndStoreData(){
@@ -50,15 +44,14 @@ function generateTemplates(){
       var flatPosts = posts.reduce((posts_prev,posts_next)=>posts_prev.concat(posts_next));
       var pagination = {next:null,prev:null};
 
-      mkdirp.sync(ROOT_DIR+'/dist/category');
-      mkdirp.sync(ROOT_DIR+'/dist/posts');
+      mkdirp.sync(path.join(ROOT_DIR,'dist','category'));
+      mkdirp.sync(path.join(ROOT_DIR,'dist','posts'));
       // category templates
       Promise.all(utils.generateCategoryTemplates(labels,'dist'))
              .then(()=>{
-               // page templates
-               utils.generatePageTemplate('dist');
+
                // index templates
-               posts.forEach(function(post_arr,cur_page){
+               posts.forEach((post_arr,cur_page)=>{
                        pagination = Object.assign(pagination,
                          {
                            next:(posts.length === cur_page+1)?0:cur_page+2,
@@ -69,26 +62,28 @@ function generateTemplates(){
                        );
                        if(cur_page==0){
                          utils.generateIndexTemplate(post_arr,labels,pagination,'dist','index.html');
-                       }
-                       else{
+                       } else {
                          utils.generateIndexTemplate(post_arr,labels,pagination,'dist',cur_page+1+'.html');
                        }
                });
 
                // post templates
-               flatPosts.forEach(function(post){
+               flatPosts.forEach(post=>{
                        utils.generatePostTemplate(post,labels,'dist');
                });
+
+               // page templates
+               utils.generatePageTemplate('dist');
 
              });
 }
 
 // initiate the blog
-var blog = gitblog({username:bc.username,repo:bc.repo,author:bc.author});
+const blog = gitblog({username:bc.username,repo:bc.repo,author:bc.author});
 blog.setPost({per_page:bc.posts_per_page});
-var posts = [];
-var labels = [];
 
+let posts = [];
+let labels = [];
 
 spinner.start();
 blog.fetchAllLabels()

@@ -1,20 +1,21 @@
 'use strict';
 process.env.NODE_ENV = 'production';
 
-var path = require('path');
-var ora = require('ora');
-var rimraf = require('rimraf');
-var fs = require('fs');
-var gitblog = require('github-blog-api');
-var bc = require('../blog_config.json');
-var utils = require('./utils.js');
+const path = require('path');
+const ora = require('ora');
+const rimraf = require('rimraf');
+const fs = require('fs');
+const gitblog = require('github-blog-api');
+const bc = require('../blog_config.json');
+const utils = require('./utils.js');
 
-var ROOT_DIR = path.resolve('.');
-var spinner = ora({text:'Fetching posts',spinner:'line'});
+const ROOT_DIR = process.env.ROOT_DIR;
+const spinner = ora({text:'Uploading posts',spinner:'line'});
 
-require('dotenv').config({path:ROOT_DIR+"/.env"});
+//require('dotenv').config({path:ROOT_DIR+"/.env"});
+require('dotenv').config({path:path.join(ROOT_DIR,'.env')});
 
-var blog = gitblog({username:bc.username,repo:bc.repo,author:bc.author});
+const blog = gitblog({username:bc.username,repo:bc.repo,author:bc.author});
 blog.setPost({per_page:bc.posts_per_page});
 
 
