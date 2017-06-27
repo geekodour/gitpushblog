@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracing JITs and modern CPUs: double trouble, or, a problem shared is a problem halved?</title>
+    <meta name="description" content="">
+    <meta name="author" content="Hrishikesh Barman">
+
+    <link href="/assets/main.css" rel="stylesheet">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+
+  <script>
+  window.blogInfo = {
+          pageType: 'post',
+          postId: 5,
+          comment: {"disabled":false,"isGithub":true,"isDisqus":false,"isGithubAuth":true,"disqus_id":"geekodour"},
+          bc: {"meta":{"blog_name":"geek blog","blog_theme":"newbulmadefault"},"username":"lukego","author":"lukego","repo":"blog","posts_per_page":"6","comments_per_page":"3","comment":{"disabled":false,"isGithub":true,"isDisqus":false,"isGithubAuth":true,"disqus_id":"geekodour"},"firebaseConfig":{"apiKey":"AIzaSyAZSJ1d1Sr9MnTK-__3D8SrwXjjQf6EML4","authDomain":"myblog-2b0ba.firebaseapp.com","databaseURL":"https://myblog-2b0ba.firebaseio.com","projectId":"myblog-2b0ba","storageBucket":"myblog-2b0ba.appspot.com","messagingSenderId":"20890326099"}}
+  };
+  </script>
+
+  </head>
+
+  <body>
+<nav class="nav">
+  <div class="nav-left"></div>
+  <div class="nav-center">
+  <a class="nav-item title is-5" href="/">
+    geek blog
+  </a>
+  </div>
+  <span id="nav-toggle" class="nav-toggle">
+  <span></span>
+  <span></span>
+  <span></span>
+  </span>
+  <div id="nav-menu" class="nav-right nav-menu">
+  <a class="nav-item" href="">projects</a>
+  <a class="nav-item" href="">favorites</a>
+  <a class="nav-item" href="">contact</a>
+  </div>
+</nav>
+
+  <div class="columns">
+          <div class="column">
+            <div class=""></div>
+          </div>
+          <div class="column is-half">
+<div class="section">
+  <div class="container">
+    <div class="content">
+      <div class="post-header">
+      <span class="tag">luajit</span>
+      <span class="tag">tech</span>
+      <span class="is-pulled-right">24/7/2015</span>
+      </div>
+      <h1>Tracing jits and modern cpus: double trouble, or, a problem shared is a problem halved?</h1>
+      <p>Lately while hacking <a href="https://github.com/SnabbCo/snabbswitch/">Snabb Switch</a> I am spending a lot of time getting familiar with two mysterious technologies: trace-based just-in-time compilers and the latest Intel CPU microarchitectures.</p>
+<p>Each one is complex enough to make your head hurt. Is it madness to have to contend with both at the same time? Maybe. However, I am starting to see symmetry and to enjoy thinking about them both in combination rather than separately in isolation.</p>
+<h3 id="tracing-jits">Tracing JITs</h3>
+<p><a href="https://en.wikipedia.org/wiki/Tracing_just-in-time_compilation">Tracing just-in-time compilers</a> work by creating chunks of code (&quot;traces&quot;) with peculiar characteristics (slightly simplified):</p>
+<ol>
+<li>Flat: every single function call inlined.</li>
+<li>No branches.</li>
+<li>One loop.</li>
+</ol>
+<p>CPUs can execute code blindingly fast while it is &quot;on trace&quot;: that is, when you can keep the CPU running on one such block of code for a significant amount of time e.g. 100 nanoseconds. The trace compiler can make a whole new class of optimizations because it knows exactly which instructions will execute and exactly how control will flow.</p>
+<p>Code runs slower when it does not stay on-trace. This extremely specialized code generation is less effective when several traces have to be patched together. So there is a major benefit to be had from keeping the trace compiler happy -- and a penalty to be paid when you do something to piss it off.</p>
+<p>I want to have a really strong mental model of how code is compiled to traces. I am slowly getting there: I have even caught myself writing C code as if it were going to be trace compiled (which frankly would be very handy). However, this is a long journey, and in the meantime some of the optimization techniques are really surprising.</p>
+<p>Consider these optimization tips:</p>
+<ol>
+<li>Avoid nested loops.</li>
+<li>Avoid lots of tiny loops.</li>
+<li>Avoid loops with unpredictable iteration counts.</li>
+<li>Avoid unpredictable branches.</li>
+</ol>
+<p>Extreme, right? I mean, what is the point of having an <code>if</code> statement at all if the code is only allowed to take one of the alternatives? And when did loops, one of the most basic concepts in the history of computing, suddenly become taboo?</p>
+<p>On the face of it you might think that Tracing JITs are an anomoly that will soon disappear, like programming in a straight jacket. Then you would go back to your favourite static compiler or method-based JIT and use all the loops and branches that you damned well please.</p>
+<h3 id="intel-microarchitecture">Intel microarchitecture</h3>
+<p>Here is the rub: Modern CPUs also have a long do-and-don&#39;t list for maximizing performance at the machine code level. This sounds bad because if you are already stretching your brain to make the JIT happy then the last thing you want is another set of complex rules to follow. However, in practice the demands of the JIT and the CPU seem to be surprisingly well aligned, and thinking about satisfying one actually helps you to to satisfy the other.</p>
+<p>Here are a few rules from the <a href="http://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-optimization-manual.pdf">Intel Optimization Reference Manual</a> for Haswell that seem to be on point:</p>
+<blockquote>
+<ol>
+<li>Arrange code to make basic blocks contiguous and eliminate unnecessary branches.</li>
+<li>Avoid the use of conditional branches inside loops and consider using SSE instructions to eliminate branches.</li>
+<li>Favor inlining small functions that contain branches with poor prediction rates. If a branch misprediction results in a RETURN being prematurely predicted as taken, a performance penalty may be incurred.</li>
+</ol>
+</blockquote>
+<p>There is even a hardware <a href="https://en.wikipedia.org/wiki/CPU_cache#Trace_cache">trace cache</a> in the CPU that attempts to do some of the same optimizations as a software tracing JIT to improve performance.</p>
+<p>So what does it all mean? I don&#39;t know for sure yet but I am really enjoying thinking it through.</p>
+<p>I like to think that effort spent on making the JIT happy is also making the CPU happy. Then with a happy CPU we can better reap the benefits of <a href="http://mechanical-sympathy.blogspot.ch/2011/07/why-mechanical-sympathy.html">mechanical sympathy</a> and achieve seemingly impossible performance for more applications. Sure, a trace compiler takes some effort to please, but it is a lot more helpful and transparent than dealing with the CPU directly.</p>
+<p>In any case tracing JITs and modern CPU microarchitectures are both extremely interesting technologies and the study of one does stimulate a lot of interesting ideas about the other.</p>
+
+    </div>
+  </div>
+</div>
+<!-- comment section -->
+<div >
+    <div class="section">
+      <div id="comment_box">
+        <div class="field">
+        <label class="label">Your Comment</label>
+        <p class="control">
+          <textarea class="textarea" placeholder="Write something.."></textarea>
+        </p>
+        <p class="control">
+          <button id="signin_button" class="button is-medium is-success is-full-width">SignIn and Comment</button>
+        </p>
+        </div>
+      </div>
+      <div id="comment-error-box" class="is-hidden">
+        <small>Oops! need to write something to post a comment!</small>
+      </div>
+    </div>
+  <div id="comments_container"></div>
+    <div id="loadmore_container" class="has-text-centered">
+      <div class="button is-danger is-loading" id="loadmore_button">Load more</div>
+    </div>
+</div>
+<!-- end comment section -->
+          </div>
+          <div class="column">
+            <div class="hidden-mobile">
+<div class="card">
+  <div class="card-content">
+    <div class="media">
+      <div class="media-left">
+        <figure class="image is-48x48">
+          <img src="http://bulma.io/images/placeholders/96x96.png" alt="Image">
+        </figure>
+      </div>
+      <div class="media-content">
+        <p class="title is-4">Hrishikesh Barman</p>
+        <p class="subtitle is-6">@geekodour</p>
+      </div>
+    </div>
+
+    <div class="content">
+      <small>I am Hrishikesh</small>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-content">
+    <div class="content">
+      <small>categories</small>
+      <ul>
+      <li><a href="/category/hacking">hacking</a></li>
+      <li><a href="/category/life">life</a></li>
+      <li><a href="/category/luajit">luajit</a></li>
+      <li><a href="/category/snabb">snabb</a></li>
+      <li><a href="/category/tech">tech</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+            </div>
+          </div>
+  </div>
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p>github is love, github is life</p>
+    </div>
+  </div>
+</footer>
+
+ <script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>       <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+      <script src="/assets/main.js"></script>
+  </body>
+</html>

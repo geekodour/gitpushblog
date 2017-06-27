@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracing JITs and modern CPUs part 3: A bad case</title>
+    <meta name="description" content="">
+    <meta name="author" content="Hrishikesh Barman">
+
+    <link href="/assets/main.css" rel="stylesheet">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+
+  <script>
+  window.blogInfo = {
+          pageType: 'post',
+          postId: 8,
+          comment: {"disabled":false,"isGithub":true,"isDisqus":false,"isGithubAuth":true,"disqus_id":"geekodour"},
+          bc: {"meta":{"blog_name":"geek blog","blog_theme":"newbulmadefault"},"username":"lukego","author":"lukego","repo":"blog","posts_per_page":"6","comments_per_page":"3","comment":{"disabled":false,"isGithub":true,"isDisqus":false,"isGithubAuth":true,"disqus_id":"geekodour"},"firebaseConfig":{"apiKey":"AIzaSyAZSJ1d1Sr9MnTK-__3D8SrwXjjQf6EML4","authDomain":"myblog-2b0ba.firebaseapp.com","databaseURL":"https://myblog-2b0ba.firebaseio.com","projectId":"myblog-2b0ba","storageBucket":"myblog-2b0ba.appspot.com","messagingSenderId":"20890326099"}}
+  };
+  </script>
+
+  </head>
+
+  <body>
+<nav class="nav">
+  <div class="nav-left"></div>
+  <div class="nav-center">
+  <a class="nav-item title is-5" href="/">
+    geek blog
+  </a>
+  </div>
+  <span id="nav-toggle" class="nav-toggle">
+  <span></span>
+  <span></span>
+  <span></span>
+  </span>
+  <div id="nav-menu" class="nav-right nav-menu">
+  <a class="nav-item" href="">projects</a>
+  <a class="nav-item" href="">favorites</a>
+  <a class="nav-item" href="">contact</a>
+  </div>
+</nav>
+
+  <div class="columns">
+          <div class="column">
+            <div class=""></div>
+          </div>
+          <div class="column is-half">
+<div class="section">
+  <div class="container">
+    <div class="content">
+      <div class="post-header">
+      <span class="tag">hacking</span>
+      <span class="tag">luajit</span>
+      <span class="tag">snabb</span>
+      <span class="is-pulled-right">8/8/2015</span>
+      </div>
+      <h1>Tracing jits and modern cpus part 3: a bad case</h1>
+      <p>Let&#39;s look at a bad case for tracing JITs. The simple function we looked at in #6 worked really well but turns out to be quite fragile. Let us look at how to break it and see if we can learn something in the process.</p>
+<p>I write this from my perspective as a humble application programmer who only needs to understand the fundamentals well enough to write efficient programs. I will not be offering any grand insights into compilers on this blog (though perhaps commenters will).</p>
+<h4 id="background">Background</h4>
+<p>Back in #6 I wrote a simple Lua module for <a href="https://github.com/SnabbCo/snabbswitch">Snabb Switch</a> and found that the JIT compiled it surprisingly well and that the CPU executed the code surprisingly well too.</p>
+<p>The code was a simple loop to bump a counter one billion times. The code is high-level Lua that even includes a hashtable lookup in the inner loop (looking up the <code>add</code> function from the <code>counter</code> table):</p>
+<pre><code class="lang-lua">local counter = require(&quot;core.counter&quot;)
+
+local n = 1e9
+local c = counter.open(&quot;test&quot;)
+for i = 1,n do
+   counter.add(c, 1)
+end
+</code></pre>
+<p>LuaJIT compiled this down to a trace: a linear block of machine code that contains at most one loop and otherwise no internal branches. The loop compiled down to five instructions:</p>
+<pre><code>-&gt;LOOP:
+0bcafab0  add rbp, +0x01
+0bcafab4  mov [rcx+0x8], rbp
+0bcafab8  add ebx, +0x01
+0bcafabb  cmp ebx, eax
+0bcafabd  jle 0x0bcafab0    -&gt;LOOP
+</code></pre><p>and I was pleasantly surprised when <code>perf stat</code> told me that my CPU executes all five of those instructions in one cycle:</p>
+<pre><code>     5,021,702,476 instructions              #    4.58  insns per cycle        
+     1,097,518,679 cycles
+</code></pre><p>That paints a very pretty picture. But it is easy to shake this up.</p>
+<h4 id="just-a-little-innocent-change">Just a little innocent change</h4>
+<p>Here is an innocent looking new version of the program that contains an <code>if</code> to count 1 when the loop index is even and 10 otherwise:</p>
+<pre><code class="lang-lua">local counter = require(&quot;core.counter&quot;)
+
+local n = 1e9
+local c = counter.open(&quot;test&quot;)
+for i = 1,n do
+   if i % 2 == 0 then
+      counter.add(c, 1)
+   else
+      counter.add(c, 10)
+   end
+end
+</code></pre>
+<p>How does this version run?</p>
+<pre><code>    36,029,310,879 instructions              #    2.38  insns per cycle        
+    15,109,330,649 cycles
+</code></pre><p>Oops! Now each iteration takes 15 cycles and executes 36 instructions. That is a 15x slow down.</p>
+<h4 id="what-happened-">What happened?</h4>
+<p>The high-level explanation is actually straightforward. The first version runs fast because the loop executes very few instructions: most of the work like table lookups has been &quot;hoisted&quot; to run before entering the loop. The second version runs slowly because it is frequently repeating this setup work.</p>
+<p>To understand what happens we can read the <a href="https://gist.github.com/lukego/609b4e61b28c6666332e">JIT dumps for the first version and second version</a> and draw pictures of the flow of control. In these diagrams each box is a trace i.e. a series of machine code instructions that will execute from top to bottom. Branches are drawn as arrows and there are two kinds: the <em>loop</em> back into an earlier part of the trace (at most one is allowed) or an <em>exit</em> to a different trace. The &quot;hot&quot; code that consumes the CPU is highlighted.</p>
+<p>Here is a picture of the first version that runs fast:</p>
+<p><img src="https://cloud.githubusercontent.com/assets/13791/9150496/ba6e8e3e-3ddb-11e5-9f37-1161e02818c0.jpeg" alt="first"></p>
+<p>and below is the full machine code. I don&#39;t really bother to read every instruction here. My observation is that the proportions match the diagram: quite a lot of instructions upon entry and then a small number of instructions in the loop.</p>
+<pre><code>---- TRACE 3 mcode 212
+0bcaf9f0  mov dword [0x41693410], 0x3
+0bcaf9fb  movsd xmm7, [rdx+0x20]
+0bcafa00  cvttsd2si eax, xmm7
+0bcafa04  xorps xmm6, xmm6
+0bcafa07  cvtsi2sd xmm6, eax
+0bcafa0b  ucomisd xmm7, xmm6
+0bcafa0f  jnz 0x0bca0010    -&gt;0
+0bcafa15  jpe 0x0bca0010    -&gt;0
+0bcafa1b  cmp eax, 0x7ffffffe
+0bcafa21  jg 0x0bca0010 -&gt;0
+0bcafa27  cvttsd2si ebx, [rdx+0x18]
+0bcafa2c  cmp dword [rdx+0x4], -0x0c
+0bcafa30  jnz 0x0bca0010    -&gt;0
+0bcafa36  mov r8d, [rdx]
+0bcafa39  cmp dword [r8+0x1c], +0x0f
+0bcafa3e  jnz 0x0bca0010    -&gt;0
+0bcafa44  mov esi, [r8+0x14]
+0bcafa48  mov rdi, 0xfffffffb4169d9e8
+0bcafa52  cmp rdi, [rsi+0x140]
+0bcafa59  jnz 0x0bca0010    -&gt;0
+0bcafa5f  cmp dword [rsi+0x13c], -0x09
+0bcafa66  jnz 0x0bca0010    -&gt;0
+0bcafa6c  cmp dword [rdx+0x14], -0x0b
+0bcafa70  jnz 0x0bca0010    -&gt;0
+0bcafa76  mov ecx, [rdx+0x10]
+0bcafa79  cmp dword [rsi+0x138], 0x4172d7b0
+0bcafa83  jnz 0x0bca0010    -&gt;0
+0bcafa89  movzx edx, word [rcx+0x6]
+0bcafa8d  cmp edx, 0x4f9
+0bcafa93  jnz 0x0bca0010    -&gt;0
+0bcafa99  mov rbp, [rcx+0x8]
+0bcafa9d  add rbp, +0x01
+0bcafaa1  mov [rcx+0x8], rbp
+0bcafaa5  add ebx, +0x01
+0bcafaa8  cmp ebx, eax
+0bcafaaa  jg 0x0bca0014 -&gt;1
+-&gt;LOOP:
+0bcafab0  add rbp, +0x01
+0bcafab4  mov [rcx+0x8], rbp
+0bcafab8  add ebx, +0x01
+0bcafabb  cmp ebx, eax
+0bcafabd  jle 0x0bcafab0    -&gt;LOOP
+0bcafabf  jmp 0x0bca001c    -&gt;3
+---- TRACE 3 stop -&gt; loop
+</code></pre><p>So what changes in the second version that causes the inner loop to expand from 5 instructions up to 36? Here is the picture:</p>
+<p><img src="https://cloud.githubusercontent.com/assets/13791/9150497/c2419a5c-3ddb-11e5-9cec-311ff33df39e.jpeg" alt="second"></p>
+<p>Now we have two traces: the original <em>root trace</em> and a new <em>side trace</em>. This is necessary because there is a branch (<code>if</code>) in our code and traces are not allowed to have internal branches. The root trace will internally handle the case when the loop index is even but it will <em>exit</em> to the side trace when the index is odd. The side trace then rejoins the root trace. The effect is that the loop alternates between saying inside the root trace and exiting to the side trace.</p>
+<p>The picture also illustrates the two reasons why we execute so many instructions now. First, the side trace is bigger than the loop in the root trace (i.e. it contains more instructions). Second, when the side trace branches back to the root trace it re-enters at the top instead of taking a short-cut into the inner loop. This means that overall we execute more instructions.</p>
+<p>Let us zoom in to a bit more detail: first to look at the inner loop in the root trace, then to look at the side trace, and finally to look at the complete root trace that is running every time the side trace branches back.</p>
+<p>Here is the new loop in the root trace (with added comments):</p>
+<pre><code>-&gt;LOOP:
+0bcafaa0  test ebx, 0x1               ; loop index is odd?
+0bcafaa6  jnz 0x0bca0024    -&gt;5   ; yes: exit this trace
+0bcafaac  add rbp, +0x01
+0bcafab0  mov [rcx+0x8], rbp
+0bcafab4  add ebx, +0x01
+0bcafab7  cmp ebx, eax
+0bcafab9  jle 0x0bcafaa0    -&gt;LOOP
+</code></pre><p>The difference from the original trace is the two new instructions at the start. These test a <em>guard</em> for the trace (that the loop index must be even) and branch to an exit if this condition does not hold. So when the loop index happens to be even the execution will be very similar to the original version, but when the loop index is odd we will exit to the side trace.</p>
+<p>Here is the code for the side trace.</p>
+<pre><code>---- TRACE 4 mcode 171
+0bcaf922  mov dword [0x416ac410], 0x4
+0bcaf92d  mov edx, [0x416ac4b4]
+0bcaf934  cmp dword [rdx+0x4], -0x0c
+0bcaf938  jnz 0x0bca0010    -&gt;0
+0bcaf93e  mov ebp, [rdx]
+0bcaf940  cmp dword [rbp+0x1c], +0x0f
+0bcaf944  jnz 0x0bca0010    -&gt;0
+0bcaf94a  mov ebp, [rbp+0x14]
+0bcaf94d  mov rdi, 0xfffffffb416b69e8
+0bcaf957  cmp rdi, [rbp+0x140]
+0bcaf95e  jnz 0x0bca0010    -&gt;0
+0bcaf964  cmp dword [rbp+0x13c], -0x09
+0bcaf96b  jnz 0x0bca0010    -&gt;0
+0bcaf971  cmp dword [rdx+0x14], -0x0b
+0bcaf975  jnz 0x0bca0010    -&gt;0
+0bcaf97b  mov r15d, [rdx+0x10]
+0bcaf97f  cmp dword [rbp+0x138], 0x413fe7b0
+0bcaf989  jnz 0x0bca0010    -&gt;0
+0bcaf98f  movzx ebp, word [r15+0x6]
+0bcaf994  cmp ebp, 0x4f9
+0bcaf99a  jnz 0x0bca0010    -&gt;0
+0bcaf9a0  mov rbp, [r15+0x8]
+0bcaf9a4  add rbp, +0x0a
+0bcaf9a8  mov [r15+0x8], rbp
+0bcaf9ac  add ebx, +0x01
+0bcaf9af  cmp ebx, eax
+0bcaf9b1  jg 0x0bca0014 -&gt;1
+0bcaf9b7  xorps xmm7, xmm7
+0bcaf9ba  cvtsi2sd xmm7, ebx
+0bcaf9be  movsd [rdx+0x30], xmm7
+0bcaf9c3  movsd [rdx+0x18], xmm7
+0bcaf9c8  jmp 0x0bcaf9d4
+---- TRACE 4 stop -&gt; 3
+</code></pre><p>I have not read this code in detail but here are a couple of observations:</p>
+<ol>
+<li>It contains 32 instructions. This side trace will run on every second iteration of the loop and so it seems to account for about half of the 36 instructions per iteration reported by <code>perf</code>.</li>
+<li>The trace ends by branching to address <code>0bcaf9d4</code> which turns out to be the beginning of the root trace (not the inner loop).</li>
+</ol>
+<p>Here finally is the entire root trace, this time including the initial code before the loop that executes when the side trace branches back:</p>
+<pre><code>---- TRACE 3 mcode 236
+0bcaf9d4  mov dword [0x416ac410], 0x3
+0bcaf9df  movsd xmm7, [rdx+0x20]
+0bcaf9e4  cvttsd2si eax, xmm7
+0bcaf9e8  xorps xmm6, xmm6
+0bcaf9eb  cvtsi2sd xmm6, eax
+0bcaf9ef  ucomisd xmm7, xmm6
+0bcaf9f3  jnz 0x0bca0010    -&gt;0
+0bcaf9f9  jpe 0x0bca0010    -&gt;0
+0bcaf9ff  cmp eax, 0x7ffffffe
+0bcafa05  jg 0x0bca0010 -&gt;0
+0bcafa0b  cvttsd2si ebx, [rdx+0x18]
+0bcafa10  test ebx, 0x1
+0bcafa16  jnz 0x0bca0014    -&gt;1
+0bcafa1c  cmp dword [rdx+0x4], -0x0c
+0bcafa20  jnz 0x0bca0018    -&gt;2
+0bcafa26  mov r8d, [rdx]
+0bcafa29  cmp dword [r8+0x1c], +0x0f
+0bcafa2e  jnz 0x0bca0018    -&gt;2
+0bcafa34  mov esi, [r8+0x14]
+0bcafa38  mov rdi, 0xfffffffb416b69e8
+0bcafa42  cmp rdi, [rsi+0x140]
+0bcafa49  jnz 0x0bca0018    -&gt;2
+0bcafa4f  cmp dword [rsi+0x13c], -0x09
+0bcafa56  jnz 0x0bca0018    -&gt;2
+0bcafa5c  cmp dword [rdx+0x14], -0x0b
+0bcafa60  jnz 0x0bca0018    -&gt;2
+0bcafa66  mov ecx, [rdx+0x10]
+0bcafa69  cmp dword [rsi+0x138], 0x413fe7b0
+0bcafa73  jnz 0x0bca0018    -&gt;2
+0bcafa79  movzx edx, word [rcx+0x6]
+0bcafa7d  cmp edx, 0x4f9
+0bcafa83  jnz 0x0bca0018    -&gt;2
+0bcafa89  mov rbp, [rcx+0x8]
+0bcafa8d  add rbp, +0x01
+0bcafa91  mov [rcx+0x8], rbp
+0bcafa95  add ebx, +0x01
+0bcafa98  cmp ebx, eax
+0bcafa9a  jg 0x0bca001c -&gt;3
+-&gt;LOOP:
+0bcafaa0  test ebx, 0x1
+0bcafaa6  jnz 0x0bca0024    -&gt;5
+0bcafaac  add rbp, +0x01
+0bcafab0  mov [rcx+0x8], rbp
+0bcafab4  add ebx, +0x01
+0bcafab7  cmp ebx, eax
+0bcafab9  jle 0x0bcafaa0    -&gt;LOOP
+0bcafabb  jmp 0x0bca0028    -&gt;6
+</code></pre><p>The trace executes an additional 38 instructions before entering the loop. This path will be taken on every second loop iteration, when the exit to the side trace is taken and it branches back to the top. That would seem to account for the rest of the instructions reported by <code>perf</code>.</p>
+<h4 id="so-">So...?</h4>
+<p>If I were a compiler expert then this is where I would explain why the code compiles in this way and provide interesting links to all the relevant research. But I am not. So all I can really state are my own personal observations.</p>
+<ol>
+<li>The trace structure seems to be significant. The first version was awesomely fast because it kept the CPU on the same trace for an extended period of time.</li>
+<li>Microbenchmarks can be very hard to interpret. How do you decide whether a particular programming construct -- for example the <code>counter.add(...)</code> module lookupg - is cheap or expensive? The answer seems very context dependent.</li>
+<li>Good profiling tools and a strong mental model are probably critical to achieving predictably high performance.</li>
+<li>Now I understand the <a href="http://wiki.luajit.org/Numerical-Computing-Performance-Guide">LuaJIT numerical computing optimization tip</a> &quot;Reduce unbiased branches. Heavily biased branches (&gt;95% in one direction) are fine.&quot; If we were only executing the side trace on 1/20th of the iterations then the cost would not be a problem.</li>
+</ol>
+<p>I find this all very interesting. The issues are subtle and complex, but most languages and platforms are subtle and complex to optimize when you first start taking them seriously. I am happy to keep geeking out on these ideas.</p>
+<h4 id="thanks">Thanks</h4>
+<p>Thanks to Alex Gall and Andy Wingo for mentioning the issue of side-traces re-entering their parent traces at the root, so that I could recognise it when I saw it too.</p>
+
+    </div>
+  </div>
+</div>
+<!-- comment section -->
+<div >
+    <div class="section">
+      <div id="comment_box">
+        <div class="field">
+        <label class="label">Your Comment</label>
+        <p class="control">
+          <textarea class="textarea" placeholder="Write something.."></textarea>
+        </p>
+        <p class="control">
+          <button id="signin_button" class="button is-medium is-success is-full-width">SignIn and Comment</button>
+        </p>
+        </div>
+      </div>
+      <div id="comment-error-box" class="is-hidden">
+        <small>Oops! need to write something to post a comment!</small>
+      </div>
+    </div>
+  <div id="comments_container"></div>
+    <div id="loadmore_container" class="has-text-centered">
+      <div class="button is-danger is-loading" id="loadmore_button">Load more</div>
+    </div>
+</div>
+<!-- end comment section -->
+          </div>
+          <div class="column">
+            <div class="hidden-mobile">
+<div class="card">
+  <div class="card-content">
+    <div class="media">
+      <div class="media-left">
+        <figure class="image is-48x48">
+          <img src="http://bulma.io/images/placeholders/96x96.png" alt="Image">
+        </figure>
+      </div>
+      <div class="media-content">
+        <p class="title is-4">Hrishikesh Barman</p>
+        <p class="subtitle is-6">@geekodour</p>
+      </div>
+    </div>
+
+    <div class="content">
+      <small>I am Hrishikesh</small>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-content">
+    <div class="content">
+      <small>categories</small>
+      <ul>
+      <li><a href="/category/hacking">hacking</a></li>
+      <li><a href="/category/life">life</a></li>
+      <li><a href="/category/luajit">luajit</a></li>
+      <li><a href="/category/snabb">snabb</a></li>
+      <li><a href="/category/tech">tech</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+            </div>
+          </div>
+  </div>
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p>github is love, github is life</p>
+    </div>
+  </div>
+</footer>
+
+ <script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>       <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+      <script src="/assets/main.js"></script>
+  </body>
+</html>

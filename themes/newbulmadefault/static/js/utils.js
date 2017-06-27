@@ -130,6 +130,7 @@ const updateGithubComments = ()=>{
 export const updateCategoryList = () => {
   // we could have generated the items in category
   // page using nunjucks, just using an alternative here
+  //const loadMoreButton = document.getElementById('loadmore_button');
   loadMoreButton.classList.add('is-loading');
 
   // fetchBlogPosts takes `[]` of labels

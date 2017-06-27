@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracing JITs and modern CPUs: Part 2</title>
+    <meta name="description" content="">
+    <meta name="author" content="Hrishikesh Barman">
+
+    <link href="/assets/main.css" rel="stylesheet">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+
+  <script>
+  window.blogInfo = {
+          pageType: 'post',
+          postId: 6,
+          comment: {"disabled":false,"isGithub":true,"isDisqus":false,"isGithubAuth":true,"disqus_id":"geekodour"},
+          bc: {"meta":{"blog_name":"geek blog","blog_theme":"newbulmadefault"},"username":"lukego","author":"lukego","repo":"blog","posts_per_page":"6","comments_per_page":"3","comment":{"disabled":false,"isGithub":true,"isDisqus":false,"isGithubAuth":true,"disqus_id":"geekodour"},"firebaseConfig":{"apiKey":"AIzaSyAZSJ1d1Sr9MnTK-__3D8SrwXjjQf6EML4","authDomain":"myblog-2b0ba.firebaseapp.com","databaseURL":"https://myblog-2b0ba.firebaseio.com","projectId":"myblog-2b0ba","storageBucket":"myblog-2b0ba.appspot.com","messagingSenderId":"20890326099"}}
+  };
+  </script>
+
+  </head>
+
+  <body>
+<nav class="nav">
+  <div class="nav-left"></div>
+  <div class="nav-center">
+  <a class="nav-item title is-5" href="/">
+    geek blog
+  </a>
+  </div>
+  <span id="nav-toggle" class="nav-toggle">
+  <span></span>
+  <span></span>
+  <span></span>
+  </span>
+  <div id="nav-menu" class="nav-right nav-menu">
+  <a class="nav-item" href="">projects</a>
+  <a class="nav-item" href="">favorites</a>
+  <a class="nav-item" href="">contact</a>
+  </div>
+</nav>
+
+  <div class="columns">
+          <div class="column">
+            <div class=""></div>
+          </div>
+          <div class="column is-half">
+<div class="section">
+  <div class="container">
+    <div class="content">
+      <div class="post-header">
+      <span class="tag">hacking</span>
+      <span class="tag">luajit</span>
+      <span class="is-pulled-right">25/7/2015</span>
+      </div>
+      <h1>Tracing jits and modern cpus: part 2</h1>
+      <p>Hi there!</p>
+<p>Here is a simple exercise to connect the theory and practice of tracing JITs and modern Intel microarchitectures. I write a small example program, see how LuaJIT compiles it to a trace, and then see how a Haswell CPU executes it. This follows on from #5 and #3 respectively.</p>
+<h3 id="tracing-jit">Tracing JIT</h3>
+<p>The program is trivially simple: it uses the Snabb Switch <code>counter</code> module to create a counter object and then increment that one billion times. Snabb Switch counters are represented as binary files on disk that each contain one 64-bit number (each file is 8 bytes). The reason we allocate counters on the file system is to make them directly available to diagnostic programs that are tracking network packets processed, packets dropped, and so on. The way we actually access them in Lua code is by mapping them into memory with <code>mmap()</code> and then accessing them directly as <a href="http://luajit.org/ext_ffi_tutorial.html">FFI</a> <code>uint64_t *</code> values. (See the <a href="https://github.com/SnabbCo/snabbswitch/blob/master/src/core/shm.lua"><code>shm</code></a> module for our cute little API to allocate arbitrary C data types as named shared memory objects.)</p>
+<p>Here is the code:</p>
+<pre><code class="lang-lua">local counter = require(&quot;core.counter&quot;)
+
+local n = 1e9
+local c = counter.open(&quot;test&quot;)
+for i = 1,n do
+   counter.add(c, 1)
+end
+</code></pre>
+<p>I run this using <a href="https://github.com/SnabbCo/snabbswitch/tree/master/src/program/snsh">snsh</a> (snabb shell, a LuaJIT frontend) with JIT trace dumping enabled:</p>
+<pre><code># ./snabb snsh -jdump script.lua
+</code></pre><p>which outputs a <a href="https://gist.github.com/lukego/6fcf9023ddda137c933a">full dump</a> (<a href="http://wiki.luajit.org/Bytecode-2.0">bytecode</a>, <a href="http://wiki.luajit.org/SSA-IR-2.0">intermediate representation</a>, and x86 machine code) from which we can look at the machine code for the loop that will execute one billion times:</p>
+<pre><code>-&gt;LOOP:
+0bcaf790  add rbp, +0x01
+0bcaf794  mov [rcx], rbp
+0bcaf797  add ebx, +0x01
+0bcaf79a  cmp ebx, eax
+0bcaf79c  jle 0x0bcaf790    -&gt;LOOP
+</code></pre><p>There we see that LuaJIT has compiled the loop body down to five instructions:</p>
+<ol>
+<li>Bump counter value in register.</li>
+<li>Store counter value to memory.</li>
+<li>Bump loop iteration counter.</li>
+<li>Check for loop termination.</li>
+<li>Branch back to start of loop.</li>
+</ol>
+<p>This seems pretty nice actually: according to the semantics of Lua the call to <code>counter.add()</code> is actually a hashtable lookup and a function call but LuaJIT has been able to optimize this away and inline the call into two instructions. (Hat tip to Mike Pall and his very impressive brain.)</p>
+<p>So that is what the tracing JIT does!</p>
+<h3 id="haswell-cpu">Haswell CPU</h3>
+<p>Now what does the Haswell CPU do with this?</p>
+<p>First the theory: we can refer to the excellent <a href="http://www.anandtech.com/show/6355/intels-haswell-architecture/8">AnandTech article</a> to see how each Haswell CPU core works:</p>
+<p><img src="http://images.anandtech.com/reviews/cpu/intel/Haswell/Architecture/haswellexec.png" alt="haswell microarchitecutre"></p>
+<p>The CPU takes in a large number of x86 instructions, JITs them all into internal Haswell micro-instructions, figures out their interdependencies, and schedules them for parallel execution across eight independent execution units. (This is a sophisticated piece of technology.)</p>
+<p>To connect this with practice we will use the <code>ocperf.py</code> program from <a href="https://github.com/andikleen/pmu-tools">pmu-tools</a> to access some CPU performance counters. Performance counters give us visbility into the internal workings of the CPU: a modern Xeon exports a lot of diagnostic information and is very far from a black box.</p>
+<p>I test with a Xeon E5-2620 v3 and this command:</p>
+<pre><code># events=instructions,cycles,branches,branch-misses,L1-dcache-stores,L1-dcache-store-misses,uops_executed_port.port_0,uops_executed_port.port_1,uops_executed_port.port_2,uops_executed_port.port_3,uops_executed_port.port_4,uops_executed_port.port_5,uops_executed_port.port_6,uops_executed_port.port_7
+
+# ocperf.py stat -e $events ./snabb snsh script.lua
+
+ Performance counter stats for &#39;./snabb snsh script.lua&#39;:
+
+     4,943,623,915      instructions              #    4.93  insns per cycle         [36.34%]
+     1,002,132,062      cycles                    [36.89%]
+       972,186,713      branches                                                     [37.44%]
+           465,760      branch-misses             #    0.05% of all branches         [38.01%]
+       964,577,367      L1-dcache-stores                                             [38.09%]
+           193,800      L1-dcache-store-misses                                       [29.38%]
+       667,517,657      uops_executed_port_port_0                                    [28.52%]
+       672,651,709      uops_executed_port_port_1                                    [27.66%]
+       434,145,210      uops_executed_port_port_2                                    [27.56%]
+       367,160,760      uops_executed_port_port_3                                    [29.60%]
+       962,831,791      uops_executed_port_port_4                                    [29.33%]
+       651,043,422      uops_executed_port_port_5                                    [29.07%]
+       989,614,752      uops_executed_port_port_6                                    [28.77%]
+       215,443,552      uops_executed_port_port_7                                    [28.52%]
+
+       0.465658029 seconds time elapsed
+</code></pre><p>So what does this mean?</p>
+<ol>
+<li>The loop executed around 5 billion <code>instructions</code>. This makes sense because we counted five instructions in the loop body and we chose an iteration count of one billion.</li>
+<li>The loop executed in 1 billion <code>cycles</code>. Holy shit! The CPU is actually executing the entire loop - all five instructions - in only one cycle. I am impressed.</li>
+<li>There were a billion branches but the CPU predicted them all correctly.</li>
+<li>There were a billion memory stores but the CPU made them all hit the L1 cache.</li>
+<li>The Haswell execution units 4 and 6 were used continuously and the CPU scheduled the rest of the load across execution units 0, 1, 2, 3, and 7. I can see what port 4 would need to be used continuously because it is the only execution core capable of <em>Store Data</em> but that is the limit of my interpretation.</li>
+</ol>
+<p>Cool stuff!</p>
+<h3 id="the-end">The end</h3>
+<p>This is the level of visibility that I want to have into the programs I am working on. I am quite satisfied with this example. Now what I want to do is make it easy for Snabb Switch hackers to get this level of visibility into the practical code that they are working on.</p>
+
+    </div>
+  </div>
+</div>
+<!-- comment section -->
+<div >
+    <div class="section">
+      <div id="comment_box">
+        <div class="field">
+        <label class="label">Your Comment</label>
+        <p class="control">
+          <textarea class="textarea" placeholder="Write something.."></textarea>
+        </p>
+        <p class="control">
+          <button id="signin_button" class="button is-medium is-success is-full-width">SignIn and Comment</button>
+        </p>
+        </div>
+      </div>
+      <div id="comment-error-box" class="is-hidden">
+        <small>Oops! need to write something to post a comment!</small>
+      </div>
+    </div>
+  <div id="comments_container"></div>
+    <div id="loadmore_container" class="has-text-centered">
+      <div class="button is-danger is-loading" id="loadmore_button">Load more</div>
+    </div>
+</div>
+<!-- end comment section -->
+          </div>
+          <div class="column">
+            <div class="hidden-mobile">
+<div class="card">
+  <div class="card-content">
+    <div class="media">
+      <div class="media-left">
+        <figure class="image is-48x48">
+          <img src="http://bulma.io/images/placeholders/96x96.png" alt="Image">
+        </figure>
+      </div>
+      <div class="media-content">
+        <p class="title is-4">Hrishikesh Barman</p>
+        <p class="subtitle is-6">@geekodour</p>
+      </div>
+    </div>
+
+    <div class="content">
+      <small>I am Hrishikesh</small>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-content">
+    <div class="content">
+      <small>categories</small>
+      <ul>
+      <li><a href="/category/hacking">hacking</a></li>
+      <li><a href="/category/life">life</a></li>
+      <li><a href="/category/luajit">luajit</a></li>
+      <li><a href="/category/snabb">snabb</a></li>
+      <li><a href="/category/tech">tech</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+            </div>
+          </div>
+  </div>
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p>github is love, github is life</p>
+    </div>
+  </div>
+</footer>
+
+ <script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>       <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+      <script src="/assets/main.js"></script>
+  </body>
+</html>
