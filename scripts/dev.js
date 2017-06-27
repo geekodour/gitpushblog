@@ -34,7 +34,7 @@ function generateTemplates(){
         let flatPosts = posts.reduce((posts_prev,posts_next)=>posts_prev.concat(posts_next));
         let pagination = {next:null,prev:null};
 
-        // index pages
+        // index pages and pagination
         posts.forEach((post_arr,cur_page)=>{
                 pagination = Object.assign(pagination,
                   {
@@ -57,50 +57,20 @@ function generateTemplates(){
                 utils.generatePostTemplate(post,labels,'dev');
         });
 
+        // other pages
+        utils.generatePageTemplate('dev');
+
+        // category pages
+        utils.generateCategoryTemplates2(labels,'dev')
+
         console.log(chalk.bold.green(`Templates generated. \nAvailable on:\n http://localhost:${PORT}`));
-}
-
-
-// fetch github data
-
-function fetchAndStoreData(){
-  blog.fetchBlogPosts()
-      .then(_posts=>{
-
-            posts.push(_posts);
-
-            if(!blog.settings.posts.last_reached){
-                    fetchAndStoreData();
-            }
-            else {
-                    spinner.stop();
-                    posts[0].unshift(...listOfFiles)
-                    startDevMode();
-            }
-      })
-      .catch(function(err){
-            spinner.stop();
-            console.log(chalk.bold.red('Could not fetch github data for some reason\nUsing offline data.'));
-            posts.push(listOfFiles)
-            startDevMode();
-      });
 }
 
 function startDevMode(){
 
       mkdirp.sync(path.join(ROOT_DIR,'dev','category'));
       mkdirp.sync(path.join(ROOT_DIR,'dev','posts'));
-      // Promise.all the creation of category pages
-      // then create index and other pages
-      // There is mixed use of sync and async functions
-      // need to fix that
-      Promise.all(utils.generateCategoryTemplates(labels,'dev'))
-             .then(()=>{
-               // index and post pages
-               generateTemplates();
-               // other pages
-               utils.generatePageTemplate('dev');
-             });
+      generateTemplates();
 
       // watch for changes in the theme directory and regenerate on change
       chokidar.watch(THEME_DIR, {ignored: /(^|[\/\\])\../}).on('all', (event, path) => {
@@ -110,26 +80,64 @@ function startDevMode(){
       });
 }
 
-// start the dev thing
-spinner.start();
-blog.fetchAllLabels()
+function getAllPosts(){
+  let posts = [];
+  return new Promise((resolve,reject)=>{
+    (function callFetchBlogPosts(){
+      blog.fetchBlogPosts()
+          .then(_posts=>{
+                if(blog.settings.posts.last_reached){
+                        resolve(posts);
+                }
+                else{
+                  callFetchBlogPosts();
+                }
+                posts.push(_posts);
+          })
+          .catch(function(err){
+                console.log(chalk.bold.red('Could not fetch github data for some reason\nUsing offline data.'));
+                resolve(posts);
+          });
+    })()
+  });
+}
+
+function getAllLabels(){
+  return new Promise((resolve,reject)=>{
+    blog.fetchAllLabels()
         .then(_labels=>{
-                labels = _labels;
-                let fileContents = utils.getOfflineFileContents();
-                Promise.all(fileContents).then((offlineFileContents)=>{
-                  listOfFiles = offlineFileContents;
-                  fetchAndStoreData();
-                });
+                resolve(_labels);
         })
         .catch(err=>{
-                let fileContents = utils.getOfflineFileContents();
-                Promise.all(fileContents).then((offlineFileContents)=>{
-                  listOfFiles = offlineFileContents;
-                  fetchAndStoreData();
-                });
-                console.log(chalk.bold.red('Could not fetch github data due to network issue'));
+                console.log(chalk.bold.red('Could not fetch github label data due to network issue'));
+                resolve(labels);
         });
+  });
+}
 
+
+function fetchAndStoreData(){
+  Promise.all([getAllPosts(), getAllLabels(),utils.getOfflineFileContents()])
+         .then(vals=>{
+            spinner.stop();
+            posts = vals[0];
+            labels = vals[1];
+            listOfFiles = vals[2];
+            posts[0].unshift(...listOfFiles)
+            startDevMode();
+         })
+         .catch(err=>{
+            spinner.stop();
+            utils.getOfflineFileContents()
+                 .then(files=>{
+                   posts.push(files)
+                   startDevMode();
+                 })
+         })
+}
+
+spinner.start();
+fetchAndStoreData();
 
 // start the dev server silently
 server.start({
