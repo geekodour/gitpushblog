@@ -5,20 +5,25 @@ process.env.NODE_ENV = 'production';
 const ora = require('ora');
 const chalk = require('chalk');
 const path = require('path');
-const gitblog = require('github-blog-api');
+//const gitblog = require('github-blog-api');
 const mkdirp = require('mkdirp');
 
+// import configuration files
+const init = require('./init');
 const bc = require('../blog_config.json');
-const _nunjucks = require('./nunjucks_config.js');
 const utils = require('./utils.js');
 
+// init nunjucks and blog and env variables
+const {blog} = init.init();
+
+
+// initilize some constants, `process.env.ROOT_DIR` is set in `utils.js`
 const ROOT_DIR = process.env.ROOT_DIR;
 const spinner = ora({text:'Fetching posts',spinner:'line'});
-const pagination = {next:0,prev:0};
+let posts = [];
+let labels = [];
+// const pagination = {next:0,prev:0};
 
-
-// nunjucks configuration
-const nunjucks = _nunjucks.init();
 
 // template generation
 function fetchAndStoreData(){
@@ -41,8 +46,8 @@ function fetchAndStoreData(){
 }
 
 function generateTemplates(){
-      var flatPosts = posts.reduce((posts_prev,posts_next)=>posts_prev.concat(posts_next));
-      var pagination = {next:null,prev:null};
+      let flatPosts = posts.reduce((posts_prev,posts_next)=>posts_prev.concat(posts_next));
+      let pagination = {next:null,prev:null};
 
       mkdirp.sync(path.join(ROOT_DIR,'dist','category'));
       mkdirp.sync(path.join(ROOT_DIR,'dist','posts'));
@@ -78,12 +83,6 @@ function generateTemplates(){
              });
 }
 
-// initiate the blog
-const blog = gitblog({username:bc.username,repo:bc.repo,author:bc.author});
-blog.setPost({per_page:bc.posts_per_page});
-
-let posts = [];
-let labels = [];
 
 spinner.start();
 blog.fetchAllLabels()

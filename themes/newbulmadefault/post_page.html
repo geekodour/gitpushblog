@@ -7,7 +7,7 @@
           pageType: 'post',
           postId: {{post.id}},
           comment: {{ comment|stringify|safe }},
-          disqus_id: "{{ disqus_id }}"
+          bc: {{ bc|stringify|safe }}
   };
   </script>
 {% endblock %}
@@ -27,8 +27,9 @@
     </div>
   </div>
 </div>
+<!-- comment section -->
 <div {% if comment.isDisqus %}class="section"{% endif %}>
-  {% if comment.isGithubAuth and comment.isGithub %}
+  {% if comment.isGithubAuth and comment.isGithub and not comment.disabled  %}
     <div class="section">
       <div id="comment_box">
         <div class="field">
@@ -45,14 +46,17 @@
         <small>Oops! need to write something to post a comment!</small>
       </div>
     </div>
-  {% elif comment.isGithub %}
+  {% elif comment.isGithub and not comment.disabled %}
     <div class="section has-text-centered is-fluid">
       <button id="signin_button" class="button is-medium is-info">Go to Issue</button>
     </div>
   {% endif %}
   <div id="comments_container"></div>
-  <div id="loadmore_container" class="has-text-centered">
-    <div class="button is-danger is-loading" id="loadmore_button">Load more</div>
-  </div>
+  {% if not comment.disabled and not comment.isDisqus %}
+    <div id="loadmore_container" class="has-text-centered">
+      <div class="button is-danger is-loading" id="loadmore_button">Load more</div>
+    </div>
+  {% endif %}
 </div>
+<!-- end comment section -->
 {% endblock %}

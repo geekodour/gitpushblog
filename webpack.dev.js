@@ -1,21 +1,31 @@
 const path = require('path');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const webpack = require('webpack');
+const bc = require('./blog_config.json');
 
+const THEME_DIR = path.join(__dirname,'themes',bc.meta.blog_theme)
+
+// plugin inits
 const extractSass = new ExtractTextPlugin({
     filename: "[name].css"
 });
+
+const commonChunkOptimize = new webpack.optimize.CommonsChunkPlugin({
+    name: 'common',
+    filename: 'bundle.common.js',
+    chunks: []
+});
+
 
 module.exports = {
   devtool: 'cheap-module-source-map',
 
   entry: {
-        main: './static/main.js',
-        prism: './static/vendor/prism.js'
+        main: path.join(THEME_DIR,'static','js','main.js'),
   },
 
   output: {
-    path: path.join(__dirname, './dev/assets'),
+    path: path.join(__dirname,'dev','assets'),
     filename: '[name].js',
     sourceMapFilename: '[name].map'
   },
@@ -48,12 +58,7 @@ module.exports = {
     ]
   },
   plugins: [
-        new webpack.optimize.CommonsChunkPlugin({
-                name: 'common',
-                filename: 'bundle.common.js',
-                chunks: []
-
-        }),
+        commonChunkOptimize,
         extractSass
   ]
 

@@ -1,35 +1,35 @@
 'use strict';
-var _nunjucks = require('nunjucks');
-var path = require('path');
-var bc = require('../blog_config.json');
 
-var ROOT_DIR = path.resolve('.');
-
-if( process.env.NODE_ENV === "production" ){
-  var nunjucks_opts = { autoescape: true, trimBlocks: true, lstripBlocks: true, watch: false };
-}
-else if( process.env.NODE_ENV === "test" ){
-  var nunjucks_opts = { autoescape: true, trimBlocks: true, lstripBlocks: true, watch: false };
-}
-else{
-  var nunjucks_opts = { autoescape: true, trimBlocks: true, lstripBlocks: true, watch: true };
-}
-
-//var nunjucks = _nunjucks.configure(ROOT_DIR+'/views', nunjucks_opts);
-var nunjucks = _nunjucks.configure(`${ROOT_DIR}/themes/${bc.meta.blog_theme}`, nunjucks_opts);
-
-// date filter
-nunjucks.addFilter('date', function(str, count) {
-   var dateObj = new Date(str);
-   //return dateObj.getDate()+"/"+ +dateObj.getMonth()+1 +"/"+ dateObj.getFullYear();
-   return `${dateObj.getDate()}/${+dateObj.getMonth()+1}/${dateObj.getFullYear()}`;
-});
-
-// stringify filter
-nunjucks.addFilter('stringify', function(obj, count) {
-   return JSON.stringify(obj);
-});
+const _nunjucks = require('nunjucks');
+const path = require('path');
+const bc = require('../blog_config.json');
 
 module.exports = {
-        init: function(){ return nunjucks; }
+        init: ()=>{
+          const ROOT_DIR = process.env.ROOT_DIR;
+          let nunjucks_opts = { autoescape: true, trimBlocks: true, lstripBlocks: true };
+
+          if( process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test" ){
+            nunjucks_opts = Object.assign(nunjucks_opts,{watch: false});
+          }
+          else{
+            nunjucks_opts = Object.assign(nunjucks_opts,{watch: true});
+          }
+
+          const nunjucks = _nunjucks.configure(path.join(ROOT_DIR,'themes',bc.meta.blog_theme), nunjucks_opts);
+
+          // filters
+          nunjucks.addFilter('date', function(str, count) {
+             // date filter
+             let dateObj = new Date(str);
+             return `${dateObj.getDate()}/${+dateObj.getMonth()+1}/${dateObj.getFullYear()}`;
+          });
+
+          nunjucks.addFilter('stringify', function(obj, count) {
+             // stringify filter
+             return JSON.stringify(obj);
+          });
+
+          return nunjucks;
+        }
 };

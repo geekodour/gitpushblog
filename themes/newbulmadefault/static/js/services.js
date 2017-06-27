@@ -1,4 +1,5 @@
-const bc = require('../blog_config.json');
+//const bc = require('../blog_config.json');
+const bc = window.blogInfo.bc;
 
 const firebaseInit = ()=>{
   let config = bc.firebaseConfig;
@@ -7,6 +8,9 @@ const firebaseInit = ()=>{
 
 const githubSignIn = ()=>{
   let provider = new firebase.auth.GithubAuthProvider();
+  // this `scope` takes private repo permissions
+  // need a lower permission than access to private repo.
+  // any `scope` that only enables to comment on issues?
   provider.addScope('repo');
   return new Promise((resolve,reject)=>{
     firebase.auth().signInWithPopup(provider)
@@ -28,7 +32,7 @@ const disqusInit = ()=>{
     };
     (function() {
     var d = document, s = d.createElement('script');
-    s.src = `https://${window.blogInfo.disqus_id}.disqus.com/embed.js`;
+    s.src = `https://${bc.comment.disqus_id}.disqus.com/embed.js`;
     s.setAttribute('data-timestamp', +new Date());
     (d.head || d.body).appendChild(s);
     })();

@@ -1,6 +1,9 @@
 const path = require('path');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const webpack = require('webpack');
+const bc = require('./blog_config.json');
+
+const THEME_DIR = path.join(__dirname,'themes',bc.meta.blog_theme)
 
 // plugin inits
 const extractSass = new ExtractTextPlugin({
@@ -22,12 +25,11 @@ const uglify =   new webpack.optimize.UglifyJsPlugin({
 
 module.exports = {
   entry: {
-        main: './static/main.js',
-        prism: './static/vendor/prism.js'
+        main: path.join(THEME_DIR,'static','js','main.js'),
   },
 
   output: {
-    path: path.join(__dirname, './dist/assets'),
+    path: path.join(__dirname, 'dist','assets'),
     filename: '[name].js'
   },
 

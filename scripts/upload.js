@@ -37,7 +37,7 @@ function uploadFiles(offlineFileContents){
          });
 }
 
-var fileContents = utils.getOfflineFileContents();
+const fileContents = utils.getOfflineFileContents();
 Promise.all(fileContents)
        .then((offlineFileContents)=>{
           spinner.start();

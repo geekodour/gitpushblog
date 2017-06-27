@@ -9,19 +9,25 @@ const chalk = require('chalk');
 const mkdirp = require('mkdirp');
 const fs = require('fs');
 const path = require('path');
-const gitblog = require('github-blog-api');
 const slugify = require('slugify');
 
+// import configuration files
+const init = require('./init');
 const bc = require('../blog_config.json');
 const utils = require('./utils.js');
-const _nunjucks = require('./nunjucks_config.js');
 
+// init nunjucks and blog and env variables
+const {blog} = init.init();
+
+// initilize some constants
 const ROOT_DIR = process.env.ROOT_DIR;
 const THEME_DIR = path.join(ROOT_DIR,'themes',bc.meta.blog_theme);
+const PORT = 3000;
+let posts = [];
+let labels = [];
+let listOfFiles = [];
 const spinner = ora({text:'Fetching posts',spinner:'line'});
 
-// nunjucks configuration
-const nunjucks = _nunjucks.init();
 
 // template generation
 function generateTemplates(){
@@ -51,7 +57,7 @@ function generateTemplates(){
                 utils.generatePostTemplate(post,labels,'dev');
         });
 
-        console.log("REVISION "+ rev++ +" GENERATED.");
+        console.log(chalk.bold.green(`Templates generated. \nAvailable on:\n http://localhost:${PORT}`));
 }
 
 
@@ -84,7 +90,10 @@ function startDevMode(){
 
       mkdirp.sync(path.join(ROOT_DIR,'dev','category'));
       mkdirp.sync(path.join(ROOT_DIR,'dev','posts'));
-      // create category directory
+      // Promise.all the creation of category pages
+      // then create index and other pages
+      // There is mixed use of sync and async functions
+      // need to fix that
       Promise.all(utils.generateCategoryTemplates(labels,'dev'))
              .then(()=>{
                // index and post pages
@@ -102,13 +111,6 @@ function startDevMode(){
 }
 
 // start the dev thing
-let posts = [];
-let labels = [];
-let listOfFiles = [];
-let rev = 0;
-const blog = gitblog({username:bc.username,repo:bc.repo,author:bc.author});
-blog.setPost({per_page:bc.posts_per_page});
-
 spinner.start();
 blog.fetchAllLabels()
         .then(_labels=>{
@@ -131,6 +133,6 @@ blog.fetchAllLabels()
 
 // start the dev server silently
 server.start({
-  port: 3000,
+  port: PORT,
   directory: path.join(ROOT_DIR,'dev')
 });

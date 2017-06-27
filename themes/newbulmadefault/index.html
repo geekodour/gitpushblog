@@ -4,7 +4,8 @@
 {% block inlinejavascript %}
   <script>
   window.blogInfo = {
-          pageType: 'index'
+          pageType: 'index',
+          bc: {{ bc|stringify|safe }}
   };
   </script>
 {% endblock %}

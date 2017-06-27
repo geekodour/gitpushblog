@@ -1,38 +1,40 @@
 'use strict';
 
 const mkdirp = require('mkdirp');
+const chalk = require('chalk');
 const marked = require('marked');
 const fs = require('fs');
 const slugify = require('slugify');
 const path = require('path');
 const _nunjucks = require('./nunjucks_config.js');
 const bc = require('../blog_config.json');
-const init = require('./init');
 
 
 // init nunjucks and blog and env variables
-const {nunjucks} = init.init();
+const {blog,nunjucks} = init.init();
 
 // inits
+//process.env.ROOT_DIR = path.resolve('.');
 const ROOT_DIR = process.env.ROOT_DIR;
 const THEME_DIR = path.join(ROOT_DIR,'themes',bc.meta.blog_theme);
-const DIR_NAME = process.env.NODE_ENV === 'production'?'dist':'dev'; // output directory
 //const nunjucks = _nunjucks.init();
 
 module.exports = {
 
-  generatePostTemplate: function(post,labels,dirName=DIR_NAME){
+  // we could use process.NODE_ENV to use `dist` or `dev` for dirName instead of passing them aroung
+  // will it be a good idea?
+
+  generatePostTemplate: function(post,labels,dirName){
         let fileName = post.slug+'.html';
-        // marked is required for offline support, the `body.html` already exists
-        // when using the api. Maybe put a check for that?
+        // marked is required for offline support
+        // the `body.html` does already exist when using the api
         post.html = marked(post.body);
         let renderContent = nunjucks.render('post_page.html',
           {
             meta: bc.meta,
-            bc: bc,
-            comment: bc.comment,
             post: post,
-            labels: labels
+            labels: labels,
+            comment: bc.comment
           }
         );
         fs.writeFile(path.join(ROOT_DIR,dirName,'posts',fileName), renderContent, function(err) {
@@ -40,12 +42,11 @@ module.exports = {
         });
   },
 
-  generateIndexTemplate: function(posts,labels,pagination,dirName=DIR_NAME,fileName){
+  generateIndexTemplate: function(posts,labels,pagination,dirName,fileName){
         // index template generation
         var renderContent = nunjucks.render('index.html',
           {
             meta: bc.meta,
-            bc: bc,
             posts:posts,
             labels:labels,
             pagination:pagination
@@ -57,7 +58,7 @@ module.exports = {
         });
   },
 
-  generateCategoryTemplates: function(labels,dirName=DIR_NAME){
+  generateCategoryTemplates: function(labels,dirName){
         // takes array of labels
         // creates files with name label.slug.html
         return labels.map(function(label){
@@ -65,7 +66,6 @@ module.exports = {
                   var renderContent = nunjucks.render('category_page.html',
                     {
                       meta: bc.meta,
-                      bc: bc,
                       label:label,
                       labels:labels
                     }
@@ -76,13 +76,12 @@ module.exports = {
         });
   },
 
-  generatePageTemplate: function(dirName=DIR_NAME){
+  generatePageTemplate: function(dirName){
         var pageTemplatesFiles = fs.readdirSync(path.join(THEME_DIR,'pages'));
         pageTemplatesFiles.forEach(function(fileName){
           var renderContent = nunjucks.render(path.join('pages',fileName),
             {
-              meta: bc.meta,
-              bc: bc
+              meta: bc.meta
             }
           );
           fs.writeFileSync(path.join(ROOT_DIR,dirName,fileName),renderContent);
@@ -102,5 +101,19 @@ module.exports = {
                        resolve(post);
                 });
         });
-  }
+  },
+
+  /*
+const fileContents = utils.getOfflineFileContents();
+Promise.all(fileContents)
+       .then((offlineFileContents)=>{
+          spinner.start();
+          uploadFiles(offlineFileContents);
+        })
+        .catch(err=>{
+                console.log('error with files');
+        });
+   */
+
+
 };
