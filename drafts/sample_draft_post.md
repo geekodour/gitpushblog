@@ -9,10 +9,10 @@ In this tutorial we will learn how to build an Instagram app, where users can vi
 
 For this tutorial you'll need a GraphQL project with the following schema:
 
-```graphql
+```json
 type Post {
-  id: ID!
-  description: String!
+  id: ID!,
+  description: String!,
   imageUrl: String!
 }
 ```

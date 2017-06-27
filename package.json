@@ -9,7 +9,7 @@
     "dev": "npm-run-all --parallel clean:dev build:dev webpack:dev",
     "upload": "node scripts/upload.js",
     "push": "node scripts/push.js",
-    "build:dev": "node scripts/dev.js",
+    "build:dev": "node scripts/deu.js",
     "build:dist": "node scripts/generate.js",
     "webpack:dev": "webpack --env=dev --progress --colors --watch",
     "webpack:dist": "webpack --env=prod --progress --colors",
@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/geekodour/gitpushblog#readme",
   "dependencies": {
+    "async": "2.5.0",
     "bulma": "0.4.1",
     "chokidar": "1.7.0",
     "cp": "0.2.0",

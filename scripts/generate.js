@@ -5,7 +5,6 @@ process.env.NODE_ENV = 'production';
 const ora = require('ora');
 const chalk = require('chalk');
 const path = require('path');
-//const gitblog = require('github-blog-api');
 const mkdirp = require('mkdirp');
 
 // import configuration files
@@ -22,8 +21,6 @@ const ROOT_DIR = process.env.ROOT_DIR;
 const spinner = ora({text:'Fetching posts',spinner:'line'});
 let posts = [];
 let labels = [];
-// const pagination = {next:0,prev:0};
-
 
 // template generation
 function fetchAndStoreData(){
