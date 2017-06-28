@@ -6,10 +6,10 @@ const fs = require('fs');
 const map = require('async/map');
 const slugify = require('slugify');
 const path = require('path');
+const yamlFront = require('yaml-front-matter');
 const _nunjucks = require('./nunjucks_config.js');
 const bc = require('../blog_config.json');
 const init = require('./init');
-
 
 // init nunjucks and blog and env variables
 const {nunjucks} = init.init();
@@ -107,12 +107,10 @@ module.exports = {
   getOfflineFileContents: function(){
         const genPost = (fileName,cb) =>{
                  let content = fs.readFileSync(path.join(ROOT_DIR,'drafts',fileName),{encoding:"utf8"});
-                 let post = {};
-                 // this part really need a good fix
-                 post.title = content.split("\n")[0].split(" ").slice(1).join(' ').trim();
-                 post.body = content.split("\n").slice(1).join("\n");
+                 const post = yamlFront.loadFront(content);
                  post.slug = slugify(post.title);
-                 post.html = marked(post.body);
+                 post.html = marked(post.__content);
+                 post.labels = post.labels.map(label=>({name:label}))
                  cb(null,post);
         };
 
