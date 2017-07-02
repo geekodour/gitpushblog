@@ -36,7 +36,8 @@
     "npm-run-all": "4.0.2",
     "ora": "1.2.0",
     "pushstate-server": "3.0.0",
-    "slugify": "1.1.0"
+    "slugify": "1.1.0",
+    "yaml-front-matter": "^3.4.0"
   },
   "devDependencies": {
     "autoprefixer": "7.1.1",
