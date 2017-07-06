@@ -42,14 +42,10 @@ const createPostObject = (fileName,cb) =>{
 const generatePostTemplate = (post,labels,dirName=DIR_NAME)=>{
       let fileName = `${post.slug}.html`;
       let renderContent = nunjucks.render('post_page.html',
-        {
-          meta: bc.meta,
-          bc: bc,
-          comment: bc.comment,
+        Object.assign(contextObject,{
           post: post,
-          labels: labels,
-          baseurl: process.env.NODE_ENV === 'development'?'':bc.meta.baseurl
-        }
+          labels: labels
+        })
       );
       fs.writeFile(path.join(ROOT_DIR,dirName,'posts',fileName), renderContent, (err) => {
           if(err) { console.log("disk error"); }
@@ -59,14 +55,11 @@ const generatePostTemplate = (post,labels,dirName=DIR_NAME)=>{
 const generateIndexTemplate = (posts,labels,pagination,dirName=DIR_NAME,fileName) => {
         // index template generation
         var renderContent = nunjucks.render('index.html',
-          {
-            meta: bc.meta,
-            bc: bc,
-            posts:posts,
-            labels:labels,
-            pagination:pagination,
-            baseurl: process.env.NODE_ENV === 'development'?'':bc.meta.baseurl
-          }
+          Object.assign(contextObject,{
+            posts: posts,
+            labels: labels,
+            pagination:pagination
+          })
         );
         // should we make this writeFile sync? or make all writeFile async?
         fs.writeFile(path.join(ROOT_DIR,dirName,fileName), renderContent, (err) => {
@@ -74,39 +67,13 @@ const generateIndexTemplate = (posts,labels,pagination,dirName=DIR_NAME,fileName
         });
 }
 
-const generateCategoryTemplates = (labels,dirName=DIR_NAME) => {
-        // takes array of labels
-        // creates files with name label.slug.html
-        return labels.map(function(label){
-          return new Promise(function(resolve,reject){
-                  var renderContent = nunjucks.render('category_page.html',
-                    {
-                      meta: bc.meta,
-                      bc: bc,
-                      label:label,
-                      labels:labels,
-                      baseurl: process.env.NODE_ENV === 'development'?'':bc.meta.baseurl
-                    }
-                  );
-                  //fs.writeFileSync(path.join(ROOT_DIR,dirName,'category',label.slug+'.html'),renderContent);
-                  fs.writeFile(path.join(ROOT_DIR,dirName,'category',label.slug+'.html'),renderContent, (err) => {
-                    if(err) { return console.log(err); }
-                    resolve();
-                  });
-          });
-        });
-}
-
 const generateCategoryTemplates2 = (labels,dirName=DIR_NAME) => {
         labels.forEach((label)=>{
           const renderContent = nunjucks.render('category_page.html',
-            {
-              meta: bc.meta,
-              bc: bc,
-              label:label,
-              labels:labels,
-              baseurl: process.env.NODE_ENV === 'development'?'':bc.meta.baseurl
-            }
+                    Object.assign(contextObject,{
+                      labels: labels,
+                      label:label
+                    })
           );
           fs.writeFile(path.join(ROOT_DIR,dirName,'category',`${label.slug}.html`),renderContent, (err) => {
             if(err) { return console.log(err); }
@@ -118,11 +85,7 @@ const generatePageTemplate = (dirName=DIR_NAME) => {
         var pageTemplatesFiles = fs.readdirSync(path.join(THEME_DIR,'pages'));
         pageTemplatesFiles.forEach(function(fileName){
           var renderContent = nunjucks.render(path.join('pages',fileName),
-            {
-              meta: bc.meta,
-              bc: bc,
-              baseurl: process.env.NODE_ENV === 'development'?'':bc.meta.baseurl
-            }
+                    Object.assign(contextObject,{})
           );
           fs.writeFileSync(path.join(ROOT_DIR,dirName,fileName),renderContent);
         });
@@ -144,6 +107,8 @@ const generatePagination = (pagination,posts,cur_page) => {
         // no. of `post_arrs` === no. of pages
         // i.e `posts.length` === no. of pages
         // `cur_page` is the index from forEach
+        // the pagination is sort of a hack right now
+        // when using with nunjucks. need a better solution
 
         return Object.assign(pagination,
           {
@@ -158,7 +123,6 @@ const generatePagination = (pagination,posts,cur_page) => {
 module.exports = {
         generatePostTemplate,
         generateIndexTemplate,
-        generateCategoryTemplates,
         generateCategoryTemplates2,
         generatePageTemplate,
         getOfflineFileContents,
