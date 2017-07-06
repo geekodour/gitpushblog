@@ -18,38 +18,32 @@ const utils = require('./utils.js');
 
 // init nunjucks and blog and env variables
 const {blog} = init.init();
+const spinner = ora({text:'Fetching posts',spinner:'line'});
 
 // initilize some constants
 const ROOT_DIR = process.env.ROOT_DIR;
 const THEME_DIR = path.join(ROOT_DIR,'themes',bc.meta.blog_theme);
+const DRAFT_DIR = path.join(ROOT_DIR,'drafts');
 const PORT = 3000;
-let posts = [];
-let labels = [];
-let listOfFiles = [];
-const spinner = ora({text:'Fetching posts',spinner:'line'});
 
+// global variables
+let posts = []; // array of post_arr(s), post_arr is array of postObjects
+let labels = []; // array of labelObject(s)
 
 // template generation
 function generateTemplates(){
         let flatPosts = posts.reduce((posts_prev,posts_next)=>posts_prev.concat(posts_next));
         let pagination = {next:null,prev:null};
+        let fileName = '';
 
         // index pages and pagination
-        posts.forEach((post_arr,cur_page)=>{
-                pagination = Object.assign(pagination,
-                  {
-                    next:(posts.length === cur_page+1)?0:cur_page+2,
-                    prev:cur_page>0
-                        ?cur_page==1?'index':cur_page
-                        :0
-                  }
-                );
-
-                if(cur_page==0){
-                  utils.generateIndexTemplate(post_arr,labels,pagination,'dev','index.html');
-                } else {
-                  utils.generateIndexTemplate(post_arr,labels,pagination,'dev',cur_page+1+'.html');
-                }
+        posts.forEach( (post_arr,cur_page) => {
+                // generate pagination
+                pagination = utils.generatePagination(pagination,posts,cur_page);
+                // generate fileName
+                fileName = cur_page === 0 ? `index.html` : `${cur_page+1}.html`;
+                // generate index template
+                utils.generateIndexTemplate(post_arr,labels,pagination,'dev',fileName);
         });
 
         // post pages
@@ -72,16 +66,29 @@ function startDevMode(){
       mkdirp.sync(path.join(ROOT_DIR,'dev','posts'));
       generateTemplates();
 
-      // watch for changes in the theme directory and regenerate on change
-      chokidar.watch(THEME_DIR, {ignored: /(^|[\/\\])\../}).on('all', (event, path) => {
-        if(event === "change"){
-                generateTemplates();
-        }
+      const themeWatcher = chokidar.watch([THEME_DIR], {
+        ignored: /[\/\\]\./
       });
+      const draftWatcher = chokidar.watch([DRAFT_DIR], {
+        ignored: /[\/\\]\./
+      });
+
+      themeWatcher.on('change', (path, stats) => { generateTemplates(); });
+      draftWatcher.on('change', (path, stats) => {
+              utils.getOfflineFileContents()
+                   .then(offlinePostObjects=>{
+                     posts[0] = posts[0].slice(offlinePostObjects.length);
+                     posts[0].unshift(...offlinePostObjects);
+                     generateTemplates();
+                   });
+      });
+      // todo, add draftWatcher on add and unlink
 }
 
 function getAllPosts(){
   let posts = [];
+  // this promise returns after there are recursive calls to the IIFE callFetchBlogPosts
+  // I think this is a bad idea, if you have any other idea, please feel free to suggest
   return new Promise((resolve,reject)=>{
     (function callFetchBlogPosts(){
       blog.fetchBlogPosts()
@@ -122,20 +129,21 @@ function fetchAndStoreData(){
             spinner.stop();
             posts = vals[0];
             labels = vals[1];
-            listOfFiles = vals[2];
-            posts[0].unshift(...listOfFiles)
+            // adding the offlinePostObjects, i.e vals[2] to the top array element of `posts`
+            posts[0].unshift(...vals[2]);
             startDevMode();
          })
          .catch(err=>{
             spinner.stop();
             utils.getOfflineFileContents()
-                 .then(files=>{
-                   posts.push(files)
+                 .then(offlinePostObjects=>{
+                   posts.push(offlinePostObjects);
                    startDevMode();
                  })
          })
 }
 
+// start the dev
 spinner.start();
 fetchAndStoreData();
 

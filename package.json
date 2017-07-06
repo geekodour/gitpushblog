@@ -8,6 +8,7 @@
     "generate": "npm-run-all clean:dist build:dist webpack:dist",
     "dev": "npm-run-all --parallel clean:dev build:dev webpack:dev",
     "upload": "node scripts/upload.js",
+    "new": "node scripts/newdraft.js",
     "push": "node scripts/push.js",
     "build:dev": "node scripts/dev.js",
     "build:dist": "node scripts/generate.js",
@@ -33,13 +34,12 @@
     "cp": "0.2.0",
     "dotenv": "4.0.0",
     "github-blog-api": "1.1.11",
+    "inquirer": "3.1.1",
     "npm-run-all": "4.0.2",
     "ora": "1.2.0",
     "pushstate-server": "3.0.0",
     "slugify": "1.1.0",
-    "yaml-front-matter": "^3.4.0"
-  },
-  "devDependencies": {
+    "yaml-front-matter": "^3.4.0",
     "autoprefixer": "7.1.1",
     "babel-cli": "6.24.1",
     "babel-loader": "7.0.0",
@@ -58,5 +58,6 @@
     "sass-loader": "6.0.5",
     "style-loader": "0.18.0",
     "webpack": "2.6.0"
-  }
+  },
+  "devDependencies": {}
 }
