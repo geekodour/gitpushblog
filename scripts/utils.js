@@ -117,7 +117,8 @@ const generatePageTemplate = (dirName=DIR_NAME) => {
 
 const getOfflineFileContents = () => {
         return new Promise((resolve,reject)=>{
-          const fileNames = fs.readdirSync(path.join(ROOT_DIR,'drafts'));
+          let fileNames = fs.readdirSync(path.join(ROOT_DIR,'drafts'));
+          fileNames = fileNames.filter(fileName => !/~$/.test(fileName)) // needed to skip backup~ files
           // using async map here, any idea how we'll do it without async map?
           map(fileNames, createPostObject, function(err, posts) {
             resolve(posts);

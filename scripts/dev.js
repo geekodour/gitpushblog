@@ -23,12 +23,12 @@ const spinner = ora({text:'Fetching posts',spinner:'line'});
 // initilize some constants
 const ROOT_DIR = process.env.ROOT_DIR;
 const THEME_DIR = path.join(ROOT_DIR,'themes',bc.meta.blog_theme);
+const DRAFT_DIR = path.join(ROOT_DIR,'drafts');
 const PORT = 3000;
 
 // global variables
 let posts = []; // array of post_arr(s), post_arr is array of postObjects
 let labels = []; // array of labelObject(s)
-let offlineFiles = []; // array of postObject(s) from `/drafts`
 
 // template generation
 function generateTemplates(){
@@ -66,12 +66,23 @@ function startDevMode(){
       mkdirp.sync(path.join(ROOT_DIR,'dev','posts'));
       generateTemplates();
 
-      // watch for changes in the theme directory and regenerate on change
-      chokidar.watch(THEME_DIR, {ignored: /(^|[\/\\])\../}).on('all', (event, path) => {
-        if(event === "change"){
-                generateTemplates();
-        }
+      const themeWatcher = chokidar.watch([THEME_DIR], {
+        ignored: /[\/\\]\./
       });
+      const draftWatcher = chokidar.watch([DRAFT_DIR], {
+        ignored: /[\/\\]\./
+      });
+
+      themeWatcher.on('change', (path, stats) => { generateTemplates(); });
+      draftWatcher.on('change', (path, stats) => {
+              utils.getOfflineFileContents()
+                   .then(offlinePostObjects=>{
+                     posts[0] = posts[0].slice(offlinePostObjects.length);
+                     posts[0].unshift(...offlinePostObjects);
+                     generateTemplates();
+                   });
+      });
+      // todo, add draftWatcher on add and unlink
 }
 
 function getAllPosts(){
@@ -118,16 +129,15 @@ function fetchAndStoreData(){
             spinner.stop();
             posts = vals[0];
             labels = vals[1];
-            offlineFiles = vals[2];
-            // adding the offline files to the top array element of `posts`
-            posts[0].unshift(...offlineFiles);
+            // adding the offlinePostObjects, i.e vals[2] to the top array element of `posts`
+            posts[0].unshift(...vals[2]);
             startDevMode();
          })
          .catch(err=>{
             spinner.stop();
             utils.getOfflineFileContents()
-                 .then(files=>{
-                   posts.push(files);
+                 .then(offlinePostObjects=>{
+                   posts.push(offlinePostObjects);
                    startDevMode();
                  })
          })

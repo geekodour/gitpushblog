@@ -15,15 +15,17 @@ const init = require('./init.js');
 const {blog} = init.init();
 
 // initilize some constants
+require('dotenv').config({path:path.join(ROOT_DIR,'.env')});
 const ROOT_DIR = process.env.ROOT_DIR;
 const uploadSpinner = ora({text:'Uploading posts',spinner:'line'});
-require('dotenv').config({path:path.join(ROOT_DIR,'.env')});
+const GITHUB_AUTH_TOKEN = process.env.GITHUB_AUTH_TOKEN;
+const offlinePostObjects = []
 
 const getUploadPromises = () => {
   utils.getOfflineFileContents()
-       .then(postObjects=>{
-         return postObjects.map(postObject=>{
-           return blog.createPost(postObject,process.env.GITHUB_AUTH_TOKEN);
+       .then(offlinePostObjects=>{
+         return offlinePostObjects.map(postObject=>{
+           return blog.createPost(postObject,GITHUB_AUTH_TOKEN);
          });
        });
 }
