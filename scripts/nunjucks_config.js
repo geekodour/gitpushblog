@@ -30,6 +30,16 @@ module.exports = {
              return JSON.stringify(obj);
           });
 
+          nunjucks.addFilter('addbaseurl', function(str, count) {
+             // baseurl filter
+             if( process.env.NODE_ENV === "development"){
+                return str;
+             }
+             else{
+               return `${bc.meta.baseurl}${str}`;
+             }
+          });
+
           return nunjucks;
         }
 };

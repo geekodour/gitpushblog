@@ -18,7 +18,6 @@
 import gitBlog from 'github-blog-api';
 import { disqusService, firebaseService } from './services';
 
-//const bc = require('../blog_config.json');
 const bc = window.blogInfo.bc;
 const blogInfo = window.blogInfo;
 
@@ -88,7 +87,7 @@ const getCommentHTML = comment => {
 
 const getPostListItemHTML = post => {
         // by default it's using css classes from [bulma](https://bulma.io)
-        return `<li><a href="/posts/${post.slug}" class="title is-4">${post.title}</a></li>`
+        return `<li><a href="${blogInfo.baseurl}/posts/${post.slug}" class="title is-4">${post.title}</a></li>`
 }
 
 const generateLoadMoreButton = iterator => {

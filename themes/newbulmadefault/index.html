@@ -24,19 +24,21 @@
                 <ul>
                 {% for post in posts %}
                   <li class="post_list_item">
-                    <a href="/posts/{{ post.slug }}">{{ post.title }}</a>
+                    <a href="{{ "/posts/"|addbaseurl }}{{ post.slug }}">{{ post.title }}</a>
                     <span class="is-pulled-right">{{ post.date|date }}</span>
                   </li>
                 {% endfor %}
                 </ul>
+                <!-- pagination -->
                 <div class="container has-text-centered">
                 {% if pagination.prev %}
-                  <a class="" href="{{pagination.prev}}">prev</a>
+                  <a class="" href="{{ "/"|addbaseurl }}{{ pagination.prev }}">prev</a>
                 {% endif %}
                 {% if pagination.next %}
-                  <a class="" href="{{pagination.next}}">next</a>
+                  <a class="" href="{{ "/"|addbaseurl }}{{ pagination.next }}">next</a>
                 {% endif %}
                 </div>
+                <!-- end of pagination -->
               </div>
             {% endblock %}
           </div>

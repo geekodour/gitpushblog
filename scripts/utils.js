@@ -19,6 +19,13 @@ const ROOT_DIR = process.env.ROOT_DIR;
 const THEME_DIR = path.join(ROOT_DIR,'themes',bc.meta.blog_theme);
 const DIR_NAME = process.env.NODE_ENV === 'production'?'dist':'dev'; // output directory
 
+const contextObject = {
+          meta: bc.meta,
+          bc: bc,
+          comment: bc.comment,
+          baseurl: process.env.NODE_ENV === 'development'?'':bc.meta.baseurl
+}
+
 // non-exported functions
 const createPostObject = (fileName,cb) =>{
          let content = fs.readFileSync(path.join(ROOT_DIR,'drafts',fileName),{encoding:"utf8"});
@@ -40,7 +47,8 @@ const generatePostTemplate = (post,labels,dirName=DIR_NAME)=>{
           bc: bc,
           comment: bc.comment,
           post: post,
-          labels: labels
+          labels: labels,
+          baseurl: process.env.NODE_ENV === 'development'?'':bc.meta.baseurl
         }
       );
       fs.writeFile(path.join(ROOT_DIR,dirName,'posts',fileName), renderContent, (err) => {
@@ -56,7 +64,8 @@ const generateIndexTemplate = (posts,labels,pagination,dirName=DIR_NAME,fileName
             bc: bc,
             posts:posts,
             labels:labels,
-            pagination:pagination
+            pagination:pagination,
+            baseurl: process.env.NODE_ENV === 'development'?'':bc.meta.baseurl
           }
         );
         // should we make this writeFile sync? or make all writeFile async?
@@ -75,7 +84,8 @@ const generateCategoryTemplates = (labels,dirName=DIR_NAME) => {
                       meta: bc.meta,
                       bc: bc,
                       label:label,
-                      labels:labels
+                      labels:labels,
+                      baseurl: process.env.NODE_ENV === 'development'?'':bc.meta.baseurl
                     }
                   );
                   //fs.writeFileSync(path.join(ROOT_DIR,dirName,'category',label.slug+'.html'),renderContent);
@@ -94,7 +104,8 @@ const generateCategoryTemplates2 = (labels,dirName=DIR_NAME) => {
               meta: bc.meta,
               bc: bc,
               label:label,
-              labels:labels
+              labels:labels,
+              baseurl: process.env.NODE_ENV === 'development'?'':bc.meta.baseurl
             }
           );
           fs.writeFile(path.join(ROOT_DIR,dirName,'category',`${label.slug}.html`),renderContent, (err) => {
@@ -109,7 +120,8 @@ const generatePageTemplate = (dirName=DIR_NAME) => {
           var renderContent = nunjucks.render(path.join('pages',fileName),
             {
               meta: bc.meta,
-              bc: bc
+              bc: bc,
+              baseurl: process.env.NODE_ENV === 'development'?'':bc.meta.baseurl
             }
           );
           fs.writeFileSync(path.join(ROOT_DIR,dirName,fileName),renderContent);

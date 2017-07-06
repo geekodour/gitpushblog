@@ -1,7 +1,8 @@
 {
   "meta": {
     "blog_name": "geek blog",
-    "blog_theme": "newbulmadefault"
+    "blog_theme": "newbulmadefault",
+    "baseurl": "/gitpushblog"
   },
   "username": "lukego",
   "author": "lukego",
