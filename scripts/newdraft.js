@@ -12,7 +12,7 @@ const DRAFT_DIR = path.join(ROOT_DIR,'drafts');
 const fileName = process.argv[2];
 
 const markdownTemplate = `---
-title: title for ${fileName}
+title: just a title
 labels:
   - label sample
 ---

@@ -27,14 +27,13 @@ const createPostObject = (fileName,cb) =>{
          post.html = marked(post.__content);
          post.body = post.__content;
          post.fileName = fileName;
-         post.labels = post.labels.map(label=>({name:label}))
+         post.labels = post.labels.map(label=>({name:label}));
          cb(null,post);
 }
 
 // exported functions
 const generatePostTemplate = (post,labels,dirName=DIR_NAME)=>{
       let fileName = `${post.slug}.html`;
-      //let fileName = post.slug+'.html';
       let renderContent = nunjucks.render('post_page.html',
         {
           meta: bc.meta,
