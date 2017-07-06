@@ -1,4 +1,5 @@
 'use strict';
+// the generate scripts skips the drafts and skips watch mode
 
 process.env.NODE_ENV = 'production';
 
@@ -18,36 +19,30 @@ const utils = require('./utils.js');
 
 // init nunjucks and blog and env variables
 const {blog} = init.init();
+const spinner = ora({text:'Fetching posts',spinner:'line'});
 
 // initilize some constants
 const ROOT_DIR = process.env.ROOT_DIR;
 const THEME_DIR = path.join(ROOT_DIR,'themes',bc.meta.blog_theme);
-const spinner = ora({text:'Fetching posts',spinner:'line'});
-let posts = [];
-let labels = [];
 
+// global variables
+let posts = []; // array of post_arr(s), post_arr is array of postObjects
+let labels = []; // array of labelObject(s)
 
 // template generation
 function generateTemplates(){
         let flatPosts = posts.reduce((posts_prev,posts_next)=>posts_prev.concat(posts_next));
         let pagination = {next:null,prev:null};
+        let fileName = '';
 
         // index pages and pagination
-        posts.forEach((post_arr,cur_page)=>{
-                pagination = Object.assign(pagination,
-                  {
-                    next:(posts.length === cur_page+1)?0:cur_page+2,
-                    prev:cur_page>0
-                        ?cur_page==1?'index':cur_page
-                        :0
-                  }
-                );
-
-                if(cur_page==0){
-                  utils.generateIndexTemplate(post_arr,labels,pagination,'dist','index.html');
-                } else {
-                  utils.generateIndexTemplate(post_arr,labels,pagination,'dist',cur_page+1+'.html');
-                }
+        posts.forEach( (post_arr,cur_page) => {
+                // generate pagination
+                pagination = utils.generatePagination(pagination,posts,cur_page);
+                // generate fileName
+                fileName = cur_page === 0 ? `index.html` : `${cur_page+1}.html`;
+                // generate index template
+                utils.generateIndexTemplate(post_arr,labels,pagination,'dist',fileName);
         });
 
         // post pages

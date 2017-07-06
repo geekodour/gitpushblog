@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snabb Switch in a Nutshell</title>
+    <meta name="description" content="">
+    <meta name="author" content="Hrishikesh Barman">
+
+    <link href="/assets/main.css" rel="stylesheet">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+
+  <script>
+  window.blogInfo = {
+          pageType: 'post',
+          postId: 10,
+          comment: {"disabled":false,"isGithub":true,"isDisqus":false,"isGithubAuth":true,"disqus_id":"geekodour"},
+          bc: {"meta":{"blog_name":"geek blog","blog_theme":"newbulmadefault"},"username":"lukego","author":"lukego","repo":"blog","posts_per_page":"6","comments_per_page":"3","comment":{"disabled":false,"isGithub":true,"isDisqus":false,"isGithubAuth":true,"disqus_id":"geekodour"},"firebaseConfig":{"apiKey":"AIzaSyAZSJ1d1Sr9MnTK-__3D8SrwXjjQf6EML4","authDomain":"myblog-2b0ba.firebaseapp.com","databaseURL":"https://myblog-2b0ba.firebaseio.com","projectId":"myblog-2b0ba","storageBucket":"myblog-2b0ba.appspot.com","messagingSenderId":"20890326099"}}
+  };
+  </script>
+
+  </head>
+
+  <body>
+<nav class="nav">
+  <div class="nav-left"></div>
+  <div class="nav-center">
+  <a class="nav-item title is-5" href="/">
+    geek blog
+  </a>
+  </div>
+  <span id="nav-toggle" class="nav-toggle">
+  <span></span>
+  <span></span>
+  <span></span>
+  </span>
+  <div id="nav-menu" class="nav-right nav-menu">
+  <a class="nav-item" href="">projects</a>
+  <a class="nav-item" href="">favorites</a>
+  <a class="nav-item" href="">contact</a>
+  </div>
+</nav>
+
+  <div class="columns">
+          <div class="column">
+            <div class=""></div>
+          </div>
+          <div class="column is-half">
+<div class="section">
+  <div class="container">
+    <div class="content">
+      <div class="post-header">
+      <span class="tag">snabb</span>
+      <span class="is-pulled-right">30/8/2015</span>
+      </div>
+      <h1>Snabb switch in a nutshell</h1>
+      <p><a href="https://github.com/SnabbCo/snabbswitch/">Snabb Switch</a> is an open source project for simple and fast packet networking. Here is what you should know about its software architecture. (Please forgive the scanned diagrams: I am a newbie with <a href="http://www.sane-project.org/">SANE</a>.)</p>
+<h2 id="apps">Apps</h2>
+<p><em>Apps</em> are the fundamental atoms of the Snabb Switch universe. Apps are the software counterparts of physical network equipment like routers, switches, and load generators.</p>
+<p><em>Links</em> are how you connect apps together. Links in turn are the software counterparts of physical ethernet cables. With one important difference: links are unidirectional while ethernet cables are bidirectional, so you need a pair of links to emulate an ethernet cable.</p>
+<p>Apps can be connected with any number of input and output links and each link can either be named or anonymous.</p>
+<p><img src="https://cloud.githubusercontent.com/assets/13791/9566629/7f007e92-4f0c-11e5-984b-32d461a92e33.jpg" alt="app"></p>
+<p>The name &quot;app&quot; is supposed to make you think of an App Store on your mobile phone: an element in a collection of fixed-purpose components that are easy for developers to distribute and for users to install.</p>
+<p>Each app is a &quot;black box&quot; that receives packets from its input links, processes the packets in its own peculiar way, and transmits packets on its output links. Snabb Switch developers write new apps when they need new packet processing functionality. An app could be an I/O interface towards a network card or a virtual machine, an ethernet switch, a router, a firewall, or really anything else that can receive and transmit packets.</p>
+<p><img src="https://cloud.githubusercontent.com/assets/13791/9566630/8beff1aa-4f0c-11e5-8166-629df60dc8a5.jpg" alt="apps"></p>
+<p>You can browse <a href="https://github.com/SnabbCo/snabbswitch/tree/master/src/apps">src/apps/</a> on Github to see the apps that already exist on the master branch.</p>
+<h2 id="app-networks">App networks</h2>
+<p>To solve a networking problem with Snabb Switch you connect apps together to create an <em>app network</em>.</p>
+<p>For example, you could create a inline (&quot;bump in the wire&quot;) firewall device by taking two apps that perform I/O (e.g. 10G ethernet drivers) and connecting them together via a firewall app that performs packet filtering.</p>
+<p><img src="https://cloud.githubusercontent.com/assets/13791/9566632/942cb740-4f0c-11e5-9524-aef15268096f.jpg" alt="app-network"></p>
+<p>The app network executes as a simple event loop. On each iteration it receives a batch of approximately 100 packets from the I/O sources and then drives them through the network to their ultimate destinations. Then it repeats. This is practical because the whole batch of packets can fit into the CPU cache at the same time and each app can use the CPU for a reasonable length of time between &quot;context switches&quot;.</p>
+<p>The performance and behavior of each app is mostly independent of the others. This makes it possible to make practical estimates about system performance when designing your app network. For example, if your I/O apps require 50 CPU cycles and your firewall app requires 100 CPU cycles then you would spend 200 cycles per packet and expect to handle 10 million packets per second (Mpps) on a 2GHz CPU.</p>
+<p>You can also run multiple app networks in parallel. These each run as an independent process and each use one CPU core. If you want 200 Mpps performance then you can run 20 of your firewall app networks each on a separate CPU core. (Your challenge will be to dispatch traffic to the processes by some suitable means, for example assigning separate hardware NICs to each process.)</p>
+<p><img src="https://cloud.githubusercontent.com/assets/13791/9566635/a3d0a102-4f0c-11e5-99fe-f9b128607023.jpg" alt="app-networks"></p>
+<p>Separate app networks can pass traffic between each other by simply using apps that perform inter-process I/O. This is like having a physical cluster of network devices that are cross-connected with ethernet links. Generally speaking you can approach app network design problems in the same way you would approach physical networks.</p>
+<h2 id="programs">Programs</h2>
+<p>Programs are shrink-wrapped applications built on Snabb Switch. They are front ends that can be used to hide an app network behind a simple command-line interface for an end user. This means that only system designers need to think about apps and app networks: end users can use simpler interfaces reminiscent of familiar tools like tcpdump, netcat, iperf, and so on.</p>
+<p>Snabb Switch uses the same trick as BusyBox to implement many programs in the same executable: it behaves differently depending on the name that you use to invoke it. This means that when you compile Snabb Switch you get a single executable that supports all available programs. You can choose a program with a syntax like <code>snabb myprogram</code> or you can <code>cp snabb /usr/local/bin/myprogram</code> and then simply run <code>myprogram</code>.</p>
+<p>You can browse the available programs and their documentation in <a href="https://github.com/SnabbCo/snabbswitch/tree/master/src/program">src/program/</a>. You can also list the programs included with a given Snabb executable by running <code>snabb --help</code>.</p>
+<h2 id="the-end">The end</h2>
+<p>Now you know what Snabb Switch is about!</p>
+<p>The Snabb Switch community is now busy creating apps, app networks, and programs. Over time we are improving our tooling and experience for the common themes such as regression testing, benchmarking, code optimization, interoperability testing, operation and maintenance (&quot;northbound&quot;) interfaces, and so on. This is a lot of fun and we look forward to continuing this for many years to come.</p>
+
+    </div>
+  </div>
+</div>
+<!-- comment section -->
+<div >
+    <div class="section">
+      <div id="comment_box">
+        <div class="field">
+        <label class="label">Your Comment</label>
+        <p class="control">
+          <textarea class="textarea" placeholder="Write something.."></textarea>
+        </p>
+        <p class="control">
+          <button id="signin_button" class="button is-medium is-success is-full-width">SignIn and Comment</button>
+        </p>
+        </div>
+      </div>
+      <div id="comment-error-box" class="is-hidden">
+        <small>Oops! need to write something to post a comment!</small>
+      </div>
+    </div>
+  <div id="comments_container"></div>
+    <div id="loadmore_container" class="has-text-centered">
+      <div class="button is-danger is-loading" id="loadmore_button">Load more</div>
+    </div>
+</div>
+<!-- end comment section -->
+          </div>
+          <div class="column">
+            <div class="hidden-mobile">
+<div class="card">
+  <div class="card-content">
+    <div class="media">
+      <div class="media-left">
+        <figure class="image is-48x48">
+          <img src="http://bulma.io/images/placeholders/96x96.png" alt="Image">
+        </figure>
+      </div>
+      <div class="media-content">
+        <p class="title is-4">Hrishikesh Barman</p>
+        <p class="subtitle is-6">@geekodour</p>
+      </div>
+    </div>
+
+    <div class="content">
+      <small>I am Hrishikesh</small>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-content">
+    <div class="content">
+      <small>categories</small>
+      <ul>
+      <li><a href="/category/hacking">hacking</a></li>
+      <li><a href="/category/life">life</a></li>
+      <li><a href="/category/luajit">luajit</a></li>
+      <li><a href="/category/snabb">snabb</a></li>
+      <li><a href="/category/tech">tech</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+            </div>
+          </div>
+  </div>
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p>github is love, github is life</p>
+    </div>
+  </div>
+</footer>
+
+ <script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>       <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+      <script src="/assets/main.js"></script>
+  </body>
+</html>

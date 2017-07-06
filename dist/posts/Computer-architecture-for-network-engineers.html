@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer architecture for network engineers</title>
+    <meta name="description" content="">
+    <meta name="author" content="Hrishikesh Barman">
+
+    <link href="/assets/main.css" rel="stylesheet">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+
+  <script>
+  window.blogInfo = {
+          pageType: 'post',
+          postId: 18,
+          comment: {"disabled":false,"isGithub":true,"isDisqus":false,"isGithubAuth":true,"disqus_id":"geekodour"},
+          bc: {"meta":{"blog_name":"geek blog","blog_theme":"newbulmadefault"},"username":"lukego","author":"lukego","repo":"blog","posts_per_page":"6","comments_per_page":"3","comment":{"disabled":false,"isGithub":true,"isDisqus":false,"isGithubAuth":true,"disqus_id":"geekodour"},"firebaseConfig":{"apiKey":"AIzaSyAZSJ1d1Sr9MnTK-__3D8SrwXjjQf6EML4","authDomain":"myblog-2b0ba.firebaseapp.com","databaseURL":"https://myblog-2b0ba.firebaseio.com","projectId":"myblog-2b0ba","storageBucket":"myblog-2b0ba.appspot.com","messagingSenderId":"20890326099"}}
+  };
+  </script>
+
+  </head>
+
+  <body>
+<nav class="nav">
+  <div class="nav-left"></div>
+  <div class="nav-center">
+  <a class="nav-item title is-5" href="/">
+    geek blog
+  </a>
+  </div>
+  <span id="nav-toggle" class="nav-toggle">
+  <span></span>
+  <span></span>
+  <span></span>
+  </span>
+  <div id="nav-menu" class="nav-right nav-menu">
+  <a class="nav-item" href="">projects</a>
+  <a class="nav-item" href="">favorites</a>
+  <a class="nav-item" href="">contact</a>
+  </div>
+</nav>
+
+  <div class="columns">
+          <div class="column">
+            <div class=""></div>
+          </div>
+          <div class="column is-half">
+<div class="section">
+  <div class="container">
+    <div class="content">
+      <div class="post-header">
+      <span class="tag">tech</span>
+      <span class="is-pulled-right">13/4/2017</span>
+      </div>
+      <h1>Computer architecture for network engineers</h1>
+      <p><em>This is a rough idea for a talk/tutorial. Critique welcome :).</em></p>
+<p>Suppose you are a network engineer and you want to understand how modern x86 CPUs work under the hood. <em>Cache-misses, out-of-order execution, pipelined execution</em>, etc. One approach is to read a big heavy book like <a href="https://www.amazon.com/Computer-Architecture-Fifth-Quantitative-Approach/dp/012383872X">Hennessy and Patterson</a>. However, there is also a short-cut.</p>
+<p>CPUs are basically networks these days (#15) and their mechanisms all have direct analogues in TCP. In fact, if you have spent time troubleshooting TCP performance problems in wireshark it&#39;s entirely likely that you have a more visceral intuition for CPU performance that most software people do.</p>
+<p>Here is why CPUs are basically equivalent to TCP senders:</p>
+<table>
+<thead>
+<tr>
+<th>TCP</th>
+<th>CPU</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TCP <em>sends</em> a stream of <em>packets</em>.</td>
+<td>CPU <em>issues</em> a stream of <em>instructions</em>.</td>
+</tr>
+<tr>
+<td>TCP packets are eventually <em>acknowledged</em>.</td>
+<td>CPU instructions are eventually <em>retired</em>.</td>
+</tr>
+<tr>
+<td>TCP sends multiple packets in series, without waiting for the first to be acknowledged, up to the <em>window size</em>.</td>
+<td>CPU issues multiple instructions in series, without waiting for the first to be retired, up to the _<a href="https://en.wikipedia.org/wiki/Reservation_station">reservation station</a> size_.</td>
+</tr>
+<tr>
+<td>TCP packets that are &quot;in flight&quot; all make progress towards their destination at the same time.</td>
+<td>CPU instructions that are in flight all make progress towards completion at the same time in a <a href="https://en.wikipedia.org/wiki/Instruction_pipelining">pipelined architecture</a>.</td>
+</tr>
+<tr>
+<td>TCP incurs <em>packet loss</em> when a packet reaches an overloaded router. The main consequence of a packet loss is more latency between initial transmission and ultimate acknowledgement. (There are also a lot of complex state transitions.)</td>
+<td>CPU incurs <em>cache misses</em> when instructions refer to memory addresses that are not cached. The main consequence of a cache miss is more latency between the initial issue of an instruction and its ultimate retirement.</td>
+</tr>
+<tr>
+<td>The impact of a packet loss depends on the workload. Losing certain packets can cripple performance, for example a control packet like a TCP SYN or a HTTP GET, while certain other packets won&#39;t have a noticable impact at all, like losing the 900th packet in an FTP transfer. The key is whether TCP can &quot;keep the pipe full&quot; with other data while it waits to recover the lost packet.</td>
+<td>The impact of a cache miss depends on the workload. Certain cache misses can cripple performance, for example when fetching the next instruction to execute or chasing a long chain of pointer-dereferences, while certain cache misses won&#39;t have a noticable impact at all, like a long series of pipelined memory accesses that all go out to RAM in parallel.</td>
+</tr>
+<tr>
+<td>TCP can use Selective ACK to work-around hazards like packet loss and continue sending new packets beyond the slow one without waiting for it to be recovered and ACKed first.</td>
+<td>CPU can use <a href="https://en.wikipedia.org/wiki/Out-of-order_execution">out-of-order execution</a> to work-around hazards like cache misses and continue executing new instructions beyond the slow one without waiting for it to be completed and retired first.</td>
+</tr>
+<tr>
+<td>TCP can run multiple <em>connections</em> on the same link. This does not directly increase bandwidth, because they are sharing the same network resources, but it does improve robustness. If one connection is blocked by a hazard, such as a packet loss, the other can still make progress and so the link is less likely to become idle (which would waste bandwidth.)</td>
+<td>CPU can run multiple <em>hyperthreads</em> on the same core. This does not directly increase performance, because they are sharing the same computing resources, but it does improve robustness. If one hyperthread is blocked by a hazard, such as a cache miss, the other can still make progress and so the core is less likely to become idle (which would waste execution cycles.)</td>
+</tr>
+</tbody>
+</table>
+<p>What do you think?</p>
+<p>Have an idea for good analogs of branch prediction and dispatching instructions across multiple execution units?</p>
+
+    </div>
+  </div>
+</div>
+<!-- comment section -->
+<div >
+    <div class="section">
+      <div id="comment_box">
+        <div class="field">
+        <label class="label">Your Comment</label>
+        <p class="control">
+          <textarea class="textarea" placeholder="Write something.."></textarea>
+        </p>
+        <p class="control">
+          <button id="signin_button" class="button is-medium is-success is-full-width">SignIn and Comment</button>
+        </p>
+        </div>
+      </div>
+      <div id="comment-error-box" class="is-hidden">
+        <small>Oops! need to write something to post a comment!</small>
+      </div>
+    </div>
+  <div id="comments_container"></div>
+    <div id="loadmore_container" class="has-text-centered">
+      <div class="button is-danger is-loading" id="loadmore_button">Load more</div>
+    </div>
+</div>
+<!-- end comment section -->
+          </div>
+          <div class="column">
+            <div class="hidden-mobile">
+<div class="card">
+  <div class="card-content">
+    <div class="media">
+      <div class="media-left">
+        <figure class="image is-48x48">
+          <img src="http://bulma.io/images/placeholders/96x96.png" alt="Image">
+        </figure>
+      </div>
+      <div class="media-content">
+        <p class="title is-4">Hrishikesh Barman</p>
+        <p class="subtitle is-6">@geekodour</p>
+      </div>
+    </div>
+
+    <div class="content">
+      <small>I am Hrishikesh</small>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-content">
+    <div class="content">
+      <small>categories</small>
+      <ul>
+      <li><a href="/category/hacking">hacking</a></li>
+      <li><a href="/category/life">life</a></li>
+      <li><a href="/category/luajit">luajit</a></li>
+      <li><a href="/category/snabb">snabb</a></li>
+      <li><a href="/category/tech">tech</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+            </div>
+          </div>
+  </div>
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p>github is love, github is life</p>
+    </div>
+  </div>
+</footer>
+
+ <script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>       <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+      <script src="/assets/main.js"></script>
+  </body>
+</html>

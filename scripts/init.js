@@ -4,7 +4,6 @@ const _nunjucks = require('./nunjucks_config.js');
 const gitblog = require('github-blog-api');
 const bc = require('../blog_config.json');
 
-
 module.exports = {
   init: ()=>{
     process.env.ROOT_DIR = path.resolve('.');
