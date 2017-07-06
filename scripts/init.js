@@ -1,5 +1,5 @@
-const path = require('path');
 // init nunjucks, githubblog api and env vars
+const path = require('path');
 const _nunjucks = require('./nunjucks_config.js');
 const gitblog = require('github-blog-api');
 const bc = require('../blog_config.json');

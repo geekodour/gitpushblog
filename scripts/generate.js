@@ -25,7 +25,7 @@ const spinner = ora({text:'Fetching posts',spinner:'line'});
 const ROOT_DIR = process.env.ROOT_DIR;
 const THEME_DIR = path.join(ROOT_DIR,'themes',bc.meta.blog_theme);
 
-// global variables
+// global variables, will get rid of them soon
 let posts = []; // array of post_arr(s), post_arr is array of postObjects
 let labels = []; // array of labelObject(s)
 
@@ -113,5 +113,6 @@ function fetchAndStoreData(){
          })
 }
 
+// start the generation
 spinner.start();
 fetchAndStoreData();
