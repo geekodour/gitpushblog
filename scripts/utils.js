@@ -20,9 +20,7 @@ const THEME_DIR = path.join(ROOT_DIR,'themes',bc.meta.blog_theme);
 const DIR_NAME = process.env.NODE_ENV === 'production'?'dist':'dev'; // output directory
 
 const contextObject = {
-          meta: bc.meta,
           bc: bc,
-          comment: bc.comment,
           baseurl: process.env.NODE_ENV === 'development'?'':bc.meta.baseurl
 }
 
@@ -107,6 +105,7 @@ const generatePagination = (pagination,posts,cur_page) => {
         // no. of `post_arrs` === no. of pages
         // i.e `posts.length` === no. of pages
         // `cur_page` is the index from forEach
+
         // the pagination is sort of a hack right now
         // when using with nunjucks. need a better solution
 

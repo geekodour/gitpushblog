@@ -15,7 +15,6 @@
   window.blogInfo = {
           pageType: 'post',
           postId: 10,
-          comment: {"disabled":false,"isGithub":true,"isDisqus":false,"isGithubAuth":true,"disqus_id":"geekodour"},
           bc: {"meta":{"blog_name":"geek blog","blog_theme":"newbulmadefault","baseurl":"/gitpushblog"},"username":"lukego","author":"lukego","repo":"blog","posts_per_page":"6","comments_per_page":"3","comment":{"disabled":false,"isGithub":true,"isDisqus":false,"isGithubAuth":true,"disqus_id":"geekodour"},"firebaseConfig":{"apiKey":"AIzaSyAZSJ1d1Sr9MnTK-__3D8SrwXjjQf6EML4","authDomain":"myblog-2b0ba.firebaseapp.com","databaseURL":"https://myblog-2b0ba.firebaseio.com","projectId":"myblog-2b0ba","storageBucket":"myblog-2b0ba.appspot.com","messagingSenderId":"20890326099"}}
   };
   </script>
@@ -87,22 +86,6 @@
 </div>
 <!-- comment section -->
 <div >
-    <div class="section">
-      <div id="comment_box">
-        <div class="field">
-        <label class="label">Your Comment</label>
-        <p class="control">
-          <textarea class="textarea" placeholder="Write something.."></textarea>
-        </p>
-        <p class="control">
-          <button id="signin_button" class="button is-medium is-success is-full-width">SignIn and Comment</button>
-        </p>
-        </div>
-      </div>
-      <div id="comment-error-box" class="is-hidden">
-        <small>Oops! need to write something to post a comment!</small>
-      </div>
-    </div>
   <div id="comments_container"></div>
     <div id="loadmore_container" class="has-text-centered">
       <div class="button is-danger is-loading" id="loadmore_button">Load more</div>
@@ -156,7 +139,7 @@
   </div>
 </footer>
 
- <script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>       <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
       <script src=/gitpushblog/assets/main.js></script>
   </body>
 </html>
