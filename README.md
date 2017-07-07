@@ -9,7 +9,6 @@ README needs a lot of improvements, please comment on [this issue for README](ht
 
 This right now probably has 0 SEO optimizations. will have to look into that too, right now just making sure that this
 atleast 'just works'.
-- Also, `npm install` takes a while, mainly to download the postcss libraries, any alternatives?
 
 ## Quick Start
 - `fork` this repository
@@ -33,10 +32,12 @@ Issue labels | BlogPosts categories
 
 It is very simple to use, just configure `blog_config.json` to setup your blog.
 and there are four simple commands to interact with your blog from the cli,
-`npm run generate`
 `npm run dev`
+`npm run new <draft_name.md>`
+`npm run generate`
 `npm run upload`
-`npm run deploy`
+`npm run push`
+`npm run push:only`
 
 Here's a example directory structure of a generated blog
 

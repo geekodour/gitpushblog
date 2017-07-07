@@ -31,17 +31,6 @@
   "homepage": "https://github.com/geekodour/gitpushblog#readme",
   "dependencies": {
     "async": "2.5.0",
-    "bulma": "0.4.1",
-    "chokidar": "1.7.0",
-    "cp": "0.2.0",
-    "dotenv": "4.0.0",
-    "github-blog-api": "1.1.11",
-    "inquirer": "3.1.1",
-    "npm-run-all": "4.0.2",
-    "ora": "1.2.0",
-    "pushstate-server": "3.0.0",
-    "slugify": "1.1.0",
-    "yaml-front-matter": "^3.4.0",
     "autoprefixer": "7.1.1",
     "babel-cli": "6.24.1",
     "babel-loader": "7.0.0",
@@ -56,6 +45,7 @@
     "gh-pages": "1.0.0",
     "github-blog-api": "1.1.11",
     "inquirer": "3.1.1",
+    "js-yaml": "3.8.4",
     "marked": "0.3.6",
     "mkdirp": "0.5.1",
     "node-sass": "4.5.3",
@@ -70,7 +60,8 @@
     "sass-loader": "6.0.5",
     "slugify": "1.1.0",
     "style-loader": "0.18.0",
-    "webpack": "2.6.0"
+    "webpack": "2.6.0",
+    "yaml-front-matter": "^3.4.0"
   },
   "devDependencies": {}
 }

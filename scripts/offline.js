@@ -8,11 +8,10 @@ const chalk = require('chalk');
 const rimraf = require('rimraf');
 const fs = require('fs');
 const gitblog = require('github-blog-api');
-const bc = require('../blog_config.json');
 const utils = require('./utils.js');
 const init = require('./init.js');
 
-const {blog} = init.init();
+const {blog,bc} = init.init();
 
 // initilize some constants
 const ROOT_DIR = process.env.ROOT_DIR;

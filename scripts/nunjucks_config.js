@@ -1,12 +1,15 @@
 'use strict';
 
-const _nunjucks = require('nunjucks');
+const fs = require('fs');
 const path = require('path');
-const bc = require('../blog_config.json');
+const _nunjucks = require('nunjucks');
+const yaml = require('js-yaml');
+
 
 module.exports = {
         init: ()=>{
           const ROOT_DIR = process.env.ROOT_DIR;
+          const bc = yaml.safeLoad(fs.readFileSync(path.join(ROOT_DIR,'_config.yml'), 'utf8'));
           let nunjucks_opts = { autoescape: true, trimBlocks: true, lstripBlocks: true };
 
           if( process.env.NODE_ENV === "production" || process.env.NODE_ENV === "test" ){

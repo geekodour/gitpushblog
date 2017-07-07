@@ -8,11 +8,10 @@ const slugify = require('slugify');
 const path = require('path');
 const yamlFront = require('yaml-front-matter');
 const _nunjucks = require('./nunjucks_config.js');
-const bc = require('../blog_config.json');
 const init = require('./init');
 
 // init nunjucks and blog and env variables
-const {nunjucks} = init.init();
+const {nunjucks,bc} = init.init();
 
 // inits
 const ROOT_DIR = process.env.ROOT_DIR;

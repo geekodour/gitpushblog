@@ -13,11 +13,10 @@ const slugify = require('slugify');
 
 // import configuration files
 const init = require('./init');
-const bc = require('../blog_config.json');
 const utils = require('./utils.js');
 
 // init nunjucks and blog and env variables
-const {blog} = init.init();
+const {blog,bc} = init.init();
 const spinner = ora({text:'Fetching posts',spinner:'line'});
 
 // initilize some constants

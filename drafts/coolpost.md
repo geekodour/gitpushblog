@@ -1,5 +1,5 @@
 ---
-title: sad
+title: just a title
 labels:
   - label sample
 ---

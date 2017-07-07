@@ -1,4 +1,3 @@
-//const bc = require('../blog_config.json');
 const bc = window.blogInfo.bc;
 
 const firebaseInit = ()=>{
