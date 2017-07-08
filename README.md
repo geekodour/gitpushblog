@@ -10,10 +10,10 @@ see a [live demo]() here
 
 ## Features
 - uses npm scripts
+- built with webpack and sass support
 - works hasslefree with githubpages(both userpages and repo pages)
 - uses github api
 - offline markdown draft support, live editing*
-- built with webpack and sass support
 
 ## Limitations
 - Uses only nunjucks for now, let me know if to add support of any other
@@ -33,6 +33,16 @@ Github Element | Blog Element
 Issues | BlogPosts
 Issue comments | BlogPosts comments
 Issue labels | BlogPosts categories
+
+Paraphrasing a (HN comment)[https://news.ycombinator.com/item?id=14170041] related to the use of github issues for blogposts
+
+> **person1:** I don't really like the idea of "exploiting" GitHub issues for blog comments.
+> This is obviously not a designed feature of GitHub API and it feels like an abuse of GitHub service.
+
+> **person2:** To me this feels like something GitHub would approve of. GitHub Issues intentionally gives users a lot of freedom so they can use it however they want. Unlike competitors who forced you to do something a certain way.
+> This is creative, and if your blog is hosted via GitHub Pages, then using Issues to discuss the content is not far-fetched at all.
+
+so I think this is a valid idea.
 
 The GithubAPI is not directory accessed, instead it uses a [github-blog-api](https://www.npmjs.com/package/github-blog-api)
 that I created, using that npm package you can make a fully client side blog if you want to, but here we're using it to generate
@@ -83,7 +93,7 @@ then submit the issue. Now we've created two very basic blogposts,
 one in the offline `/drafts` directory another directly in Github.
 let's see gitpushblog in action now.
 
-6. Inside <new_repo_name>, run `npm install`
+6. Inside `<new_repo_name>/`, run `npm install`
 
 7. After installation is complete, run `npm run dev`
 
@@ -96,38 +106,101 @@ $ npm run push
 ```
 git will ask for credentials before the push if using HTTPS, give it.
 the push will be done to the `gh-pages` branch of the repository, it will create one if does not already exist.
+
 10. visit `https://<username>.github.io/<new_repo_name>/`
+
 You'll notice that the posts inside `/drafts` are not there, whereas they were showing locally.
 You'll need to `npm run upload` to upload drafts to github, which is discussed later in this readme.
 
 That's all for the QuickStart.
 
-## Installation and Exaplained Quick Start
+
+## A note about github, git and gitpushblog
+
+The nice thing is, you can use `git push origin master` to push changes to the `master` branch and run `npm run push` to push generated blog contents to the `gh-pages` branch.
+
+This is a little bit different if you use `userpages` for the blog because github
+(only allows the `master` branch to be the publishing branch.)[https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/]
+So, when using `userpages` with gitpushblog `npm run push` pushes generated blog contents to `master` branch and you are supposed to push changes to `dev` branch.
+
+## Installation and Explanation of QuickStart
+**I highly recommend you do the (QuickStart)[] if you haven't already**
+
 There are two ways you can get started with:
 - fork
 - clone
-I recommended *cloning*, because you won't have that `forked from` thing. If you don't mind having that, then please follow the fork installation instructions :smile:
 
-Because github offers [userpages and repopages](https://help.github.com/articles/user-organization-and-project-pages/), I've added support for both.
-It's simple as changing `userpage` to `true` in `_config.yml`, read more about [configuration]().
+I recommended **cloning**, because you won't have that `forked from` thing. If you don't mind having that, then please follow the fork installation instructions :smile:
 
-** Options for setting up the blog **
-- use `userpages` as the only
-- use `repopages` 
+Because github offers [userpages and repopages](https://help.github.com/articles/user-organization-and-project-pages/),
+I've added support for both, `userpages` as basically profile pages, eg. (geekodour.github.io)[https://geekodour.github.io/].
+It's simple as changing `userpage` to `true` in `_config.yml`, read more about [configuration and `_config.yml`]().
+
+**Options for setting up the blog**
+1. use `userpage` as the blog
+2. use `userpage` as the intro page, use a `repopage` as the blog (I use this, this way the userpage does not need have gitpushblog and it's just a simple html file)
+3. use `repopage` as the blog
 
 ### Installing gitpushblog (clone)
-- first create your blog repository
-- **fork** this repository
-- enable **issues** in the forked repository (in repository settings).
-- change the name of the repository if you want.
-- `clone` the forked repository.
-- run `npm install`.
-- run `npm run dev`
-After it shows `REVISION 0 GENERATED` open `localhost:3000` in your browser.
-check the newly created `dev` directory in the project root, (it's gitignored, so no worries)
-### Installing gitpushblog (fork)
+1. Clone gitpushblog repository locally
+```
+$ git clone https://github.com/geekodour/gitpushblog.git
+```
+> After cloning, you'll decide which option to choose, if you choose option 2 or 3, then continue. else
+> if you're planning to use `userpages` as the blog *(1st option)* then (use these instructions instead)[] after cloning.
 
-note: For the quickstart example we're using a repository by lukego named blog
+2. Create a Github repository for the blog in Github, I recommend naming it **'blog'**, in our case <new_repo_name> will be **'blog'**
+
+3. Point the cloned `gitpushblog` to `<new_repo_name>`
+```
+$ mv gitpushblog <new_repo_name>
+$ cd <new_repo_name>
+$ git remote remove origin
+$ git remote add origin https://github.com/<username>/<new_repo_name>.git
+```
+
+4. open `_config.yml` and change the following(mind the slash!),
+```
+.
+.
+    userpage: false
+    baseurl: /<new_repo_name>
+
+username: <username>
+author: <username>
+repo: <new_repo_name>
+.
+.
+```
+5. Done.
+
+
+### Installing gitpushblog (clone) + userpage as the blog
+When using
+TODO
+
+
+### Installing gitpushblog (fork)
+The fork instructions are very similar to the clone instructions.
+1. Fork this repository
+2. In the forked version of gitpushblog, go to settings and enable `issues`
+3. You can also change the repository name to something like 'blog' if you want to.
+4. Now clone the forked repository, and `cd` inside it and run `npm install`
+5. open `_config.yml` and change the following(mind the slash!), and save.
+```
+.
+.
+    userpage: false
+    baseurl: /<new_repo_name>
+
+username: <username>
+author: <username>
+repo: <new_repo_name>
+.
+.
+```
+6. Done.
+
 ## Tree of a blog generated by gitpushblog (`dist/`)
 ```
 .
@@ -162,94 +235,6 @@ and there are four simple commands to interact with your blog from the cli,
 `npm run push`
 `npm run push:only`
 
-Here's a example directory structure of a generated blog
-
-```
-```
-
-paraphrasing a github comment related to the use of github issues for blogposts
-
-> **first person:** I don't really like the idea of "exploiting" GitHub issues for blog comments.
-> This is obviously not a designed feature of GitHub API and it feels like an abuse of GitHub service.
-> **second person:** To me this feels like something GitHub would approve of. GitHub Issues intentionally gives users a lot of freedom so they can use it however they want. Unlike competitors who forced you to do something a certain way.
-> This is creative, and if your blog is hosted via GitHub Pages, then using Issues to discuss the content is not far-fetched at all.
-
-# Setup
-There are **two ways** to setup this blogging system,
-
-## 1. Use the generator (NOT YET DONE)
-Simply installing and running the blog generator cli app is the easiest, it will configure the
-`blog_config.json` for and install dependencies and setup git for you.
-
-`npm install -g gitpushblog-generator` and then `gitpushblog-generator repo_name`
-
-then you can simply run the four commands **generate**,**dev**,**upload** and **deploy**
-
-## 2. Forking this repository
-- `fork` this repository
-- enable `issues` in the forked repository (in repository settings)
-- change the name of the repository if you want.
-- `clone` the forked repository.
-- run `npm install`
-- manually configure `blog_config.json`
-- run the npm scripts as described in the usage section
-
-# Comments
-Comments are important part of a blog. **gitpushblog** has four comment states.
-- `disabled` : if `true` comments will be disabled completely
-- `isGithub` : if `true` the github comments of the issue will be listed,
-one has to visit the `issue` on github to make a comment like [this blogpost](http://donw.io/post/github-comments/)
-- `isGithubAuth` : if `true`, a comment box will appear under the post and firebaseAuth for github will
-be there to authenticate the user. (there's an issue with the permissions)
-- `isDisqus` : if `true` Disqus comments will be added
-(recommend not having `isDisqus` and `isGithub` **both** turned to `true`, it will act as disabled anyway if you do so)
-
-# Usage
-A simple usecase is just having all posts in the `posts` directory and generating the `index` pages
-but a blog is more than that so **gitpushblog** has builtin disqus and github comment along with **offline** support
-so that if you don't have access to the *new issue* page on github, you can just write the post in `markdown` and
-upload your posts when you have internet connection.
-*(technically, it just creates a new issue on your repo with the markdown content)*
-
-So, let's start by configuring `blog_config.json`
-
-### blog_config.json
-HELP NEEDED: **firebase api keys public?**. In the repository, I have my firebase app details given in the `blog_config.json`
-so that you can just test out the firebase GithubAuth thing.
-for example we'll use this repository: https://github.com/lukego/blog/issues
-
-a sample is given below:
-- **username**: repository owner github username
-- **author**: issue creator github username
-- **repo**: repository name
-- **comment object**: it just has the comment states as mentioned above along with some additional info.
-- **firebaseConfig**: the firebase config object for webapps(get it on the firebase console)
-```json
-{
-  "username": "lukego",
-  "author": "lukego",
-  "repo": "blog",
-  "posts_per_page": "6",
-  "comments_per_page": "3",
-  "comment": {
-    "disabled": false,
-    "isGithub": true,
-    "isDisqus": false,
-    "isGithubAuth": true,
-    "disqus_id": "geekodour"
-  },
-  "firebaseConfig": {
-    "apiKey": "...",
-    "authDomain": "...",
-    "databaseURL": "...",
-    "projectId": "...",
-    "storageBucket": "...",
-    "messagingSenderId": "..."
-  }
-}
-```
-
-### npm scripts
 `npm scripts` are the main workhorses, there are quite a few `npm scripts` for developers but, just four
 for someone just wanting to setup and start blogging.
 - `npm run generate` : generate the deployable version in `dist` directory. files are minified.
@@ -259,41 +244,26 @@ with developer options such as sourcemaps etc.
 - `npm run deploy`: put the contents of the dist folder into `gh-pages` branch, so on the next push, if github
 pages is set to `gh-pages` branch, the new content is available on the site. (**deploy is not written yet, will do that soon**)
 
-### Offline
-When offline you can write your posts in `markdown` inside the `contents` directory.
-and when online you can upload them to github.
-> using `npm run dev` will work offline, if it is not able to connect to githubapi
-> it will just use the contents of the `content` directory as posts, if it can connect
-> to the API both(content directory+github issue data) will be shown.
-> but `npm run generate` will **only** fetch information from github api.
+# Configuration and `_config.yml`
 
-Github needs you to have authenticated to create an issue, in other words to create a blog post.
-so, can't have the `api token` floating around in the repo. So for offline support i used
-`.dotenv` for having the `github personal api token` as an env variable.
-just make a `.env` file and put in your github personal api token like this. *(the `.env` file is gitignored)*
-```
-GITHUB_AUTH_TOKEN=6565THIS_IS_MY_TOKEN65565
-```
-now running `npm run upload` will upload the posts inside `content` directory, after successful upload it will clear up
-the `content` directory.
+## `_config.yml`
+
+
+
 
 # Templates details
 The templates are created using nunjucks, though template authors can write templates the way the want
-but for the comment system to work properly they have to add three 
+but for the comment system to work properly they have to add three
 
 If you're using react or any other javascript framework for making the blog you should
 check the `main.js` file inside
 
 # Todo
 - [ ] Make the `main.sass` file cleaner and organized
-- Will add more todo soon.. there's a lot of them.
 
 # Contribute
 - It will be awesome if anyone can help in creating some themes, it's almost just plain HTML and CSS
 - will add issues and more contributing info soon.
-
-# Eating my own dogfood
-created this github api wrapper called [github-blog-api](https://github.com/geekodour/github-blog-api) to help with the github api calls
 
 ## Tree of gitpushblog
 
