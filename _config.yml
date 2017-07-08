@@ -1,7 +1,8 @@
 meta:
-    blog_name: geek blog
+    blog_name: iamthenameoftheblog
     blog_theme: gitpushblogdefault
     engine: nunjucks
+    userpage: false
     baseurl: /gitpushblog
 
 username: lukego
