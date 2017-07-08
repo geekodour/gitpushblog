@@ -22,6 +22,7 @@ const spinner = ora({text:'Fetching posts',spinner:'line'});
 // initilize some constants
 const ROOT_DIR = process.env.ROOT_DIR;
 const THEME_DIR = path.join(ROOT_DIR,'themes',bc.meta.blog_theme);
+mkdirp.sync(path.join(ROOT_DIR,'drafts'));
 const DRAFT_DIR = path.join(ROOT_DIR,'drafts');
 const PORT = 3000;
 

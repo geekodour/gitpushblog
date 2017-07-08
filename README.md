@@ -138,9 +138,10 @@ I've added support for both, `userpages` as basically profile pages, eg. [geekod
 It's simple as changing `userpage` to `true` in `_config.yml`, read more about [configuration and `_config.yml`]().
 
 **Options for setting up the blog**
-1. use `userpage` as the blog
-2. use `userpage` as the intro page, use a `repopage` as the blog (I use this, this way the userpage does not need have gitpushblog and it's just a simple html file)
-3. use `repopage` as the blog
+1. use `userpage` as the blog (1 repository)
+2. use `userpage` as the intro page, use a `repopage` as the blog (I use this, this way the userpage does not need have gitpushblog
+and it's just a simple html file, but you endup using 2 different repositories)
+3. use `repopage` as the blog (1 repository)
 
 ### Installing gitpushblog (by cloning)
 1. Clone gitpushblog repository locally
@@ -234,9 +235,9 @@ gitpushblog uses **npm scripts**.
 
 - **`npm run dev`** : Generate the development build of the blog in watch mode and serve in port 3000,
 useful if you are writing a draft and want to see changes in the browser on reload, also helpful when
-developing the theme. The files are in `/dev`
+developing the theme. The generated files are in `/dev`, `/dev` is gitignored.
 
-- **`npm run new <draft_name.md>`** : Create a new markdown file inside `/drafts` with appropriate template
+- **`npm run new <draft_name.md>`** : Create a new markdown file inside `/drafts` with appropriate template to start editing.
 
 - **`npm run upload`** : Lets you choose which **draft files** to upload to github issues,
 and then uploads them. If upload was successful the uploaded file will be **deleted** from `/drafts`.
