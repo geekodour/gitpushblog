@@ -46,7 +46,7 @@ Paraphrasing a [HN comment](https://news.ycombinator.com/item?id=14170041) relat
 so I think this is a valid idea.
 
 The GithubAPI is not directory accessed, instead it uses a [github-blog-api](https://www.npmjs.com/package/github-blog-api)
-that I created, using that npm package you can make a fully client side blog if you want to, but here we're using it to generate
+, using that npm package you can make a fully client side blog if you want to, but here we're using it to generate
 the static content.
 
 ## Quick Start
@@ -254,7 +254,29 @@ for `npm run upload` to work. Read: `Setting GITHUB_AUTH_TOKEN`**
 
 ## `_config.yml`
 
+- `meta.blog_name` : Name of the blog, can be used in places like navbar by the theme
+- `meta.blog_theme` : Name of the directory inside `/themes` to use as the theme
+- `meta.engine` : This should be `nunjucks` as that's the only templating engine that's supported as of now.
+- `meta.userpage` : should be set to true if blog is a `userpage`
+- `meta.baseurl` : `/<repo_name>`, it is required for repopages, for user pages it's just `/`, read [more about baseurl](https://byparker.com/blog/2014/clearing-up-confusion-around-baseurl/)
 
+- `username` : github username
+- `author` : github username basically. explanation: github-blog-api filters issues based on author, so if someone else creates an issue, only the ones you created will show up.
+- `repo` : name of the repository, where you want gitpushblog to be.
+- `posts_per_page` : number of posts to fetch at once (max 100), used by static generator and javascript in the theme
+- `comments_per_page` : number of comments to fetch at once (max 100), used by static generator and javascript in the theme
+
+- `comments.disabled` : if `true` no comments will show up, no one can comment.
+- `comments.isGithub` : if `true` github comments will be shown.
+- `comments.isGithubAuth` : if `true` a will show a comment box, where you can comment by authenticating with your github account.
+**NOTE: This is super experimental and I think is **dangerous** too, please check the issue regarding this
+if you'd like to help, I recommend you set it to `false` for now**
+- `comments.isDisqus` : if `true` will help the theme declare `divs` and containers for the disqus commenting system,
+disqus is already integrated in default theme, so just set this to `true` and `isGithub` to `false` if you want disqus comments.
+- `comments.disqus_id` : your disqus id
+
+- `firebaseConfig.*` : these firebase configuration options that you get from firebase, again this is highly experimental, recomment not using it for now.
+If you want to experiment, then read [setting up githubAuth and commenting with firebase]()
 
 
 # Templates details
@@ -270,5 +292,8 @@ check the `main.js` file inside
 # Contribute
 - It will be awesome if anyone can help in creating some themes, it's almost just plain HTML and CSS
 - will add issues and more contributing info soon.
+
+# Contributors
+- [@CodeDotJS](https://github.com/CodeDotJS)
 
 TODO: minmal frebase config object
