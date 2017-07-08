@@ -1,25 +1,8 @@
-/* note:
- * if you're using some framework like react
- * you probaly can take out chunks out of this file
- * but i'll suggest rewriting them the rect way
- *
- * This file includes functions for loading more posts,comments,signin for comments
- * => suggest a better name than `utils.js`?maybe?
- *
- * in `const bc = require('../blog_config.json');` `webpack` is enabling us to use
- * data from our `blog_config.json` in this file. If you're NOT using `webpack`
- * then you might want to use the data available at `window.blogInfo` which is
- * passed during template generation to each and every page
- *
- * FIX NOTE: pass whole blog_config+otherstuff into window.blogInfo else this will be
- * unusable without webpack
- * */
-
 import gitBlog from 'github-blog-api';
 import { disqusService, firebaseService } from './services';
 
-const bc = window.blogInfo.bc;
 const blogInfo = window.blogInfo;
+const bc = blogInfo.bc;
 
 const myblog = gitBlog({username:bc.username,repo:bc.repo,author:bc.author});
 myblog.setPost({per_page:bc.posts_per_page});
@@ -29,30 +12,51 @@ myblog.setComment({per_page:bc.comments_per_page});
 const commentText = document.querySelector('#comment_box .textarea');
 const commentsContainer = document.getElementById('comments_container');
 const commentError = document.getElementById('comment-error-box');
+
 const loadMoreContainer = document.getElementById('loadmore_container');
 const loadMoreButton = document.getElementById('loadmore_button');
-const postsContainer = document.getElementById('category_posts_container');
+
+const postsListContainer = document.getElementById('category_posts_container');
+
 const signInButton = document.getElementById("signin_button");
+const signOutButton = document.getElementById("signout_button");
 
 
 const handleSignInAndComment = () => {
 
   if(commentText.value){
-    // hide error message
-    commentError.classList.add('is-hidden');
+    commentError.classList.remove('is-warning');
+    commentError.innerText = '';
 
     firebaseService.signIn()
       .then(token=>{
+        commentError.innerText = 'you are signed in';
+        displaySignOut();
         myblog.createComment({body:commentText.value},blogInfo.postId,token)
            .then(comment=>{
+             // update notification
+             commentError.innerText = 'comment added!';
              // update comment thread
              commentsContainer.insertAdjacentHTML('beforeend', getCommentHTML(comment));
            });
       });
   }
   else{
-    commentError.classList.remove('is-hidden');
+    // if comment is empty
+    commentError.classList.add('is-warning');
+    commentError.innerText = 'your comment seems a little bit empty!';
   }
+}
+
+const handleSignOut = () => {
+  firebase.auth().signOut().then(function() {
+    commentError.classList.remove('is-danger');
+    commentError.innerText = `signed out successfully!`;
+    window.location.reload();
+  }).catch(function(error) {
+    commentError.classList.add('is-danger');
+    commentError.innerText = `could not signout!`;
+  });
 }
 
 
@@ -138,7 +142,7 @@ export const updateCategoryList = () => {
   myblog.fetchBlogPosts([blogInfo.label]).then(posts=>{
           generateLoadMoreButton("post");
           posts.forEach(post=>{
-             postsContainer.insertAdjacentHTML('beforeend', getPostListItemHTML(post));
+             postsListContainer.insertAdjacentHTML('beforeend', getPostListItemHTML(post));
           });
   });
 }
@@ -149,13 +153,21 @@ export const initCommentSystem = () => {
     if(bc.comment.isGithub){
       updateGithubComments();
       if(bc.comment.isGithubAuth){
-              firebaseService.init();
               signInButton.addEventListener("click", handleSignInAndComment);
+              signOutButton.addEventListener("click", handleSignOut);
       }
     }
     else if(bc.comment.isDisqus){
       commentsContainer.innerHTML += getCommentHTML();
       disqusService.init();
     }
+  }
+}
+
+export const displaySignOut = () => {
+  if(firebase.auth().currentUser){
+    signOutButton.classList.remove('is-hidden');
+  } else {
+    signOutButton.classList.add('is-hidden');
   }
 }

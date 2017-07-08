@@ -185,3 +185,6 @@ check the `main.js` file inside
 
 # Eating my own dogfood
 created this github api wrapper called [github-blog-api](https://github.com/geekodour/github-blog-api) to help with the github api calls
+
+TODO:
+- firebase logout and toast after logged in

@@ -53,7 +53,7 @@ function generateTemplates(){
         utils.generatePageTemplate('dist');
 
         // category pages
-        utils.generateCategoryTemplates2(labels,'dist')
+        utils.generateCategoryTemplates(labels,'dist')
 }
 
 function startGenerate(){

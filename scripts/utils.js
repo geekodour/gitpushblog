@@ -64,7 +64,7 @@ const generateIndexTemplate = (posts,labels,pagination,dirName=DIR_NAME,fileName
         });
 }
 
-const generateCategoryTemplates2 = (labels,dirName=DIR_NAME) => {
+const generateCategoryTemplates = (labels,dirName=DIR_NAME) => {
         labels.forEach((label)=>{
           const renderContent = nunjucks.render('category_page.html',
                     Object.assign(contextObject,{
@@ -121,7 +121,7 @@ const generatePagination = (pagination,posts,cur_page) => {
 module.exports = {
         generatePostTemplate,
         generateIndexTemplate,
-        generateCategoryTemplates2,
+        generateCategoryTemplates,
         generatePageTemplate,
         getOfflineFileContents,
         generatePagination

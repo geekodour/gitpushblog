@@ -5,9 +5,10 @@
   <script>
   window.blogInfo = {
           pageType: 'post',
-          postId: {{post.id}},
+          postId: '{{post.id}}',
           bc: {{ bc|stringify|safe }}
   };
+  // postId should be string or number?
   </script>
 {% endblock %}
 
@@ -27,31 +28,31 @@
   </div>
 </div>
 <!-- comment section -->
-<div {% if comment.isDisqus %}class="section"{% endif %}>
-  {% if comment.isGithubAuth and comment.isGithub and not comment.disabled  %}
+<div {% if bc.comment.isDisqus %}class="section"{% endif %}>
+  {% if bc.comment.isGithubAuth and bc.comment.isGithub and not bc.comment.disabled  %}
     <div class="section">
       <div id="comment_box">
+        <div id="comment-error-box" class="notification">
+          let me know what you think about this post in the comments.😅
+        </div>
         <div class="field">
         <label class="label">Your Comment</label>
         <p class="control">
-          <textarea class="textarea" placeholder="Write something.."></textarea>
+          <textarea class="textarea no-round" placeholder="Write something.."></textarea>
         </p>
         <p class="control">
-          <button id="signin_button" class="button is-medium is-success is-full-width">SignIn and Comment</button>
+          <button id="signin_button" class="button is-medium is-info is-full-width no-round">comment</button>
         </p>
         </div>
       </div>
-      <div id="comment-error-box" class="is-hidden">
-        <small>Oops! need to write something to post a comment!</small>
-      </div>
     </div>
-  {% elif comment.isGithub and not comment.disabled %}
+  {% elif bc.comment.isGithub and not bc.comment.disabled %}
     <div class="section has-text-centered is-fluid">
       <button id="signin_button" class="button is-medium is-info">Go to Issue</button>
     </div>
   {% endif %}
   <div id="comments_container"></div>
-  {% if not comment.disabled and not comment.isDisqus %}
+  {% if not bc.comment.disabled and not bc.comment.isDisqus %}
     <div id="loadmore_container" class="has-text-centered">
       <div class="button is-danger is-loading" id="loadmore_button">Load more</div>
     </div>

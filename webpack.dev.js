@@ -1,8 +1,10 @@
+const fs = require('fs');
 const path = require('path');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const webpack = require('webpack');
-const bc = require('./blog_config.json');
+const yaml = require('js-yaml');
 
+const bc = yaml.safeLoad(fs.readFileSync(path.join('_config.yml'), 'utf8'));
 const THEME_DIR = path.join(__dirname,'themes',bc.meta.blog_theme)
 
 // plugin inits

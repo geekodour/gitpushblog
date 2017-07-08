@@ -1,6 +1,7 @@
 meta:
     blog_name: geek blog
     blog_theme: newbulmadefault
+    engine: nunjucks
     baseurl: /gitpushblog
 
 username: lukego

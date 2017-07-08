@@ -54,7 +54,7 @@ function generateTemplates(){
         utils.generatePageTemplate('dev');
 
         // category pages
-        utils.generateCategoryTemplates2(labels,'dev')
+        utils.generateCategoryTemplates(labels,'dev')
 
         console.log(chalk.bold.green(`Templates generated. \nAvailable on:\n http://localhost:${PORT}`));
 }
