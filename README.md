@@ -116,7 +116,7 @@ You'll need to `npm run upload` to upload drafts to github, which is discussed l
 That's all for the QuickStart.
 
 
-## A note about github, git and gitpushblog
+### A note about github, git and gitpushblog
 
 The nice thing is, you can use `git push origin master` to push changes to the `master` branch and run `npm run push` to push generated blog contents to the `gh-pages` branch.
 
@@ -230,7 +230,7 @@ see usage for usage instructions.
 └── projects.html
 ```
 
-# Usage
+## Usage
 gitpushblog uses **npm scripts**.
 
 - **`npm run dev`** : Generate the development build of the blog in watch mode and serve in port 3000,
@@ -250,9 +250,10 @@ for `npm run upload` to work. Read: `Setting GITHUB_AUTH_TOKEN`**
 - **`npm run push`** : It runs `npm run generate` first and then pushes the `/dist` directory to the `gh-pages` branch.
 - **`npm run push:only`** : Only pushes the `/dist` directory to `gh-pages` branch.
 
-# Configuration and `_config.yml`
+## Configuration and `_config.yml`
+All configurations are done in _confg.yml
 
-## `_config.yml`
+### `_config.yml` explanations
 
 - `meta.blog_name` : Name of the blog, can be used in places like navbar by the theme
 - `meta.blog_theme` : Name of the directory inside `/themes` to use as the theme
@@ -278,6 +279,17 @@ disqus is already integrated in default theme, so just set this to `true` and `i
 - `firebaseConfig.*` : these firebase configuration options that you get from firebase, again this is highly experimental, recomment not using it for now.
 If you want to experiment, then read [setting up githubAuth and commenting with firebase]()
 
+### Setting up githubAuth and commenting with firebase
+
+### GITHUB_AUTH_TOKEN Env Variable for `npm run upload`
+1. To get the `personal access token` go to [https://github.com/settings/tokens](https://github.com/settings/tokens)
+give it the whole `repo` scope permission and give a name to your token and you'll have a newly generated token.
+2. Copy that token
+3. Create a file named `.env` inside the blog repository, put the token inside the `.env` file like this:
+```
+GITHUB_AUTH_TOKEN=YOUR_TOKEN_HERE_NO_SPACES
+```
+4. you're done, `.env` file is gitignored, so it will remain local to your system always.
 
 # Templates details
 The templates are created using nunjucks, though template authors can write templates the way the want
