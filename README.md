@@ -8,7 +8,10 @@ It is sort of like [Jekyll](https://jekyllrb.com/), but currently does limited s
 
 see a [live demo]() here
 
-# Table of contents
+## Table of contents
+- Features and Limitations
+- Basic idea behind
+- Quick start guide
 
 ## Features
 - uses npm scripts
@@ -24,7 +27,7 @@ see a [live demo]() here
 - see issues for others
 - currently only works with github pages (want to keep it that way)
 
-## Why another static site generator
+## Basic idea behind
 
 There was not much of a need, but I guess it's fun, also I wanted to use something like
 Jekyll but not Jekyll.
