@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick survey of git &quot;merge commits&quot; in open source projects</title>
+    <meta name="description" content="">
+    <meta name="author" content="Hrishikesh Barman">
+
+    <link href=/gitpushblog/assets/main.css rel="stylesheet">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+
+  <script>
+  window.blogInfo = {
+          pageType: 'post',
+          postId: '14',
+          bc: {"meta":{"blog_name":"geek blog","blog_theme":"gitpushblogdefault","engine":"nunjucks","baseurl":"/gitpushblog"},"username":"lukego","author":"lukego","repo":"blog","posts_per_page":6,"comments_per_page":3,"comment":{"disabled":false,"isGithub":true,"isDisqus":false,"isGithubAuth":true,"disqus_id":"geekodour"},"firebaseConfig":{"apiKey":"AIzaSyAZSJ1d1Sr9MnTK-__3D8SrwXjjQf6EML4","authDomain":"myblog-2b0ba.firebaseapp.com","databaseURL":"https://myblog-2b0ba.firebaseio.com","projectId":"myblog-2b0ba","storageBucket":"myblog-2b0ba.appspot.com","messagingSenderId":20890326099}}
+  };
+  // postId should be string or number?
+  </script>
+
+  </head>
+
+  <body>
+<nav class="nav">
+  <div class="nav-left"></div>
+  <div class="nav-center">
+  <a class="nav-item title is-5" href=/gitpushblog/>
+    geek blog
+  </a>
+  </div>
+  <span id="nav-toggle" class="nav-toggle">
+  <span></span>
+  <span></span>
+  <span></span>
+  </span>
+  <div id="nav-menu" class="nav-right nav-menu">
+  <a class="nav-item" href="">projects</a>
+  <a class="nav-item" href="">favorites</a>
+  <a class="nav-item" href="">contact</a>
+  </div>
+</nav>
+
+  <div class="columns">
+          <div class="column">
+            <div class=""></div>
+          </div>
+          <div class="column is-half">
+<div class="section">
+  <div class="container">
+    <div class="content">
+      <div class="post-header">
+      <span class="tag">tech</span>
+      <span class="is-pulled-right">24/1/2016</span>
+      </div>
+      <h1>Quick survey of git &quot;merge commits&quot; in open source projects</h1>
+      <p>How do different open source projects use Git merge commits? Here is a brief survey: log of the latest 15-or-so merge commits on a few projects/branches. Just a tangential thought following the discussion on snabbco/snabbswitch#725.</p>
+<p>Please leave a comment if you have an interesting interpretation :-)</p>
+<h3 id="snabb-switch">Snabb Switch</h3>
+<pre><code>~/git/snabbswitch$ git log --oneline --graph --merges -15 
+*   07aba83 Merge branch &#39;max-next&#39; into next
+|\  
+| * 1d3a1c3 Merge PR #717 (Fixed a bug where strings could not be app arguments) into max-next
+| *   dfbc5f9 Merge PR #681 (implementation of virtio-net driver) into max-next
+| |\  
+| | * 7a17d0a Merge branch &#39;master&#39; into virtio-net
+| |/  
+|/|   
+| * dd0f939 Merge PR #683 (intel1g: Intel 1G driver) into max-next
+| | * 004ac13 sync with intel1g_rs_i210, e.g. remote master (v2016.1)
+| | *   295e5d4 sync with remote (v2016.01), resolve conflicts
+| | |\  
+| |_|/  
+|/| |   
+| | * 68980a8 Merge pull request #1 from hb9cwp/intel1g_rs_snabbmark
+| * fe1a893 Merge PR #633 (core.engine: enable selftest() method) into max-next
+| * 337071c Merge PR #699 (make PREFIX work like expected) into max-next
+*   d0fff55 Merged PR #677 (v2016.01 release) onto master
+|\  
+| *   e788e7a Merge PR #679 (fixes branch from @eugeneia) into next
+| |\  
+| | * 599a568 Merge branch &#39;issue-579&#39; into issues-2015.12
+| | * b17317b Merge branch &#39;issue-658&#39; into issues-2015.12
+| | * 4704b09 Merge branch &#39;issue-666&#39; into issues-2015.12
+| |/  
+|/|
+</code></pre><h3 id="linux-kernel">Linux kernel</h3>
+<pre><code>~/git/linux$ git log --oneline --graph --merges -20
+* 048ccca Merge tag &#39;for-linus&#39; of git://git.kernel.org/pub/scm/linux/kernel/git/dledford/rdma
+| * 882f3b3 Merge branches &#39;4.5/Or-cleanup&#39; and &#39;4.5/rdma-cq&#39; into k.o/for-4.5
+| * c6333f9 Merge branch &#39;rdma-cq.2&#39; of git://git.infradead.org/users/hch/rdma into 4.5/rdma-cq
+* b3e27d5 Merge tag &#39;ntb-4.5&#39; of git://github.com/jonmason/ntb
+* cc67375 Merge branch &#39;for-linus&#39; of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs
+*   fa7d9a1 Merge tag &#39;nfs-for-4.5-2&#39; of git://git.linux-nfs.org/projects/trondmy/linux-nfs
+|\  
+| * 6d45c04 Merge branch &#39;bugfixes&#39;
+* 20c759c Merge branch &#39;akpm&#39; (patches from Andrew)
+* b82dde0 Merge tag &#39;please-pull-copy_file_range&#39; of git://git.kernel.org/pub/scm/linux/kernel/git/aegl/linux
+*   79d2453 Merge tag &#39;armsoc-tegra&#39; of git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc
+|\  
+| * 5f4900b Merge tag &#39;tegra-for-4.5-dt&#39; of git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux into late/tegra
+| | * 1d1bac6 Merge branch &#39;for-4.5/soc&#39; into for-4.5/dt
+| | * 00ccc34 Merge branch &#39;for-4.5/clk&#39; into for-4.5/dt
+| * d0ac611 Merge tag &#39;tegra-for-4.5-soc&#39; of git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux into late/tegra
+| * 3e91219 Merge branch &#39;treewide/cleanup&#39; into late/tegra
+*   1b8ee1e Merge tag &#39;armsoc-fixes&#39; of git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc
+|\  
+| * 53c517a Merge tag &#39;renesas-fixes-for-v4.5&#39; of git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas into fixes
+*   5430dfe Merge branch &#39;for-linus&#39; of git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input
+|\  
+| * b26a95d Merge branch &#39;next&#39; into for-linus
+| | * 85c017f Merge branch &#39;xpad&#39; into next
+</code></pre><h3 id="qemu">QEMU</h3>
+<pre><code>~/git/qemu$ git log --oneline --graph --merges -15 
+* 047e363 Merge remote-tracking branch &#39;remotes/pmaydell/tags/pull-softfloat-20160122&#39; into staging
+* 3c2c85e Merge remote-tracking branch &#39;remotes/gkurz/tags/for-upstream&#39; into staging
+* 0b0571d Merge remote-tracking branch &#39;remotes/sstabellini/tags/xen-20160121&#39; into staging
+* 8344646 Merge remote-tracking branch &#39;remotes/ehabkost/tags/x86-pull-request&#39; into staging
+* 1a4f446 Merge remote-tracking branch &#39;remotes/pmaydell/tags/pull-target-arm-20160121&#39; into staging
+* 3c9331c Merge remote-tracking branch &#39;remotes/kevin/tags/for-upstream&#39; into staging
+* 3ed0b65 Merge remote-tracking branch &#39;remotes/berrange/tags/pull-io-next-2016-01-20-1&#39; into staging
+* a953853 Merge remote-tracking branch &#39;remotes/kraxel/tags/pull-socket-20160120-1&#39; into staging
+* 1cf81ea Merge remote-tracking branch &#39;remotes/awilliam/tags/vfio-update-20160119.0&#39; into staging
+* 3db34bf Merge remote-tracking branch &#39;remotes/afaerber/tags/qom-devices-for-peter&#39; into staging
+* 4618834 Merge remote-tracking branch &#39;remotes/kraxel/tags/pull-ui-20160118-1&#39; into staging
+* 4aaddc2 Merge remote-tracking branch &#39;remotes/mcayland/tags/qemu-sparc-signed&#39; into staging
+* 19b6d84 Merge remote-tracking branch &#39;remotes/bonzini/tags/for-upstream&#39; into staging
+* 5a57acb Merge remote-tracking branch &#39;remotes/pmaydell/tags/pull-target-arm-20160115&#39; into staging
+* 17c8a21 Merge remote-tracking branch &#39;remotes/armbru/tags/pull-error-2016-01-13&#39; into staging
+</code></pre><h3 id="v8">V8</h3>
+<pre><code>~/git/v8$ git log --oneline --graph --merges -15
+</code></pre><p>(There don&#39;t seem to be any merge commits in the v8 repository.)</p>
+<h3 id="rust">Rust</h3>
+<pre><code>$ git log --oneline --graph --merges -25
+* 7dbee36 Auto merge of #25449 - IvanUkhov:std-doc, r=alexcrichton
+* e10bd27 Auto merge of #25447 - brson:version, r=alexcrichton
+* 4ce08a5 Auto merge of #25440 - durka:patch-3, r=alexcrichton
+* 7a52835 Auto merge of #25466 - P1start:move-closure-span, r=alexcrichton
+* daaf715 Auto merge of #25432 - killercup:patch-12, r=steveklabnik
+* a9ea33f Auto merge of #25437 - MazinZ1:master, r=alexcrichton
+* 716f920 Auto merge of #25429 - nham:patch-1, r=steveklabnik
+* b948d81 Auto merge of #25219 - Eljay:fix-comment-parsing, r=alexcrichton
+* 9bebe5f Auto merge of #25059 - erickt:pprint, r=acrichto
+* 13a4b83 Auto merge of #25402 - parir:master, r=Manishearth
+* 7ebaf1c Auto merge of #25423 - dotdash:assume, r=huonw
+* 579e319 Auto merge of #25400 - nrc:save-api, r=huonw
+* 072cba9 Auto merge of #25422 - cactorium:unsafe_errors, r=huonw
+| * 507f8b8 Fix merge conflict and also add markdown formatting
+* | 0077ffe Auto merge of #25419 - nrc:time, r=alexcrichton
+* |   daabc8a Auto merge of #25421 - steveklabnik:rollup, r=steveklabnik
+|\ \  
+| * | 6df13d4 Rollup merge of #25420 - habnabit:master, r=steveklabnik
+| * | 5501f07 Rollup merge of #25418 - leunggamciu:patch-trpl, r=steveklabnik
+| * | 8d52274 Rollup merge of #25414 - apasel422:patch-1, r=alexcrichton
+| * | aa56011 Rollup merge of #25413 - killercup:patch-11, r=alexcrichton
+| * | 609b4a1 Rollup merge of #25412 - koute:master, r=alexcrichton
+| * | dd60abc Rollup merge of #25410 - durka:patch-2, r=steveklabnik
+| * | 765a55e Rollup merge of #25408 - Nashenas88:rust-book-stack-and-heap-typo, r=steveklabnik
+| * | c356211 Rollup merge of #25407 - durka:patch-1, r=alexcrichton
+| * | 0028f85 Rollup merge of #25405 - dreid:patch-3, r=nikomatsakis
+</code></pre><h3 id="openstack-nova">OpenStack Nova</h3>
+<pre><code>~/git/nova]$ git log --oneline --merges --graph -15
+* d574aaf Merge &quot;Updated from global requirements&quot;
+* ce72bec Merge &quot;_can_fallocate should throw a warning instead of error&quot;
+* f2013bc Merge &quot;Note in HypervisorSupportMatrix for Libvirt/LXC shutdown kernel bug&quot;
+* e37cafb Merge &quot;Create filter_properties earlier in boot request&quot;
+* 853424c Merge &quot;Remove releasenotes/build between releasenotes runs&quot;
+* 20c28fc Merge &quot;enginefacade: &#39;ec2_instance&#39; and &#39;instance_fault&#39;&quot;
+* df83122 Merge &quot;Add service status notification&quot;
+* 69465d6 Merge &quot;hardware: check whether realtime capable in API&quot;
+* 833face Merge &quot;Add a REST API to trigger crash dump in an instance.&quot;
+* d886eca Merge &quot;Assignment (from method with no return) removed&quot;
+* 349d7f0 Merge &quot;nova conf single point of entry: fix error message&quot;
+* e06b219 Merge &quot;XenAPI: Expose labels for ephemeral disks&quot;
+* d2baf6c Merge &quot;VMware: no longer convert image meta from dict to object&quot;
+* ac367f5 Merge &quot;Remove catching of ComputeHostNotFound exception&quot;
+* cdfb527 Merge &quot;libvirt: use native AIO mode for cinder volumes&quot;
+</code></pre><h3 id="ruby-on-rails">Ruby on Rails</h3>
+<pre><code>~/git/rails$ git log --oneline --graph --merges -15 
+* e3a0ad8 Merge pull request #23216 from prathamesh-sonpatki/fix-23137
+* 75a8973 Merge pull request #23102 from yui-knk/foreign_type_to_singular_association
+* 39ea2b0 Merge pull request #23206 from joyvuu-dave/action_cable_api_fix
+* 4fdc56d Merge pull request #23207 from y-yagi/fix_path_of_actioncable_config
+* f3cf476 Merge branch &#39;master&#39; of github.com:rails/docrails
+* 9bb5f5f Merge pull request #23201 from dkniffin/patch-1
+* f692513 Merge pull request #23126 from Gaurav2728/implement_rake_to_rails_taks_in_doc
+* cf1cf02 Merge pull request #23194 from britg/patch-2
+* 84461db Merge pull request #23177 from vipulnsward/testing-pass-1
+* 9e4534c Merge pull request #23182 from palkan/add-docs-tsrange
+* 8383f79 Merge pull request #23178 from vipulnsward/rm-changelog
+* a2a6806 Merge pull request #23180 from y-yagi/remove_per_form_csrf_tokens_initializer_from_rails_api
+* 5d9e923 Merge pull request #23174 from JuanitoFatas/followup-skip-action-cable
+* 24a316d Merge pull request #23175 from maclover7/add-ac-appgen-test
+* a688c03 Merge pull request #23080 from prathamesh-sonpatki/fix-cache-key-for-loaded-empty-collection
+</code></pre><h3 id="luajit-v2-1-branch-">LuaJIT (v2.1 branch)</h3>
+<pre><code>~/git/luajit$ git log --oneline --graph --merges -15 v2.1
+* 126e55d Merge branch &#39;master&#39; into v2.1
+* 0aa337a Merge branch &#39;master&#39; into v2.1
+* 3ad7734 Merge branch &#39;master&#39; into v2.1
+* ffb124e Merge branch &#39;master&#39; into v2.1
+* e54ca42 Merge branch &#39;master&#39; into v2.1
+* b20642c Merge branch &#39;master&#39; into v2.1
+* 776c693 Merge branch &#39;master&#39; into v2.1
+* 22a9ed8 Merge branch &#39;master&#39; into v2.1
+* 0b09c97 Merge branch &#39;master&#39; into v2.1
+* 49427df Merge branch &#39;master&#39; into v2.1
+* ca78889 Merge branch &#39;master&#39; into v2.1
+* b86fc2b Merge branch &#39;master&#39; into v2.1
+* 0dcd2d1 Merge branch &#39;master&#39; into v2.1
+* 5874c21 Merge branch &#39;master&#39; into v2.1
+* 5081e38 Merge branch &#39;master&#39; into v2.1
+</code></pre>
+    </div>
+  </div>
+</div>
+<!-- comment section -->
+<div >
+    <div class="section">
+      <div id="comment_box">
+        <div id="comment-error-box" class="notification">
+          let me know what you think about this post in the comments.😅
+        </div>
+        <div class="field">
+        <label class="label">Your Comment</label>
+        <p class="control">
+          <textarea class="textarea no-round" placeholder="Write something.."></textarea>
+        </p>
+        <p class="control">
+          <button id="signin_button" class="button is-medium is-info is-full-width no-round">comment</button>
+        </p>
+        </div>
+      </div>
+    </div>
+  <div id="comments_container"></div>
+    <div id="loadmore_container" class="has-text-centered">
+      <div class="button is-danger is-loading" id="loadmore_button">Load more</div>
+    </div>
+</div>
+<!-- end comment section -->
+          </div>
+          <div class="column">
+            <div class="hidden-mobile">
+<div class="card">
+  <div class="card-content">
+    <div class="media">
+      <div class="media-left">
+        <figure class="image is-48x48">
+          <img src="http://bulma.io/images/placeholders/96x96.png" alt="Image">
+        </figure>
+      </div>
+      <div class="media-content">
+        <p class="title is-4">Hrishikesh Barman</p>
+        <p class="subtitle is-6">@geekodour</p>
+      </div>
+    </div>
+
+    <div class="content">
+      <small>I am Hrishikesh</small>
+    </div>
+    <div class="content">
+      <button id="signout_button" class="button is-info is-hidden">github signout</button>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-content">
+    <div class="content">
+      <small>categories</small>
+      <ul>
+      <li><a href=/gitpushblog/category/hacking>hacking</a></li>
+      <li><a href=/gitpushblog/category/life>life</a></li>
+      <li><a href=/gitpushblog/category/luajit>luajit</a></li>
+      <li><a href=/gitpushblog/category/snabb>snabb</a></li>
+      <li><a href=/gitpushblog/category/tech>tech</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+            </div>
+          </div>
+  </div>
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p>github is love, github is life</p>
+    </div>
+  </div>
+</footer>
+
+ <script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>       <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+      <script src=/gitpushblog/assets/main.js></script>
+  </body>
+</html>
