@@ -2,12 +2,14 @@ process.env.NODE_ENV = 'production'; // required, if not specified will run in w
 
 const fs = require('fs');
 const path = require('path');
+const mkdirp = require('mkdirp');
 const chalk = require('chalk');
 const init = require('./init');
 const log = console.log.bind(console,'> ');
 init.init();
 
 const ROOT_DIR = process.env.ROOT_DIR;
+mkdirp.sync(path.join(ROOT_DIR,'drafts')); // create `drafts/` if does not exist
 const DRAFT_DIR = path.join(ROOT_DIR,'drafts');
 const fileName = process.argv[2];
 
