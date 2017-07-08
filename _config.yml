@@ -1,6 +1,6 @@
 meta:
     blog_name: geek blog
-    blog_theme: newbulmadefault
+    blog_theme: gitpushblogdefault
     engine: nunjucks
     baseurl: /gitpushblog
 
