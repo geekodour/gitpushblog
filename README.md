@@ -1,3 +1,5 @@
+# NOTE: MAJOR CHANGE, userpages things is changing.. updates soon
+
 # gitpushblog
 - A static blog generator.
 - A set of npm scripts that make it easy to build a blog using the **githubAPI** and **nunjucks**.
