@@ -82,10 +82,14 @@ I am some text inside heading
 then submit the issue. Now we've created two very basic blogposts,
 one in the offline `/drafts` directory another directly in Github.
 let's see gitpushblog in action now.
+
 6. Inside <new_repo_name>, run `npm install`
+
 7. After installation is complete, run `npm run dev`
+
 8. Visit `localhost:3000` in your browser, you'll now see a development build of the blog,
 if you make changes in your draft or theme and reload, the changes will reflect immediately.
+
 9. Now it's time to push our blog to Github
 ```
 $ npm run push
