@@ -65,21 +65,23 @@ repo: <new_repo_name>
 .
 ```
 5. create few blogposts,
+
 **offline draft post**
 ```
 $ npm run new hello_world_draft.md
 ```
 **github issue post**
-go to `https://github.com/<username>/<new_repo_name>` and create a new issue. Remember, issues are our blogposts.
-give it a title of
-> I am a title from github issues
-give it a comment body of of
-> ## heading
-> I am some text inside heading
-then submit the issue.
-now we've created two very basic blogposts, one in the offline `/drafts` directory another directly in Github.
-let's see gitpushblog in action now.
 
+go to `https://github.com/<username>/<new_repo_name>` and create a new issue. Remember, issues are our blogposts.
+give it a title of **"I am a title from github issues"**
+give it a comment body of of
+```
+## heading
+I am some text inside heading
+```
+then submit the issue. Now we've created two very basic blogposts,
+one in the offline `/drafts` directory another directly in Github.
+let's see gitpushblog in action now.
 6. Inside <new_repo_name>, run `npm install`
 7. After installation is complete, run `npm run dev`
 8. Visit `localhost:3000` in your browser, you'll now see a development build of the blog,
@@ -91,7 +93,7 @@ $ npm run push
 git will ask for credentials before the push if using HTTPS, give it.
 the push will be done to the `gh-pages` branch of the repository, it will create one if does not already exist.
 10. visit `https://<username>.github.io/<new_repo_name>/`
-You'll notice that the posts inside `/drafts` are not there, whereas they were in the dev version.
+You'll notice that the posts inside `/drafts` are not there, whereas they were showing locally.
 You'll need to `npm run upload` to upload drafts to github, which is discussed later in this readme.
 
 That's all for the QuickStart.
