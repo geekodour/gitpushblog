@@ -22,7 +22,7 @@ see a [live demo here](https://geekodour.github.io/) else get started with the [
 ## Features
 - Uses npm scripts
 - Built with webpack and sass support
-- Gthub and Disqus Comments
+- Github and Disqus Comments
 - IndexPages,pagination, postpages, simple pages
 - Offline markdown draft support, live editing(needs reload)
 - Works hasslefree with github repository pages and profile pages.
@@ -102,7 +102,7 @@ $ git remote add origin https://github.com/<username>/<repo_name>.git
 .
 .
     userpage: false
-    baseurl: /<repo_name>
+    baseurl: "/<repo_name>"
 
 username: <username>
 author: <username>
@@ -110,7 +110,9 @@ repo: <repo_name>
 .
 .
 ```
-**5. Create few blogposts**
+**5. Inside `<repo_name>/`, run `npm install`**
+
+**6. Create few blogposts**
 
 *offline draft post*
 ```
@@ -129,8 +131,6 @@ then submit the issue. Now we've created two very basic blogposts,
 one in the offline `/drafts` directory another directly in Github.
 let's see gitpushblog in action now.
 
-**6. Inside `<repo_name>/`, run `npm install`**
-
 **7. After installation is complete, run `npm run dev`**
 
 **8. Visit `localhost:3000` in your browser**
@@ -143,11 +143,14 @@ $ npm run push
 ```
 git will ask for credentials before the push if using HTTPS, give it.
 the push will be done to the `gh-pages` branch of the repository, it will create one if does not already exist.
+
 Additionally, You can also push the working repository to Github using **git add,commit and push origin master** if you want to.
+(use `git push --force origin master` if `git push origin master` fails)
 
 **10. Make gh-pages branch the publishing branch**
-Head over to the settings of your <repo_name> repository in Github, in the **Github Pages** section and
-make choose **gh-pages branch** in the source and save.
+
+Head over to the settings page of your `<repo_name>` repository in Github, in the **Github Pages** section,
+choose **gh-pages branch** as the source and save.
 
 **11. Visit `https://<username>.github.io/<repo_name>/`** , it might take a few seconds to show up the first time.
 
@@ -173,7 +176,7 @@ Github offers [userpages and repopages](https://help.github.com/articles/user-or
 `repopages` are repository pages, eg. [geekodour.github.io/gitpushblog](https://geekodour.github.io/gitpushblog).
 
 When using [`userpages`, Github only allows the `master` branch to be the publishing branch](https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/)
-so, [see configuration](#configuration) for using gitpushblog with **userpages**.
+so, [see configuration](#configuration) for using gitpushblog with **userpages**. The installation instructions also have important information on setting up `userpage/profilepage`
 
 **Options for setting up the blog**
 1. Use `userpage` as the blog, eg. [geekodour.github.io](https://geekodour.github.io/).
@@ -185,6 +188,7 @@ so, [see configuration](#configuration) for using gitpushblog with **userpages**
 $ git clone https://github.com/geekodour/gitpushblog.git
 ```
 2. Create a Github repository named `<repo_name>`, I recommend naming it **'blog'**, in our case `<repo_name>` will be **'blog'**.
+
 Now, If you are planning to make this blog your **userpage/profilepage** then head over to GitHub and create a new repository named **`username.github.io`**, where `username` is your GitHub username.
 If the first part of the repository doesn’t exactly match your username, it won’t work, so make sure to get it right.
 If you already have a `username.github.io` repository, then I suggest you keep a backup of it before proceeding.
@@ -203,7 +207,7 @@ $ git remote add origin https://github.com/<username>/<repo_name>.git
 .
 .
     userpage: false
-    baseurl: /<repo_name>
+    baseurl: "/<repo_name>"
 
 username: <username>
 author: <username>
@@ -230,7 +234,7 @@ See [usage](#usage) for usage instructions.
 .
 .
     userpage: false
-    baseurl: /<repo_name>
+    baseurl: "/<repo_name>"
 
 username: <username>
 author: <username>
@@ -238,7 +242,9 @@ repo: <repo_name>
 .
 .
 ```
-**NOTE:** If you're planning to use userpages/profilepages for the blog, then set `userpage` to `true` and `baseurl` to `""`
+**NOTE:** If you're planning to use **userpages/profilepages** for the blog, then set `userpage` to `true` and `baseurl` to `""`, please also
+see the 2nd point in [installing by cloning](https://github.com/geekodour/gitpushblog#installing-gitpushblog-by-cloning) if you are planning
+to use it for **userpage/profilepage**
 
 That's all for the install.
 
@@ -250,51 +256,63 @@ gitpushblog uses **npm scripts**.
 ### Basic Usage
 After the installation,
 - **Running in development**
-`npm run dev` is a very handy command that runs a development version of the blog in watch mode in port 3000.
+
+`npm run dev` is a very handy command that runs a development version of the blog in watch mode on port 3000.
 It can be useful when writing an offline draft or editing the theme.
 
 - **Writing a new post**
-  - You can write a new post by creating a github issue in <repo_name> repository, give it the labels you want they will all show up.
+  - You can write a new post by creating a github issue in `<repo_name>` repository, give it the labels you want they will all show up.
   - If you prefer offline writing then you can do `npm run new <filename.md>`, and a new file will be created inside the `/drafts`
-    directory with appropriate template which you can start editing. **Bonus**, if you're using `npm run dev` while editing offline
-    posts, you see the changes on browser reload.
+    directory with appropriate template which you can start editing. **Bonus**, if you're using `npm run dev` while editing and adding
+    new offline posts, you see the changes on browser reload.
 
 - **Editing a post**
+
 You need to edit the post/issue in github
 
 - **Uploading a offline draft**
+
 `npm run upload` lets you choose which **files** from `/drafts` to upload to github issues,
 and then uploads them. If upload was successful the uploaded file will be **deleted** from `/drafts`.
 Use it when you're done writing a draft offline and ready to publish it online.
 
 Usually you **don't** have to do `git add -A` then `git commit -m 'message'` and `git push orign master` but
-if you want to push the draft changes to the repository(not the blog), then you can do `git push origin master`,
+if you want to push the draft changes to the repository *(not the publishing branch/repo)*, then you can do `git push origin master`,
 when you're ready to publish the draft just do `npm run upload` and it will create a githubissue with the drafts'
 content.
 
 Don't forget to do `npm run push` to push the changes to the actual blog.
 
+**IMPORTANT: You'll need to have your github `personal access token` set to the `GITHUB_AUTH_TOKEN` env. variable
+for `npm run upload` to work. Read: [`Setting GITHUB_AUTH_TOKEN`](#setting-github_auth_token)**
+
 - **Pushing blog changes**
+
 `npm run push` is the command. **It pushes the contents of the `/dist` dist directory to the appropriate repository:branch**
 It also runs the `npm run generate` command which creates the `/dist` directory in the first place.
 
-Pushing happens differently for userpages and repository pages.
+Pushing happens differently for userpages and repository pages.(gitpushblog manages all these, you don't have to worry)
 
 In **repopages** the blog root is in the `gh-pages` branch of the same repository.
 
 In **userpages** the blog root is in the `master` branch of the `username.github.io` repository.
 
-So you have a `<repo_name>` repository, where all your blog data is stored like themes, scripts etc.
-and the contents of the public blog go in another repository or branch depending upon what you configure in `_config.yml`
+So you have a `<repo_name>` repository, where all your have `themes/`, `scripts/`, `dist/` etc.
+But when you push the changes with `npm run push` the content of the public blog go in another **repository or branch**
+depending upon what you configure in `_config.yml` with `userpages`.
 
 - **Pushing repository changes**
-Repository changes include, changes to anything other than the contents of `/dev` and `/drafts`
-like changes in theme,scripts etc. `npm run dev`, `npm run generate`, `npm run push` these commands
-will always use the local, so if you made a change in the local you'll see the changes reflected in the blog
-when using these commands and `npm run push` with only push the contents of `/dist` so you'll have the changes
-in the blog too.
-But the repository on github which actually has the blog, in our case does not know about these repository changes.
-If you want to push these changes then do
+
+Repository changes include, changes to anything other than the contents of `/dev` and `/drafts`.
+changes in theme,scripts etc.
+`npm run dev`, `npm run generate`, `npm run push` these commands will always use the local configuration and files,
+so if you made a change in the local you'll see the changes reflected in the blog when using these commands.
+
+`npm run push` will only push the contents of `/dist` so you'll have the changes in the blog too as `/dist` will be generated
+using local configurations only.
+
+But the repository on github which `git remote origin` points to, in our case does not know about these repository changes.
+If you want to push these changes then do the `origin` then do,
 ```
 $ git add -A
 $ git commit -m 'commit message'
@@ -303,12 +321,12 @@ $ git push origin master
 `/dev` and `/dist` are gitignored but are forced added by `npm run push` because it's necessary then. recommendation is to keep it
 that way.
 
-You can also push repository changes if you want to keep an online copy of your draft but don't want to publish it to the blog yet.
+**Note:** You can also push repository changes if you want to keep an online copy of your draft but don't want to publish it to the blog yet.
 
 
 ### More on Usage
 
-- **`npm run dev`** : Generate the development build of the blog in watch mode and serve in port 3000,
+- **`npm run dev`** : Generate the development build of the blog in watch mode and serve on port 3000,
 useful if you are writing a draft and want to see changes in the browser on reload, also helpful when
 developing the theme. Watchmode keeps track of `add`,`change` and `unlink` of files.
 
@@ -334,11 +352,12 @@ All configurations are done in _confg.yml
 - `meta.blog_theme` : Name of the directory inside `/themes` to use as the theme
 - `meta.engine` : This should be `nunjucks` as that's the only templating engine that's supported as of now.
 - `meta.userpage` : should be set to true if blog is a `userpage`
-- `meta.baseurl` : `/<repo_name>`, it is required for repopages, for user pages it's just `/`, read [more about baseurl](https://byparker.com/blog/2014/clearing-up-confusion-around-baseurl/)
+- `meta.baseurl` : `"/<repo_name>"`, it is required for `repopages`, for `userpages` set it to `""`, read [more about baseurl](https://byparker.com/blog/2014/clearing-up-confusion-around-baseurl/)
 
 - `username` : github username
-- `author` : github username basically. explanation: github-blog-api filters issues based on author, so if someone else creates an issue, only the ones you created will show up.
-- `repo` : name of the repository, where you want gitpushblog to be.
+- `author` : github username.
+explanation: github-blog-api filters issues based on author, so if someone else creates an issue, only the ones you created will show up.
+- `repo` : `<repo_name>`, name of the repository, where you want gitpushblog to be.
 - `posts_per_page` : number of posts to fetch at once (max 100), used by static generator and javascript in the theme
 - `comments_per_page` : number of comments to fetch at once (max 100), used by static generator and javascript in the theme
 
@@ -359,7 +378,7 @@ If you want to experiment, then read [setting up githubAuth and commenting with 
 ### Setting up githubAuth and commenting with firebase
 Follow [this guide](https://firebase.google.com/docs/web/setup) from firebase to get the credentials and put the ones needed in `_config.yml`
 
-### GITHUB_AUTH_TOKEN Env
+### Setting up GITHUB_AUTH_TOKEN Env
 1. To get the `personal access token` go to [https://github.com/settings/tokens](https://github.com/settings/tokens)
 give it the whole `repo` scope permission and give a name to your token and you'll have a newly generated token.
 2. Copy that token
