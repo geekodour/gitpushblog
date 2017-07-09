@@ -20,11 +20,14 @@ const puts = (error, stdout, stderr) => {
         console.log("DONE");
 }
 const callback = (err) => { if (err){throw err;console.log('check repo url')} console.log('done!'); }
-//console.log(JSON.stringify(bc));
 if(bc.meta.userpage){
 
-  exec('git push https://github.com/geekodour/geekodour.github.io.git `git subtree split --prefix dist`:master --force', puts);
+  let subtreecommand = `git subtree split --prefix dist`;
+  exec(`git push https://github.com/${bc.username}/${bc.username}.github.io.git \`${subtreecommand}\`:master --force`, puts);
+
   /*
+  exec('git push https://github.com/geekodour/geekodour.github.io.git `git subtree split --prefix dist`:master --force', puts);
+
   ghpages.publish('dist', {
     branch: 'master',
     repo: `https://github.com/${bc.username}/${bc.username}.github.io.git`
