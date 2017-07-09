@@ -1,0 +1,12 @@
+<div class="card">
+  <div class="card-content">
+    <div class="content">
+      <small>categories</small>
+      <ul>
+      {% for label in labels %}
+      <li><a href={{ "/category/"|addbaseurl }}{{ label.slug }}>{{ label.name }}</a></li>
+      {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>

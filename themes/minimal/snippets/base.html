@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}blog{% endblock title %}</title>
+    <meta name="description" content="">
+    <meta name="author" content="Hrishikesh Barman">
+
+    {% block css %}
+    <link href={{ "/assets/main.css"|addbaseurl }} rel="stylesheet">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    {% endblock %}
+
+    {% block inlinejavascript %}
+    {% endblock %}
+
+  </head>
+
+  <body>
+      {% include 'snippets/navbar.html' %}
+
+      {% block page_content %}{% endblock %}
+      {% include 'snippets/footer.html' %}
+
+      {% block javascript %}
+      {% if bc.comment.isGithubAuth %} <script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script> {% endif %}
+      {% if bc.comment.isDisqus %} <script id="dsq-count-scr" src="//geekodour.disqus.com/count.js" async></script> {% endif %}
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+      <script src={{ "/assets/main.js"|addbaseurl }}></script>
+      {% endblock javascript %}
+  </body>
+</html>

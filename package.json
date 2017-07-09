@@ -54,6 +54,7 @@
     "postcss-loader": "2.0.5",
     "postcss-smart-import": "0.7.2",
     "precss": "1.4.0",
+    "primer-css": "8.0.0",
     "pushstate-server": "3.0.0",
     "rimraf": "2.6.1",
     "sass-loader": "6.0.5",

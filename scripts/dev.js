@@ -73,8 +73,9 @@ function startDevMode(){
         ignored: /[\/\\]\./
       });
 
-      themeWatcher.on('change', (path, stats) => { generateTemplates(); });
-      draftWatcher.on('change', (path, stats) => {
+      // change all to change,add,unlink
+      themeWatcher.on('all', (path, stats) => { generateTemplates(); });
+      draftWatcher.on('all', (path, stats) => {
               utils.getOfflineFileContents()
                    .then(offlinePostObjects=>{
                      posts[0] = posts[0].slice(offlinePostObjects.length);
@@ -82,7 +83,6 @@ function startDevMode(){
                      generateTemplates();
                    });
       });
-      // todo, add draftWatcher on add and unlink
 }
 
 function getAllPosts(){

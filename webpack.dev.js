@@ -42,7 +42,7 @@ module.exports = {
               exclude: /node_modules/
       },
       {
-            test: /\.sass$/,
+            test: /\.(scss|sass)$/,
             use: extractSass.extract({
                 use: [{
                     loader: "css-loader"
@@ -56,7 +56,7 @@ module.exports = {
                 // use style-loader in development
                 fallback: "style-loader"
             })
-        }
+       }
     ]
   },
   plugins: [
