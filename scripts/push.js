@@ -23,6 +23,9 @@ const callback = (err) => { if (err){throw err;console.log('check repo url')} co
 if(bc.meta.userpage){
 
   let subtreecommand = `git subtree split --prefix dist`;
+
+  exec(`git add --force dist`);
+  exec(`git commit -m 'blog updates'`);
   exec(`git push https://github.com/${bc.username}/${bc.username}.github.io.git \`${subtreecommand}\`:master --force`, puts);
 
   /*
@@ -36,8 +39,11 @@ if(bc.meta.userpage){
   );*/
 
 } else {
-  ghpages.publish('dist', callback );
+  // ghpages.publish('dist', callback );
+  let subtreecommand = `git subtree push --prefix dist`;
 
+  exec(`git add --force dist`);
+  exec(`git commit -m 'blog updates'`);
+  exec(`${subtreecommand} origin gh-pages`, puts);
+  //exec(`git push https://github.com/${bc.username}/${bc.username}.github.io.git \`${subtreecommand}\`:master --force`, puts);
 }
-
-
