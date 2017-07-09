@@ -138,10 +138,13 @@ $ npm run push
 ```
 git will ask for credentials before the push if using HTTPS, give it.
 the push will be done to the `gh-pages` branch of the repository, it will create one if does not already exist.
+Additionally, You can also push the working repository to Github using **git add,commit and push origin master** if you want to.
 
-**10. make gh-pages serving branch for github pages**
+**10. Make gh-pages branch the publishing branch**
+Head over to the settings of your <repo_name> repository in Github, in the **Github Pages** section and
+make choose **gh-pages branch** in the source and save.
 
-**11. Visit `https://<username>.github.io/<repo_name>/`**
+**11. Visit `https://<username>.github.io/<repo_name>/`** , it might take a few seconds to show up the first time.
 
 You'll notice that the posts inside `/drafts` are not there, whereas they were showing locally.
 You'll need to `npm run upload` to upload drafts to github, which is discussed later in this readme.
