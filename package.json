@@ -6,7 +6,7 @@
   "scripts": {
     "test": "node scripts/test.js",
     "generate": "npm-run-all clean:dist build:dist webpack:dist",
-    "dev": "npm-run-all --parallel clean:dev build:dev webpack:dev",
+    "dev": "npm-run-all --parallel clean:dev webpack:dev build:dev",
     "upload": "node scripts/upload.js",
     "new": "node scripts/newdraft.js",
     "prepush": "npm run generate",

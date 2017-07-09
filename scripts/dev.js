@@ -57,7 +57,6 @@ function generateTemplates(){
         // category pages
         utils.generateCategoryTemplates(labels,'dev')
 
-        console.log(chalk.bold.green(`Templates generated. \nAvailable on:\n http://localhost:${PORT}`));
 }
 
 function startDevMode(){
@@ -73,16 +72,27 @@ function startDevMode(){
         ignored: /[\/\\]\./
       });
 
-      // change all to change,add,unlink
-      themeWatcher.on('all', (path, stats) => { generateTemplates(); });
-      draftWatcher.on('all', (path, stats) => {
-              utils.getOfflineFileContents()
-                   .then(offlinePostObjects=>{
-                     posts[0] = posts[0].slice(offlinePostObjects.length);
-                     posts[0].unshift(...offlinePostObjects);
-                     generateTemplates();
-                   });
-      });
+      const draftWatcherCallback = () => {
+         utils.getOfflineFileContents()
+               .then(offlinePostObjects=>{
+                 posts[0] = posts[0].slice(offlinePostObjects.length);
+                 posts[0].unshift(...offlinePostObjects);
+                 generateTemplates();
+         });
+      }
+
+
+      themeWatcher
+        .on('change', (path, stats) => { generateTemplates(); })
+        .on('add', (path, stats) => { generateTemplates(); })
+        .on('unlink', (path, stats) => { generateTemplates(); });
+
+      draftWatcher
+        .on('change', (path, stats) => { draftWatcherCallback(); })
+        .on('add', (path, stats) => { draftWatcherCallback(); })
+        .on('unlink', (path, stats) => { draftWatcherCallback(); });
+
+      console.log(chalk.bold.green(`Templates generated. \nAvailable on:\n http://localhost:${PORT}`));
 }
 
 function getAllPosts(){
