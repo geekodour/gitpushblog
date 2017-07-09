@@ -3,7 +3,7 @@ meta:
     blog_theme: gitpushblogdefault
     engine: nunjucks
     userpage: true
-    baseurl: /
+    baseurl: ""
 
 username: lukego
 author: lukego
