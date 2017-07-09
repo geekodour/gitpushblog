@@ -22,13 +22,13 @@ see a [live demo here](https://geekodour.github.io/) else get started with the [
 ## Features
 - Uses npm scripts
 - Built with webpack and sass support
-- Blogpages, postpages, simple pages
+- Gthub and Disqus Comments
+- IndexPages,pagination, postpages, simple pages
 - Offline markdown draft support, live editing(needs reload)
-- Works hasslefree with github repository pages and profilepages.
+- Works hasslefree with github repository pages and profile pages.
 - Easily add,remove and edit themes. **(Need help creating themes if possible)**
-- Edit posts from mobile easily
-- Uses github api
-- Can make a post using github or using the commandline.
+- Edit posts from mobile easily using any github client or browser
+- Make a post using Github or using the commandline.
 
 ## Limitations
 - Probably does not work on Windows as of now.
@@ -55,7 +55,7 @@ The workfolw is simple, points **1 to 4** are one time unless you want to push y
 online or push theme changes to the repository. Otherwise, to interact with the blog you'll only
 need to run **5 to 7**.
 
-1. You clone/fork this repository and set the git remotes ( see installation )
+1. You clone/fork this repository and set the git remotes ( see [installation](#installation) )
 2. Then configure `_config.yml` according to your needs
 3. Add,remove or change theme according to your needs
 4. `git push` the whole repository, `dev/` and `dist/` are gitignored. (optional but recommend)
@@ -374,18 +374,21 @@ The templates are created using [nunjucks](https://mozilla.github.io/nunjucks/).
 of a theme looks somethng like this:
 ```
 .
-├── category_page.html
 ├── index.html
+├── post_page.html
+├── category_page.html
+│
 ├── pages
 │   ├── about.html
 │   └── projects.html
-├── post_page.html
+│
 ├── snippets
 │   ├── aboutbox.html
 │   ├── base.html
 │   ├── footer.html
 │   ├── labelsBox.html
 │   └── navbar.html
+│
 └── static
     ├── css
     │   └── main.sass
@@ -394,7 +397,7 @@ of a theme looks somethng like this:
         ├── services.js
         └── utils.js
 ```
-On running `npm run dev` or `npm run generate`, the output of these templates look something like this:
+On running `npm run dev` or `npm run generate`, the output of these templates in `/dev` and `/dist` look something like this:
 ```
 .
 ├── index.html
@@ -425,6 +428,9 @@ you can read the themes, currently there are two themes **gitpushblogdefault** a
 - PRs and everything else is welcome
 - It will be awesome if anyone can help in creating some themes, you can create themes using [nunjucks](https://mozilla.github.io/nunjucks/)
 for now.
+- There are a lot of issues, check them out. It will be really great if you can help :smile:
 
 # Contributors
 - [@CodeDotJS](https://github.com/CodeDotJS)
+- [@MaxySpark](https://github.com/MaxySpark)
+- [@geekodour](https://github.com/geekodour)
