@@ -110,7 +110,7 @@ repo: <repo_name>
 .
 .
 ```
-**5. Inside `<repo_name>/`, run `npm install`**
+**5. Inside `<repo_name>/`, run `npm install`**, will take a while
 
 **6. Create few blogposts**
 
@@ -218,6 +218,8 @@ repo: <repo_name>
 **NOTE:** If you're planning to use **userpages/profilepages** for the blog, then set `userpage` to `true` and `baseurl` to `""`, please also
 see the 2nd point in [installing by cloning](https://github.com/geekodour/gitpushblog#installing-gitpushblog-by-cloning) if you are planning
 to use it for **userpage/profilepage**
+
+5. inside `<repo_name>`, run `npm install`
 
 That's all for the install.
 
