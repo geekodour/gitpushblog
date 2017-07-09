@@ -6,23 +6,28 @@ const {bc} = init.init();
 
 // gh-pages npm package does not seem to have a --force option, which is needed sometimes
 // so have to call the git command directly for userpages
-const sys = require('sys');
-const exec = require('child_process').exec;
+//const sys = require('sys');
+//const sys = require('util');
+//const exec = require('child_process').exec;
 
 // functions
-const puts = (error, stdout, stderr) => { sys.puts(stdout) }
+//const puts = (error, stdout, stderr) => {
+//        if (error) {
+//          console.log('exec error: ' + error);
+//        }
+//        sys.puts(stdout);
+//}
 const callback = (err) => { if (err){throw err;console.log('check repo url')} console.log('done!'); }
+//console.log(JSON.stringify(bc));
+if(bc.meta.userpage){
 
-if(bc.userpage){
-
-  exec('git push https://github.com/geekodour/geekodour.github.io.git `git subtree split --prefix dist`:master --force', puts);
-  /*
+        //exec('git push https://github.com/geekodour/geekodour.github.io.git `git subtree split --prefix dist`:master --force', puts);
   ghpages.publish('dist', {
     branch: 'master',
     repo: `https://github.com/${bc.username}/${bc.username}.github.io.git`
     },
     callback
-  );*/
+  );
 
 } else {
   console.log('userpage was false');

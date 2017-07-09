@@ -2,8 +2,8 @@ meta:
     blog_name: iamthenameoftheblog
     blog_theme: gitpushblogdefault
     engine: nunjucks
-    userpage: false
-    baseurl: /gitpushblog
+    userpage: true
+    baseurl: /
 
 username: lukego
 author: lukego
