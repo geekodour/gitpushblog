@@ -6,7 +6,8 @@
 
 It is sort of like [Jekyll](https://jekyllrb.com/), but currently does limited stuff.
 
-see a [live demo]() here
+see a [live demo here](https://geekodour.github.io/) else get started with the [quickStart guide](#quick-start)
+
 
 ## Table of contents
 - Features and Limitations
@@ -18,6 +19,7 @@ see a [live demo]() here
 - built with webpack and sass support
 - works hasslefree with githubpages(both userpages and repo pages)
 - easily add remove themes and edit themes. (need help creating themes if possible)
+- mobile support lol
 - uses github api
 - offline markdown draft support, live editing*
 
@@ -32,6 +34,7 @@ see a [live demo]() here
 
 There was not much of a need, but I guess it's fun, also I wanted to use something like
 Jekyll but not Jekyll.
+
 **gitpushblog** is suitable for personal blogs for people who use github regularly.
 Here's the idea,
 
@@ -54,6 +57,8 @@ so I think this is a valid idea.
 The GithubAPI is not directory accessed, instead it uses a [github-blog-api](https://www.npmjs.com/package/github-blog-api)
 , using that npm package you can make a fully client side blog if you want to, but here we're using it to generate
 the static content.
+
+`dev/` and `dist/` are gitignored, so if you `git push orign master`, you won't see them. But `npm run push` ...
 
 ## Quick Start
 1. Clone gitpushblog repository locally

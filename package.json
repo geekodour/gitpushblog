@@ -42,7 +42,6 @@
     "css-loader": "0.28.2",
     "dotenv": "4.0.0",
     "extract-text-webpack-plugin": "2.1.0",
-    "gh-pages": "1.0.0",
     "github-blog-api": "1.1.11",
     "inquirer": "3.1.1",
     "js-yaml": "3.8.4",
