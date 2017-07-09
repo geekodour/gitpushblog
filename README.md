@@ -22,6 +22,7 @@ see a [live demo]() here
 - offline markdown draft support, live editing*
 
 ## Limitations
+- Probably does not work on windows
 - Uses only nunjucks for now, let me know if to add support of any other
 - I am thinking to add gatsby(react) support
 - see issues for others

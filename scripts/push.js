@@ -1,22 +1,32 @@
+process.env.NODE_ENV = 'production';
+
 const ghpages = require('gh-pages');
 const init = require('./init.js');
 const {bc} = init.init();
 
-const callback = (err) => {
-    if (err) throw err;
-    console.log('done!');
-}
+// gh-pages npm package does not seem to have a --force option, which is needed sometimes
+// so have to call the git command directly for userpages
+const sys = require('sys');
+const exec = require('child_process').exec;
+
+// functions
+const puts = (error, stdout, stderr) => { sys.puts(stdout) }
+const callback = (err) => { if (err){throw err;console.log('check repo url')} console.log('done!'); }
 
 if(bc.userpage){
 
+  exec('git push https://github.com/geekodour/geekodour.github.io.git `git subtree split --prefix dist`:master --force', puts);
+  /*
   ghpages.publish('dist', {
     branch: 'master',
-    repo: `https://github.com/${bc.username}/${bc.username}.github.io`
-  }, callback);
+    repo: `https://github.com/${bc.username}/${bc.username}.github.io.git`
+    },
+    callback
+  );*/
 
 } else {
-
-  ghpages.publish('dist', callback);
+  console.log('userpage was false');
+  ghpages.publish('dist', callback );
 
 }
 
