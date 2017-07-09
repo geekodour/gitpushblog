@@ -13,6 +13,11 @@ see a [live demo here](https://geekodour.github.io/) else get started with the [
 - [Quick start guide](#quick-start)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Configuration](#configuration)
+- [Templates and Theme Details](#templates-and-theme-details)
+- [Todo](#todo)
+- [Contribute](#contribute)
+- [Contributors](#contributors)
 
 ## Features
 - Uses npm scripts
@@ -162,9 +167,12 @@ There are two ways you can get started with:
 I recommended **cloning**, because you won't have that `forked from` thing under the repository name. If you don't mind having that, then please follow the fork installation instructions :smile:
 
 Github offers [userpages and repopages](https://help.github.com/articles/user-organization-and-project-pages/).
-`userpages` as basically profile pages, eg. [geekodour.github.io](https://geekodour.github.io/).
+
+`userpages` are basically profile pages, eg. [geekodour.github.io](https://geekodour.github.io/).
+
 `repopages` are repository pages, eg. [geekodour.github.io/gitpushblog](https://geekodour.github.io/gitpushblog).
-In [`userpages` Github only allows the `master` branch to be the publishing branch](https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/)
+
+When using [`userpages`, Github only allows the `master` branch to be the publishing branch](https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/)
 so, [see configuration](#configuration) for using gitpushblog with **userpages**.
 
 **Options for setting up the blog**
@@ -177,10 +185,10 @@ so, [see configuration](#configuration) for using gitpushblog with **userpages**
 $ git clone https://github.com/geekodour/gitpushblog.git
 ```
 2. Create a Github repository named `<repo_name>`, I recommend naming it **'blog'**, in our case `<repo_name>` will be **'blog'**.
-Now, If you are planning to make this blog your userpage/profilepage then head over to GitHub and create a new repository named `username.github.io`, where `username` is your GitHub username.
+Now, If you are planning to make this blog your **userpage/profilepage** then head over to GitHub and create a new repository named **`username.github.io`**, where `username` is your GitHub username.
 If the first part of the repository doesn’t exactly match your username, it won’t work, so make sure to get it right.
 If you already have a `username.github.io` repository, then I suggest you keep a backup of it before proceeding.
-So, if you'll have two new repositories now, one `<repo_name>` and another `username.github.io`.
+So, you'll have two new repositories now, one `<repo_name>` and another `username.github.io`.
 
 3. Point the cloned `gitpushblog` to `<repo_name>`
 ```
@@ -203,7 +211,9 @@ repo: <repo_name>
 .
 .
 ```
-**NOTE:** If you're planning to use userpages/profilepages for the blog, then set `userpage` to `true` and `baseurl` to `""`
+**NOTE:** If you're planning to use **userpages/profilepages** for the blog, then set `userpage` to `true` and `baseurl` to `""`, please also
+see the 2nd point in [installing by cloning](https://github.com/geekodour/gitpushblog#installing-gitpushblog-by-cloning) if you are planning
+to use it for **userpage/profilepage**
 
 That's all for the install.
 
@@ -266,10 +276,12 @@ Don't forget to do `npm run push` to push the changes to the actual blog.
 
 - **Pushing blog changes**
 `npm run push` is the command. **It pushes the contents of the `/dist` dist directory to the appropriate repository:branch**
+It also runs the `npm run generate` command which creates the `/dist` directory in the first place.
 
-This happens differently for userpages and repository pages.
+Pushing happens differently for userpages and repository pages.
 
 In **repopages** the blog root is in the `gh-pages` branch of the same repository.
+
 In **userpages** the blog root is in the `master` branch of the `username.github.io` repository.
 
 So you have a `<repo_name>` repository, where all your blog data is stored like themes, scripts etc.
@@ -307,11 +319,11 @@ and then uploads them. If upload was successful the uploaded file will be **dele
 Useful when you're done writing a draft offline and ready to publish it online.
 
 **IMPORTANT: You'll need to have your github `personal access token` set to the `GITHUB_AUTH_TOKEN` env. variable
-for `npm run upload` to work. Read: `Setting GITHUB_AUTH_TOKEN`**
+for `npm run upload` to work. Read: [`Setting GITHUB_AUTH_TOKEN`](#setting-github_auth_token)**
 
 - **`npm run generate`** : Generates the production build to say, minifies static assets etc. The files are in `/dist`
 - **`npm run push`** : It runs `npm run generate` first and then pushes the `/dist` directory to the `gh-pages` branch.
-- **`npm run push:only`** : Only pushes the `/dist` directory to `gh-pages` branch.
+- **`npm run push:only`** : Only pushes the `/dist` directory to `gh-pages` branch if using userpages then to the `master` branch of `username.github.io` repository.
 
 ## Configuration
 All configurations are done in _confg.yml
@@ -347,7 +359,7 @@ If you want to experiment, then read [setting up githubAuth and commenting with 
 ### Setting up githubAuth and commenting with firebase
 Follow [this guide](https://firebase.google.com/docs/web/setup) from firebase to get the credentials and put the ones needed in `_config.yml`
 
-### GITHUB_AUTH_TOKEN Env Variable for `npm run upload`
+### GITHUB_AUTH_TOKEN Env
 1. To get the `personal access token` go to [https://github.com/settings/tokens](https://github.com/settings/tokens)
 give it the whole `repo` scope permission and give a name to your token and you'll have a newly generated token.
 2. Copy that token
@@ -357,7 +369,7 @@ GITHUB_AUTH_TOKEN=YOUR_TOKEN_HERE_NO_SPACES
 ```
 4. you're done, `.env` file is gitignored, so it will remain local to your system always.
 
-# Templates and Theme details
+## Templates and Theme details
 The templates are created using [nunjucks](https://mozilla.github.io/nunjucks/). The directory structure
 of a theme looks somethng like this:
 ```
