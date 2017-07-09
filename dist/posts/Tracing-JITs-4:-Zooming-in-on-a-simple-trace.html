@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracing JITs 4: Zooming in on a simple trace</title>
+    <meta name="description" content="">
+    <meta name="author" content="Hrishikesh Barman">
+
+    <link href=/assets/main.css rel="stylesheet">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+
+  <script>
+  window.blogInfo = {
+          pageType: 'post',
+          postId: '9',
+          bc: {"meta":{"blog_name":"iamthenameoftheblog","blog_theme":"gitpushblogdefault","engine":"nunjucks","userpage":true,"baseurl":""},"username":"lukego","author":"lukego","repo":"blog","posts_per_page":6,"comments_per_page":3,"comment":{"disabled":false,"isGithub":true,"isDisqus":false,"isGithubAuth":true,"disqus_id":"geekodour"},"firebaseConfig":{"apiKey":"AIzaSyAZSJ1d1Sr9MnTK-__3D8SrwXjjQf6EML4","authDomain":"myblog-2b0ba.firebaseapp.com","projectId":"myblog-2b0ba"}}
+  };
+  // postId should be string or number?
+  </script>
+
+  </head>
+
+  <body>
+<nav class="nav">
+  <div class="nav-left"></div>
+  <div class="nav-center">
+  <a class="nav-item title is-5" href=/>
+    iamthenameoftheblog
+  </a>
+  </div>
+  <span id="nav-toggle" class="nav-toggle">
+  <span></span>
+  <span></span>
+  <span></span>
+  </span>
+  <div id="nav-menu" class="nav-right nav-menu">
+  <a class="nav-item" href="">projects</a>
+  <a class="nav-item" href="">favorites</a>
+  <a class="nav-item" href="">contact</a>
+  </div>
+</nav>
+
+  <div class="columns">
+          <div class="column">
+            <div class=""></div>
+          </div>
+          <div class="column is-half">
+<div class="section">
+  <div class="container">
+    <div class="content">
+      <div class="post-header">
+      <span class="tag">hacking</span>
+      <span class="tag">luajit</span>
+      <span class="tag">snabb</span>
+      <span class="is-pulled-right">10/8/2015</span>
+      </div>
+      <h1>Tracing jits 4: zooming in on a simple trace</h1>
+      <p>Today I want to do a simple experiment to improve my mental model of how <a href="https://github.com/SnabbCo/snabbswitch">Snabb Switch</a> code is just-in-time compiled into traces by <a href="http://luajit.org/">LuaJIT</a>. I am continuing with simple artificial examples like the ones in #6 and #8.</p>
+<p>This is the code I want to look at today:</p>
+<pre><code class="lang-lua">local counter = require(&quot;core.counter&quot;)
+
+local n = 1e9
+local c = counter.open(&quot;test&quot;)
+local t = { [0] = 1, [1] = 10 }  -- this table is added since #8
+for i = 1,n do
+   counter.add(c, t[i%2])
+end
+</code></pre>
+<p>which is functionally equivalent to the code in #8: it loops one billion times and increments a counter alternatively by 1 and 10. The difference is that the decision of how much to increment the counter now depends on data (table lookup) rather than control (<code>if</code> statement). This is an optimization that I have made to help the tracing JIT: I moved the variability from control (branching) into data (table lookup).</p>
+<p>Here is how it runs:</p>
+<pre><code>$ perf stat -e instructions,cycles ./snabb snsh -jdump=+r,dump.txt script3.lua
+    15,023,389,554 instructions              #    3.74  insns per cycle
+     4,021,039,287 cycles
+</code></pre><p>Each iteration takes 4 cycles (and executes 15 instructions). This is indeed in between the version from #6 that runs in one cycle (5 instructions) and the version in #8 that runs in 15 cycles (36 instructions).</p>
+<p>Here is what I am going to do now:</p>
+<ol>
+<li>Examine the machine code together with the <a href="http://wiki.luajit.org/SSA-IR-2.0">LuaJIT Intermediate Representation</a> (IR) for the loop.</li>
+<li>Make some simple tweaks and see what happens.<h4 id="ir-and-mcode">IR and mcode</h4>
+</li>
+</ol>
+<p>Let me present three exhibits: the Intermediate Representation for the loop, the corresponding machine code, and a hand-interleaved combination of the two with some comments.</p>
+<p>Here is the Intermediate Representation of the loop:</p>
+<pre><code>0030 ------------ LOOP ------------
+0031 r15      int BAND   0028  +1
+0032       &gt;  int ABC    0013  0031
+0033          p32 AREF   0015  0031
+0034 xmm7  &gt;  num ALOAD  0033
+0035 r15      u64 CONV   0034  u64.num
+0036 rbp    + u64 ADD    0035  0025
+0037          u64 XSTORE 0021  0036
+0038 rbx    + int ADD    0028  +1
+0039       &gt;  int LE     0038  0001
+0040 rbx      int PHI    0028  0038
+0041 rbp      u64 PHI    0025  0036
+</code></pre><p>Here is the machine code that was generated for that IR code:</p>
+<pre><code>0bcafa70  mov r15d, ebx
+0bcafa73  and r15d, +0x01
+0bcafa77  cmp r15d, esi
+0bcafa7a  jnb 0x0bca0018        -&gt;2
+0bcafa80  cmp dword [rdx+r15*8+0x4], 0xfffeffff
+0bcafa89  jnb 0x0bca0018        -&gt;2
+0bcafa8f  movsd xmm7, [rdx+r15*8]
+0bcafa95  cvttsd2si r15, xmm7
+0bcafa9a  test r15, r15
+0bcafa9d  jns 0x0bcafaad
+0bcafa9f  addsd xmm7, [0x41937b60]
+0bcafaa8  cvttsd2si r15, xmm7
+0bcafaad  add rbp, r15
+0bcafab0  mov [rcx+0x8], rbp
+0bcafab4  add ebx, +0x01
+0bcafab7  cmp ebx, eax
+0bcafab9  jle 0x0bcafa70        -&gt;LOOP
+</code></pre><p>Here is an interleaved combination of the two where I have added comments explaining my interpretation of what is going on:</p>
+<pre><code>0030 ------------ LOOP ------------
+
+;; Calculate i%2
+0031 r15      int BAND   0028  +1
+  0bcafa70  mov r15d, ebx
+  0bcafa73  and r15d, +0x01
+
+;; Array Bounds Check (ABC) of t[...]
+0032       &gt;  int ABC    0013  0031
+  0bcafa77  cmp r15d, esi
+  0bcafa7a  jnb 0x0bca0018        -&gt;2
+  0bcafa80  cmp dword [rdx+r15*8+0x4], 0xfffeffff
+  0bcafa89  jnb 0x0bca0018        -&gt;2
+
+;; Lookup array element location (AREF) and value (ALOAD)
+0033          p32 AREF   0015  0031
+0034 xmm7  &gt;  num ALOAD  0033
+  0bcafa8f  movsd xmm7, [rdx+r15*8]
+
+;; Convert array value from double float (Lua&#39;s native number format) into a uint64_t.
+0035 r15      u64 CONV   0034  u64.num
+  0bcafa95  cvttsd2si r15, xmm7
+  0bcafa9a  test r15, r15integ
+  0bcafa9d  jns 0x0bcafaad
+
+;; Add the value fromt he table (xmm7) to the counter value (rbp).
+;;
+;; XXX Is there duplicate work here with a second &#39;cvttsd2si r15,xmm7&#39;?
+;;     (that converts the double float in xmm7 to an integer in r15)
+0036 rbp    + u64 ADD    0035  0025
+  0bcafa9f  addsd xmm7, [0x40111b60]
+  0bcafaa8  cvttsd2si r15, xmm7
+  0bcafaad  add rbp, r15
+
+;; Store the updated counter value to memory.
+0037          u64 XSTORE 0021  0036
+  0bcafab0  mov [rcx+0x8], rbp
+
+;; Increment the loop index.
+0038 rbx    + int ADD    0028  +1
+  0bcafab4  add ebx, +0x01
+
+;; Check for loop termination.
+0039       &gt;  int LE     0038  0001
+  0bcafab7  cmp ebx, eax
+  0bcafab9  jle 0x0bcafa70        -&gt;LOOP
+
+0040 rbx      int PHI    0028  0038
+0041 rbp      u64 PHI    0025  0036
+</code></pre><p>I may well have made a mistake in this interpretation. I am also not certain whether the machine code does strictly match the IR code or to what extent it can be merged and shuffled around. I would like to understand this better because I have a fantasy that LuaJIT could automatically generate the interleaved view and that this might make traces easier for me to read.</p>
+<p>So what jumps out from this?</p>
+<ol>
+<li>The IR and the machine code do seem to match up pretty neatly. I am glad to have both because I would have had a hard time recognizing the ABC (Array Bounds Check) just from looking at the machine code.</li>
+<li>The loop is quite long: 15 instructions. That is triple the length of the simpler loop from #6.</li>
+<li>The loop executes in four cycles. That is an average of 3.75 instructions executed per cycle. I am still really impressed with Intel CPUs.</li>
+<li>There seems to be some busy-work that could be optimized away: the array bounds check and the float/integer conversions.<h4 id="tweak-1-luajit_nummode">Tweak 1: LUAJIT_NUMMODE</h4>
+</li>
+</ol>
+<p>First I take the opportunity to try a little bit of voodoo. LuaJIT supports <a href="https://github.com/SnabbCo/luajit/blob/master/src/lj_arch.h#L124-L127">several number modes</a> that can be chosen at compile time. What is a number mode? I don&#39;t really know. Mike Pall has commented that on x86_64 there are several options and some may be faster than others depending on the mix of integer and floating point operations.</p>
+<p>Just for fun I tried them all. Turned out that compiling LuaJIT with <code>-DLUAJIT_NUMMODE=2</code> improved this example significantly:</p>
+<pre><code>    12,022,432,242 instructions              #    3.98  insns per cycle
+     3,020,610,875 cycles
+</code></pre><p>Now we are down to 3 cycles per iteration (for 12 instructions).</p>
+<p>Here is the IR:</p>
+<pre><code>0030 ------------ LOOP ------------
+0031 r15      int BAND   0028  +1
+0032       &gt;  int ABC    0013  0031
+0033          p32 AREF   0015  0031
+0034       &gt;  int ALOAD  0033
+0035 r15      u64 CONV   0034  u64.int sext
+0036 rbp    + u64 ADD    0035  0025
+0037          u64 XSTORE 0021  0036
+0038 rbx    + int ADD    0028  +1
+0039       &gt;  int LE     0038  0001
+0040 rbx      int PHI    0028  0038
+0041 rbp      u64 PHI    0025  0036
+</code></pre><p>Here is the mcode:</p>
+<pre><code>-&gt;LOOP:
+0bcafaa0  mov r15d, ebx
+0bcafaa3  and r15d, +0x01
+0bcafaa7  cmp r15d, esi
+0bcafaaa  jnb 0x0bca0018        -&gt;2
+0bcafab0  cmp dword [rdx+r15*8+0x4], 0xfffeffff
+0bcafab9  jnz 0x0bca0018        -&gt;2
+0bcafabf  movsxd r15, dword [rdx+r15*8]
+0bcafac3  add rbp, r15
+0bcafac6  mov [rcx+0x8], rbp
+0bcafaca  add ebx, +0x01
+0bcafacd  cmp ebx, eax
+0bcafacf  jle 0x0bcafaa0        -&gt;LOOP
+</code></pre><p>Interesting. I am tempted to submit a Pull Request to Snabb Switch that enables <code>-DLUAJIT_NUMMODE=2</code> and see what impact that has on the performance tests that our CI runs. However, I am generally reluctant to apply optimizations that I don&#39;t understand reasonably well.</p>
+<h4 id="tweak-2-ffi-table">Tweak 2: FFI table</h4>
+<p>This time I will try a more straightforward change.</p>
+<p>The problem I see is that we are doing a bunch of work to check array bounds and convert the table values from floats to ints. Let us try to avoid this by replacing the high-level Lua table with a low-level FFI array of integers.</p>
+<pre><code class="lang-lua">local counter = require(&quot;core.counter&quot;)
+local ffi = require(&quot;ffi&quot;)
+
+local n = 1e9
+local c = counter.open(&quot;test&quot;)
+local t = ffi.new(&quot;int[2]&quot;, 1, 10)  -- allocate table as FFI object
+for i = 1,n do
+   counter.add(c, t[i%2])
+end
+</code></pre>
+<p>This actually works pretty well:</p>
+<pre><code>     9,022,173,328 instructions              #    4.46  insns per cycle
+     2,022,321,563 cycles
+</code></pre><p>Now we are down to two cycles per iteration (for 9 instructions).</p>
+<p>Here is the IR:</p>
+<pre><code>0032 ------------ LOOP ------------
+0033 r15      int BAND   0030  +1
+0034 r15      i64 CONV   0033  i64.int sext
+0035          i64 BSHL   0034  +2
+0036          p64 ADD    0035  0012
+0037          p64 ADD    0036  +8
+0038          int XLOAD  0037
+0039 r15      u64 CONV   0038  u64.int sext
+0040 rbp    + u64 ADD    0039  0027
+0041          u64 XSTORE 0023  0040
+0042 rbx    + int ADD    0030  +1
+0043       &gt;  int LE     0042  0001
+0044 rbx      int PHI    0030  0042
+0045 rbp      u64 PHI    0027  0040
+</code></pre><p>Here is the mcode:</p>
+<pre><code>-&gt;LOOP:
+0bcafaa0  mov r15d, ebx
+0bcafaa3  and r15d, +0x01
+0bcafaa7  movsxd r15, r15d
+0bcafaaa  movsxd r15, dword [rdx+r15*4+0x8]
+0bcafaaf  add rbp, r15
+0bcafab2  mov [rcx+0x8], rbp
+0bcafab6  add ebx, +0x01
+0bcafab9  cmp ebx, eax
+0bcafabb  jle 0x0bcafaa0        -&gt;LOOP
+0bcafabd  jmp 0x0bca001c        -&gt;3
+</code></pre><p>This experiment feels more satisfying. I was able to identify redundant code, eliminate it in a sensible way, and verify that performance improved.</p>
+<h4 id="the-end">The end</h4>
+<p>Morals of this story:</p>
+<ol>
+<li>Trace compilers and CPUs are still fun and interesting.</li>
+<li>Getting the right information is really important: what is actually running (mcode) and why (IR). The process of piecing this together is quite interesting and may lead to automated shortcuts in the future.</li>
+<li>Relatively naive optimization techniques can be effective. In this case we have 7.5x performance by simply looking at what happens and asking ourselves &quot;can we massage this to run inside one trace?&quot;, &quot;can we get rid of the Array Bounds Check (ABC)?&quot;, &quot;can we get rid of the float to integer conversion (cvttsd2si)?&quot;.</li>
+</ol>
+
+    </div>
+  </div>
+</div>
+<!-- comment section -->
+<div >
+    <div class="section">
+      <div id="comment_box">
+        <div id="comment-error-box" class="notification">
+          let me know what you think about this post in the comments.😅
+        </div>
+        <div class="field">
+        <label class="label">Your Comment</label>
+        <p class="control">
+          <textarea class="textarea no-round" placeholder="Write something.."></textarea>
+        </p>
+        <p class="control">
+          <button id="signin_button" class="button is-medium is-info is-full-width no-round">comment</button>
+        </p>
+        </div>
+      </div>
+    </div>
+  <div id="comments_container"></div>
+    <div id="loadmore_container" class="has-text-centered">
+      <div class="button is-danger is-loading" id="loadmore_button">Load more</div>
+    </div>
+</div>
+<!-- end comment section -->
+          </div>
+          <div class="column">
+            <div class="hidden-mobile">
+<div class="card">
+  <div class="card-content">
+    <div class="media">
+      <div class="media-left">
+        <figure class="image is-48x48">
+          <img src="http://bulma.io/images/placeholders/96x96.png" alt="Image">
+        </figure>
+      </div>
+      <div class="media-content">
+        <p class="title is-4">Hrishikesh Barman</p>
+        <p class="subtitle is-6">@geekodour</p>
+      </div>
+    </div>
+
+    <div class="content">
+      <small>I am Hrishikesh Barman</small>
+    </div>
+    <div class="content">
+      <button id="signout_button" class="button is-info is-hidden">github signout</button>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-content">
+    <div class="content">
+      <small>categories</small>
+      <ul>
+      <li><a href=/category/hacking>hacking</a></li>
+      <li><a href=/category/life>life</a></li>
+      <li><a href=/category/luajit>luajit</a></li>
+      <li><a href=/category/snabb>snabb</a></li>
+      <li><a href=/category/tech>tech</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+            </div>
+          </div>
+  </div>
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p>github is love, github is life</p>
+    </div>
+  </div>
+</footer>
+
+ <script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>       <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+      <script src=/assets/main.js></script>
+  </body>
+</html>
