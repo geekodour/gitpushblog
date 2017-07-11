@@ -11,13 +11,13 @@
 	   	   <article class="entry">
 					<header class="entry-header">
 						<h2 class="entry-title">
-                                <a href="{{ "/posts/"|addbaseurl }}{{ post.slug }}" title="" rel="category tag">{{ post.title }}</a>
+                                <a href="{{ '/posts/'|addbaseurl }}{{ post.slug }}" title="" rel="category tag">{{ post.title }}</a>
 						</h2>
 						<div class="entry-meta">
 							<ul>
                                 <li>{{ post.date|date }}</li>
 								<span class="meta-sep">&bull;</span>
-                                <li><a href="{{ "/category/"|addbaseurl }}{{ post.labels[0].name }}" title="" rel="category tag">{{ post.labels[0].name }}</a></li>
+                                <li><a href="{{ '/category/'|addbaseurl }}{{ post.labels[0].slug }}" title="" rel="category tag">{{ post.labels[0].name }}</a></li>
 								<span class="meta-sep">&bull;</span>
 							</ul>
 						</div>

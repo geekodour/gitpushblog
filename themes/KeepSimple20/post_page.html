@@ -18,7 +18,7 @@
 								<span class="meta-sep">&bull;</span>
 								<li>
                                     {% for label in post.labels %}
-                                    <a href="#" title="" rel="category tag">{{ label.name }}</a>
+                                    <a href="{{ '/category/'|addbaseurl }}{{ label.slug }}" title="" rel="category tag">{{ label.name }}</a>
                                     {% endfor %}
 								</li>
 								<span class="meta-sep">&bull;</span>

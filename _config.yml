@@ -1,6 +1,6 @@
 meta:
     blog_name: iamthenameoftheblog
-    blog_theme: KeepSimple20
+    blog_theme: the-plain
     engine: nunjucks
     userpage: false
     baseurl: "/gitpushblog"
@@ -20,7 +20,7 @@ comment:
     disqus_id: geekodour
 
 others:
-   template_cat_posts: false
+   template_cat_posts: true
 
 firebaseConfig:
     apiKey: AIzaSyAZSJ1d1Sr9MnTK-__3D8SrwXjjQf6EML4

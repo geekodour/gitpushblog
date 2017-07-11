@@ -1,0 +1,21 @@
+{% extends 'snippets/base.html' %}
+
+{% block inlinejavascript %}
+  {{ super() }}
+  window.blogInfo.pageType = 'page';
+{% endblock %}
+
+{% block pagecontent %}
+<article>
+
+	<h1 class="title">not found page</h1>
+
+	<div class="divider"></div>
+
+    404 page not found
+</article>
+
+<div class="page-navigation">
+	<a class="home" href="{{ "/"|addbaseurl }}" title="Back to Homepage">Home</a>
+</div>
+{% endblock %}

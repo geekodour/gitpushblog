@@ -1,0 +1,11 @@
+<div class="page-navigation" style="text-align: left">
+    <a rel="prev" href="{{ '/posts/'|addbaseurl }}{{ posts[postIndex+1].slug }}">
+            <strong>Next Article:</strong>
+            {{ posts[postIndex+1].title }}
+    </a>
+    <br/>
+    <a rel="prev" href="{{ '/posts/'|addbaseurl }}{{ posts[postIndex-1].slug }}">
+            <strong>Previous Article:</strong>
+            {{ posts[postIndex-1].title }}
+    </a>
+</div>
