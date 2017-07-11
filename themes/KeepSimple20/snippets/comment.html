@@ -19,11 +19,13 @@
 
   {% elif bc.comment.isGithub and not bc.comment.disabled %}
     <div class="section has-text-centered is-fluid">
-      <button id="signin_button" class="button is-medium">Go to Issue</button>
+      <button id="signin_button" class="button is-medium">Go to github issue to comment</button>
     </div>
   {% endif %}
 
-  <div id="comments_container"></div>
+  <!-- github comments/disqus comments container, added by client javascript -->
+  <div id="comments_container" class="commentlist"></div>
+  <!-- end of github comments/disqus container -->
 
   {% if not bc.comment.disabled and not bc.comment.isDisqus %}
     <div id="loadmore_button_container" class="" style="text-align:center">

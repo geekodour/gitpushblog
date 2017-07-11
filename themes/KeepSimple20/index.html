@@ -6,8 +6,6 @@
 {% endblock %}
 
 {% block pagecontent %}
-   <div id="content-wrap">
-   	<div class="row">
    		<div id="main" class="eight columns">
            {% for post in posts %}
 	   	   <article class="entry">
@@ -33,6 +31,4 @@
             {% include 'snippets/pagination.html' %}
    		</div>
         {% include 'snippets/sidebar.html' %}
-   	</div> <!-- end row -->
-   </div> <!-- end content-wrap -->
 {% endblock %}

@@ -8,82 +8,103 @@ const myblog = gitBlog({username:bc.username,repo:bc.repo,author:bc.author});
 myblog.setPost({per_page:bc.posts_per_page});
 myblog.setComment({per_page:bc.comments_per_page});
 
+const domNodes = {};
+const message = {
+        signedIn : `You are signed in`,
+        signOutErr : `Could not signout`,
+        addedComment: `Your comment is added`,
+        emptyComment: `Your comment is empty, please write something`,
+        allCommentsLoaded: `All comments loaded`,
+        allPostsLoaded: `All posts loaded`
+};
+
 // get all the required DOM elements for posts and comments
-if(bc.comment.isGithubAuth){
-  const signInButton = document.getElementById("signin_button");
-  const signOutButton = document.getElementById("signout_button");
-  const commentTextarea = document.querySelector('#comments textarea');
-  const commentInfoBox = document.getElementById('comment-info-box');
+if(bc.comment.isGithubAuth)
+{
+  domNodes.signInButton = document.getElementById("signin_button");
+  domNodes.signOutButton = document.getElementById("signout_button");
 }
 
-const commentsContainer = document.getElementById('comments_container');
-const loadMoreButtonContainer = document.getElementById('loadmore_button_container');
-const loadMoreButton = document.getElementById('loadmore_button');
+if( (!bc.others.template_cat_posts && blogInfo.pageType === 'category') || (blogInfo.pageType === 'post'))
+{
+  domNodes.loadMoreButtonContainer = document.getElementById('loadmore_button_container');
+  domNodes.loadMoreButton = document.getElementById('loadmore_button');
+}
 
-const postsListContainer = document.getElementById('category_posts_container');
+if(blogInfo.pageType === 'post')
+{
+  domNodes.commentsContainer = document.getElementById('comments_container');
+  domNodes.commentTextarea = document.querySelector('#comments textarea');
+  domNodes.commentInfoBox = document.getElementById('comment-info-box');
+}
+
+if(blogInfo.pageType === 'category')
+{
+  domNodes.postsListContainer = document.getElementById('category_posts_container');
+}
 
 
 
-const handleSignInAndComment = () => {
-
-  if(commentText.value){
-    commentError.classList.remove('is-warning');
-    commentError.innerText = '';
-
+const handleSignInAndComment = (event) => {
+  event.preventDefault();
+  if(domNodes.commentTextarea.value){
     firebaseService.signIn()
       .then(token=>{
-        commentError.innerText = 'you are signed in';
+
+        domNodes.commentInfoBox.innerText = message.signedIn;
         displaySignOut();
-        myblog.createComment({body:commentText.value},blogInfo.postId,token)
+
+        myblog.createComment({body:domNodes.commentTextarea.value},blogInfo.postId,token)
            .then(comment=>{
              // update notification
-             commentError.innerText = 'comment added!';
+             domNodes.commentInfoBox.innerText = message.addedComment;
              // update comment thread
-             commentsContainer.insertAdjacentHTML('beforeend', getCommentHTML(comment));
+             domNodes.commentsContainer.insertAdjacentHTML('beforeend', getCommentHTML(comment));
            });
       });
   }
   else{
-    // if comment is empty
-    commentError.classList.add('is-warning');
-    commentError.innerText = 'your comment seems a little bit empty!';
+    // if comment is empty, inform user
+    domNodes.commentInfoBox.innerText = message.emptyComment;
   }
 }
 
 const handleSignOut = () => {
-  firebase.auth().signOut().then(function() {
-    commentError.classList.remove('is-danger');
-    commentError.innerText = `signed out successfully!`;
-    window.location.reload();
-  }).catch(function(error) {
-    commentError.classList.add('is-danger');
-    commentError.innerText = `could not signout!`;
-  });
+  firebase.auth().signOut()
+          .then(function() {
+                // reload on signout
+                window.location.reload();
+          })
+          .catch(function(error) {
+                domNodes.commentInfoBox.innerText = message.signOutErr;
+          });
 }
 
 
 const getCommentHTML = comment => {
   // return html needed for comments
   // please modify these according to the css library you use
-  // by default it's using css classes from [bulma](https://bulma.io)
+  // here using css classes from KeepItSimple20 Theme.
+  // for disqus, no style is required
   if(bc.comment.isGithub){
-    return `<div class="box">
-      <article class="media">
-        <div class="media-left">
-          <figure class="image is-64x64">
-            <img src="${comment.user.avatar_url}" alt="">
-          </figure>
+    return `
+    <li class="depth-1">
+       <div class="avatar">
+          <img width="50" height="50" class="avatar" src="${comment.user.avatar_url}" alt="">
+       </div>
+       <div class="comment-content">
+           <div class="comment-info">
+              <cite>${comment.user.username}</cite>
+              <div class="comment-meta">
+                 <time class="comment-time" datetime="${comment.created_at}">${comment.created_at}</time>
+              </div>
+           </div>
+           <div class="comment-text">
+             ${comment.html}
+           </div>
         </div>
-        <div class="media-content">
-          <div class="content">
-            <p>
-              <strong>${comment.user.username}</strong>
-              ${comment.html}
-            </p>
-          </div>
-        </div>
-      </article>
-    </div>`;
+    </li>
+    `;
   }
   else{
     return `<div id="disqus_thread"></div>`;
@@ -92,75 +113,67 @@ const getCommentHTML = comment => {
 
 
 const getPostListItemHTML = post => {
-        // by default it's using css classes from [bulma](https://bulma.io)
-        return `<li><a href="${blogInfo.baseurl}/posts/${post.slug}" class="title is-4">${post.title}</a></li>`
-}
-
-const generateLoadMoreButton = iterator => {
-        // assign events to loadMoreButton based on iterator type
-        // this function handles `loadMoreButton` for posts and comments
-        // if you have a more complicated logic for handling loading button
-        // the modify this
-        loadMoreButton.classList.remove('is-loading');
-        switch(iterator){
-          case "post":
-                if(!myblog.settings.posts.last_reached){
-                        loadMoreButton.addEventListener("click", updateCategoryList);
-                }
-                else{ loadMoreContainer.innerHTML = "<p>All posts loaded!</p>"; }
-                break;
-          case "comment":
-                if(myblog.settings.comments.done_posts.indexOf(blogInfo.postId) === -1){
-                        loadMoreButton.addEventListener("click", updateGithubComments);
-                }
-                else{ loadMoreContainer.innerHTML = "<p>All comments loaded!</p>"; }
-                break;
-          default:
-                break;
-        }
+        return `<li><a href="${blogInfo.baseurl}/posts/${post.slug}" class="">${post.title}</a></li>`
 }
 
 const updateGithubComments = ()=>{
-    loadMoreButton.classList.add('is-loading');
-
+    // add `is-loading` class
+    domNodes.loadMoreButton.classList.add('is-loading');
+    // fetch
     myblog.fetchBlogPostComments(blogInfo.postId).then(comments=>{
-            generateLoadMoreButton("comment");
+            // remove `is-loading` class
+            domNodes.loadMoreButton.classList.remove('is-loading');
+            // append comments
             comments.forEach(comment=>{
-              commentsContainer.insertAdjacentHTML('beforeend', getCommentHTML(comment));
+              domNodes.commentsContainer.insertAdjacentHTML('beforeend', getCommentHTML(comment));
             });
+            // update loadmore button container if all comments are loaded
+            if(myblog.settings.comments.done_posts.indexOf(blogInfo.postId) > -1){
+              domNodes.loadMoreButtonContainer.innerHTML = message.allCommentsLoaded;
+            }
     });
 }
 
 
-export const updateCategoryList = () => {
-  // we could have generated the items in category
-  // page using nunjucks, just using an alternative here
-  //const loadMoreButton = document.getElementById('loadmore_button');
-  loadMoreButton.classList.add('is-loading');
-
-  // fetchBlogPosts takes `[]` of labels
-  // fetchBlogPosts probaly does not handle
-  // this properly, need to fix
+const updateCategoryList = () => {
+  // add `is-loading` class
+  domNodes.loadMoreButton.classList.add('is-loading');
+  // fetch
   myblog.fetchBlogPosts([blogInfo.label]).then(posts=>{
-          generateLoadMoreButton("post");
+          // remove `is-loading` class
+          domNodes.loadMoreButton.classList.remove('is-loading');
+          // append posts
           posts.forEach(post=>{
-             postsListContainer.insertAdjacentHTML('beforeend', getPostListItemHTML(post));
+             domNodes.postsListContainer.insertAdjacentHTML('beforeend', getPostListItemHTML(post));
           });
+          // update loadmore button container if all posts are loaded
+          if(myblog.settings.posts.last_reached){
+            domNodes.loadMoreButtonContainer.innerHTML = message.allPostsLoaded;
+          }
   });
+}
+
+export const initPostCategoryPage = () => {
+  updateCategoryList();
+  domNodes.loadMoreButton.addEventListener("click", updateCategoryList);
 }
 
 
 export const initCommentSystem = () => {
   if(!bc.comment.disabled){
     if(bc.comment.isGithub){
+      // setup github comments
       updateGithubComments();
+      domNodes.loadMoreButton.addEventListener("click", updateGithubComments);
       if(bc.comment.isGithubAuth){
-              signInButton.addEventListener("click", handleSignInAndComment);
-              signOutButton.addEventListener("click", handleSignOut);
+        // setup github auth and auth comments
+        domNodes.signInButton.addEventListener("click", handleSignInAndComment);
+        domNodes.signOutButton.addEventListener("click", handleSignOut);
       }
     }
     else if(bc.comment.isDisqus){
-      commentsContainer.innerHTML += getCommentHTML();
+      // setup disqus
+      domNodes.commentsContainer.innerHTML += getCommentHTML();
       disqusService.init();
     }
   }
@@ -168,8 +181,8 @@ export const initCommentSystem = () => {
 
 export const displaySignOut = () => {
   if(firebase.auth().currentUser){
-    signOutButton.style.display = 'block';
+    domNodes.signOutButton.style.display = 'block';
   } else {
-    signOutButton.style.display = 'none';
+    domNodes.signOutButton.style.display = 'none';
   }
 }

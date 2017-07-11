@@ -1,38 +1,44 @@
-import { initCommentSystem, updateCategoryList, displaySignOut  } from './utils';
+// gitpushblog javascript
+
+import { initCommentSystem, initPostCategoryPage, displaySignOut  } from './utils';
 import { firebaseService } from './services';
+
+// css and other file imports
 import '../css/default.css';
 import '../css/layout.css';
 import '../css/media-queries.css';
 import '../images/thumb.jpg';
 import '../images/user-01.png';
+// end of file imports
 
+const blogInfo = window.blogInfo;
+const bc = blogInfo.bc;
 
 // init highlight.js (used cdn)
 hljs.initHighlightingOnLoad();
 
 // init firebase and display signout if signedin
-if(window.blogInfo.bc.comment.isGithubAuth){
+if(bc.comment.isGithubAuth){
   firebaseService.init();
   displaySignOut();
 }
 
-// run instructions based on pagetype
-// widow.blogInfo is passed to each page
-// when generating the template with nunjucks
-
-switch(window.blogInfo.pageType){
+switch(blogInfo.pageType){
         case "index":
                 break;
         case "post":
                 initCommentSystem();
                 break;
         case "category":
-                updateCategoryList();
+                if(!bc.others.template_cat_posts){
+                  initPostCategoryPage();
+                }
                 break;
         default:
                 break;
 }
 
+// end of gitpushblog javascript
 
 
 // theme javascript below

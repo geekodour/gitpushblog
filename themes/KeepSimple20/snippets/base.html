@@ -26,7 +26,15 @@
 
 <body>
    {% include 'snippets/navbar.html' %}
-   {% block pagecontent%}{% endblock %}
+
+
+   <div id="content-wrap">
+   	<div class="row">
+      {% block pagecontent%}{% endblock %}
+    </div>
+   </div>
+
+
    {% include 'snippets/footer.html' %}
 
    {% block javascript %}

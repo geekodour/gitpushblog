@@ -19,6 +19,9 @@ comment:
     isGithubAuth: true
     disqus_id: geekodour
 
+others:
+   template_cat_posts: false
+
 firebaseConfig:
     apiKey: AIzaSyAZSJ1d1Sr9MnTK-__3D8SrwXjjQf6EML4
     authDomain: myblog-2b0ba.firebaseapp.com
