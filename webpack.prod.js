@@ -5,7 +5,6 @@ const webpack = require('webpack');
 const yaml = require('js-yaml');
 
 const bc = yaml.safeLoad(fs.readFileSync(path.join('_config.yml'), 'utf8'));
-
 const THEME_DIR = path.join(__dirname,'themes',bc.meta.blog_theme)
 
 // plugin inits
@@ -62,7 +61,48 @@ module.exports = {
                 // use style-loader in development
                 fallback: "style-loader"
             })
-        }
+       },
+       {
+              test: /\.css$/,
+               use: extractSass.extract({
+                use:
+                  [
+                    {
+                      loader:'css-loader',
+                      options: { minimize: true }
+                    }
+                  ],
+                  fallback: "style-loader"
+               })
+       },
+       {
+              test: /\.(png|jpg|gif|svg)$/,
+              use: [
+                     {
+                       loader:'file-loader',
+                       query: {
+                         name: "[name].[ext]",
+                         useRelativePath: false,
+                         publicPath: '',
+                         outputPath: 'img/'
+                       }
+                     }
+              ]
+       },
+       {
+              test: /\.(woff|woff2|eot|ttf|otf)$/,
+              use: [
+                {
+                  loader:'file-loader',
+                  query: {
+                    name: "[name].[ext]",
+                    useRelativePath: false,
+                    publicPath: '',
+                    outputPath: 'fonts/'
+                  }
+                }
+              ]
+       }
     ]
   },
   plugins: [

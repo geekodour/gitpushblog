@@ -6,7 +6,7 @@ It is sort of like [Jekyll](https://jekyllrb.com/), but currently does very limi
 
 see a [live demo here](https://geekodour.github.io/) else get started with the [quickstart guide](#quick-start)
 more examples:
-1. 
+1.
 2.
 3.
 

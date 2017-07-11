@@ -3,7 +3,7 @@
 
 {% block inlinejavascript %}
   {{ super() }}
-  window.blogInfo.pageType = 'index';
+  window.blogInfo.pageType = 'post';
   window.blogInfo.postId = '{{ post.id }}';
 {% endblock %}
 
@@ -24,8 +24,10 @@
     {{ post.html|safe }}
 
 </article>
+<article>
 {% include 'snippets/post_bottom_navigation.html' %}
 {% include 'snippets/comment.html' %}
+</article>
 
 
 {% endblock %}

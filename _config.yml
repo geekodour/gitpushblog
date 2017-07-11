@@ -16,7 +16,7 @@ comment:
     disabled: false
     isGithub: true
     isDisqus: false
-    isGithubAuth: true
+    isGithubAuth: false
     disqus_id: geekodour
 
 others:

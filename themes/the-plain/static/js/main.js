@@ -12,7 +12,7 @@ const blogInfo = window.blogInfo;
 const bc = blogInfo.bc;
 
 // init highlight.js (used cdn)
-//hljs.initHighlightingOnLoad();
+hljs.initHighlightingOnLoad();
 
 // init firebase and display signout if signedin
 if(bc.comment.isGithubAuth){
