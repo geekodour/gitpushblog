@@ -448,7 +448,7 @@ you can read the themes, currently there are two themes **gitpushblogdefault** a
 
 # Todo
 - [ ] homepage, themes to have a landing page other than the blog page
-- [ ] offline syntax highlighting, this maybe: https://www.npmjs.com/package/marky-markdown
+- [ ] offline syntax highlighting, this maybe: https://www.npmjs.com/package/marky-markdown https://www.npmjs.com/package/pygments
 
 # Contribute
 - PRs and everything else is welcome
