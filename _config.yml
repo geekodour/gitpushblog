@@ -5,9 +5,9 @@ meta:
     userpage: false
     baseurl: "/gitpushblog"
 
-username: lukego
-author: lukego
-repo: blog
+username: geekodour
+author: geekodour
+repo: gitpushblog
 
 posts_per_page: 6
 comments_per_page: 3
