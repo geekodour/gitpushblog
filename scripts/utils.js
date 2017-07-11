@@ -36,12 +36,14 @@ const createPostObject = (fileName,cb) =>{
 }
 
 // exported functions
-const generatePostTemplate = (post,labels,dirName=DIR_NAME)=>{
+const generatePostTemplate = (post,labels,posts,currentPostIndex,dirName=DIR_NAME)=>{
       let fileName = `${post.slug}.html`;
       let renderContent = nunjucks.render('post_page.html',
         Object.assign(contextObject,{
           post: post,
-          labels: labels
+          labels: labels,
+          posts: posts,
+          postIndex: currentPostIndex
         })
       );
       fs.writeFile(path.join(ROOT_DIR,dirName,'posts',fileName), renderContent, (err) => {
@@ -64,12 +66,14 @@ const generateIndexTemplate = (posts,labels,pagination,dirName=DIR_NAME,fileName
         });
 }
 
-const generateCategoryTemplates = (labels,dirName=DIR_NAME) => {
+const generateCategoryTemplates = (labels,posts,dirName=DIR_NAME) => {
         labels.forEach((label)=>{
+          let postsWithLabel = posts.filter(post => post.labels.map(label=>label.name).indexOf(label.name)>-1 );
           const renderContent = nunjucks.render('category_page.html',
                     Object.assign(contextObject,{
                       labels: labels,
-                      label:label
+                      label:label,
+                      posts: postsWithLabel
                     })
           );
           fs.writeFile(path.join(ROOT_DIR,dirName,'category',`${label.slug}.html`),renderContent, (err) => {

@@ -2,9 +2,13 @@
 - A static blog generator.
 - A set of npm scripts that make it easy to build a blog using the **githubAPI** and **nunjucks**.
 
-It is sort of like [Jekyll](https://jekyllrb.com/), but currently does limited stuff.
+It is sort of like [Jekyll](https://jekyllrb.com/), but currently does very limited stuff and is in its early stage.
 
 see a [live demo here](https://geekodour.github.io/) else get started with the [quickstart guide](#quick-start)
+more examples:
+1. 
+2.
+3.
 
 
 ## Table of contents

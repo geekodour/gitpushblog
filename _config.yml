@@ -1,6 +1,6 @@
 meta:
     blog_name: iamthenameoftheblog
-    blog_theme: gitpushblogdefault
+    blog_theme: KeepSimple20
     engine: nunjucks
     userpage: false
     baseurl: "/gitpushblog"

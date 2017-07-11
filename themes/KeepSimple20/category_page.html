@@ -1,0 +1,32 @@
+{% extends 'snippets/base.html' %}
+
+{% block inlinejavascript %}
+  {{ super() }}
+  window.blogInfo.pageType = 'post';
+  window.bloginfo.label: '{{label.name}}';
+{% endblock %}
+
+{% block pagecontent %}
+   <div id="content-wrap">
+   	<div class="row">
+   		<div id="main" class="eight columns">
+           {% for post in posts %}
+	   	   <article class="entry">
+					<header class="entry-header">
+						<h4 class="entry-title">
+                                <a href="{{ "/posts/"|addbaseurl }}{{ post.slug }}" title="" rel="category tag">{{ post.title }}</a>
+						</h4>
+						<div class="entry-meta">
+							<ul>
+                                <li>{{ post.date|date }}</li>
+								<span class="meta-sep">&bull;</span>
+							</ul>
+						</div>
+					</header>
+			</article>
+            {% endfor %}
+   		</div>
+        {% include 'snippets/sidebar.html' %}
+   	</div> <!-- end row -->
+   </div> <!-- end content-wrap -->
+{% endblock %}

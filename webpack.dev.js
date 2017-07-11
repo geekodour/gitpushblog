@@ -23,7 +23,7 @@ module.exports = {
   devtool: 'cheap-module-source-map',
 
   entry: {
-        main: path.join(THEME_DIR,'static','js','main.js'),
+        main: path.join(THEME_DIR,'static','js','main.js')
   },
 
   output: {
@@ -53,9 +53,46 @@ module.exports = {
                 {
                     loader: "sass-loader"
                 }],
-                // use style-loader in development
                 fallback: "style-loader"
             })
+       },
+       {
+              test: /\.css$/,
+               use: extractSass.extract({
+                use:
+                  [
+                   {loader:'css-loader'}
+                  ],
+                  fallback: "style-loader"
+               })
+       },
+       {
+              test: /\.(png|jpg|gif|svg)$/,
+              use: [
+                     {
+                       loader:'file-loader',
+                       query: {
+                         name: "[name].[ext]",
+                         useRelativePath: false,
+                         publicPath: '',
+                         outputPath: 'img/'
+                       }
+                     }
+              ]
+       },
+       {
+              test: /\.(woff|woff2|eot|ttf|otf)$/,
+              use: [
+                {
+                  loader:'file-loader',
+                  query: {
+                    name: "[name].[ext]",
+                    useRelativePath: false,
+                    publicPath: '',
+                    outputPath: 'fonts/'
+                  }
+                }
+              ]
        }
     ]
   },

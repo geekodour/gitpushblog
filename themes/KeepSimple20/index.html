@@ -1,0 +1,38 @@
+{% extends 'snippets/base.html' %}
+
+{% block inlinejavascript %}
+  {{ super() }}
+  window.blogInfo.pageType = 'index';
+{% endblock %}
+
+{% block pagecontent %}
+   <div id="content-wrap">
+   	<div class="row">
+   		<div id="main" class="eight columns">
+           {% for post in posts %}
+	   	   <article class="entry">
+					<header class="entry-header">
+						<h2 class="entry-title">
+                                <a href="{{ "/posts/"|addbaseurl }}{{ post.slug }}" title="" rel="category tag">{{ post.title }}</a>
+						</h2>
+						<div class="entry-meta">
+							<ul>
+                                <li>{{ post.date|date }}</li>
+								<span class="meta-sep">&bull;</span>
+                                <li><a href="{{ "/category/"|addbaseurl }}{{ post.labels[0].name }}" title="" rel="category tag">{{ post.labels[0].name }}</a></li>
+								<span class="meta-sep">&bull;</span>
+							</ul>
+						</div>
+					</header>
+					<div class="entry-content">
+                            <p>{{ post.html|safe|truncate(100) }}</p>
+					</div>
+			</article>
+            {% endfor %}
+
+            {% include 'snippets/pagination.html' %}
+   		</div>
+        {% include 'snippets/sidebar.html' %}
+   	</div> <!-- end row -->
+   </div> <!-- end content-wrap -->
+{% endblock %}

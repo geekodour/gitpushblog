@@ -45,15 +45,15 @@ function generateTemplates(){
         });
 
         // post pages
-        flatPosts.forEach(post=>{
-                utils.generatePostTemplate(post,labels,'dist');
+        flatPosts.forEach((post,currentPostIndex) => {
+                utils.generatePostTemplate(post,labels,flatPosts,currentPostIndex,'dist');
         });
 
         // other pages
         utils.generatePageTemplate('dist');
 
         // category pages
-        utils.generateCategoryTemplates(labels,'dist')
+        utils.generateCategoryTemplates(labels,flatPosts,'dist')
 }
 
 function startGenerate(){

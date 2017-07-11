@@ -1,0 +1,14 @@
+<ul class="post-nav group">
+        <li class="prev">
+                <a rel="prev" href="/posts/{{ posts[postIndex-1].slug }}">
+                        <strong>Previous Article</strong>
+                        {{ posts[postIndex-1].title }}
+                </a>
+        </li>
+        <li class="next">
+                <a rel="next" href="/posts/{{ posts[postIndex+1].slug }}">
+                        <strong>Next Article</strong>
+                        {{ posts[postIndex+1].title }}
+                </a>
+        </li>
+</ul>

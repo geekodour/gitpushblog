@@ -47,15 +47,15 @@ function generateTemplates(){
         });
 
         // post pages
-        flatPosts.forEach(post=>{
-                utils.generatePostTemplate(post,labels,'dev');
+        flatPosts.forEach((post,currentPostIndex) => {
+                utils.generatePostTemplate(post,labels,flatPosts,currentPostIndex,'dev');
         });
 
         // other pages
         utils.generatePageTemplate('dev');
 
         // category pages
-        utils.generateCategoryTemplates(labels,'dev')
+        utils.generateCategoryTemplates(labels,flatPosts,'dev')
 
 }
 
