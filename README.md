@@ -6,13 +6,13 @@ It is sort of like [Jekyll](https://jekyllrb.com/), but currently does very limi
 
 see a [live demo here](https://geekodour.github.io/) else get started with the [quickstart guide](#quick-start)
 more examples:
-1.
-2.
-3.
+1. https://geekodour.github.io/gitpushblog
+2. https://geekodour.github.io/gitpushblog
+3. https://geekodour.github.io/gitpushblog
 
 
 ## Table of contents
-- [Features and Limitations](#features)
+- [Features](#features)
 - [Basic idea](#basic-idea)
 - [Quick start guide](#quick-start)
 - [Installation](#installation)
@@ -21,11 +21,13 @@ more examples:
 - [Templates and Theme Details](#templates-and-theme-details)
 - [Todo](#todo)
 - [Contribute](#contribute)
+- [Limitations](#limitations)
 - [Contributors](#contributors)
 
 ## Features
 - Uses npm scripts
-- Built with webpack and sass support
+- Built with webpack and preprocessor support
+- easily create themes
 - Github and Disqus Comments
 - IndexPages,pagination, postpages, simple pages
 - Offline markdown draft support, live editing(needs reload)
@@ -33,13 +35,6 @@ more examples:
 - Easily add,remove and edit themes. **(Need help creating themes if possible)**
 - Edit posts from mobile easily using any github client or browser
 - Make a post using Github or using the commandline.
-
-## Limitations
-- Probably does not work on Windows as of now.
-- Uses only nunjucks for now, let me know if to add support of any other templating engine.
-- I am thinking to add gatsby(react) support.
-- Currently only works with github pages (want to keep it that way)
-- See issues for others.
 
 ## Basic idea
 
@@ -59,18 +54,17 @@ The workfolw is simple, points **1 to 4** are one time unless you want to push y
 online or push theme changes to the repository. Otherwise, to interact with the blog you'll only
 need to run **5 to 7**.
 
-1. You clone/fork this repository and set the git remotes ( see [installation](#installation) )
+1. You clone/fork this repository and set the git correct remotes
 2. Then configure `_config.yml` according to your needs
 3. Add,remove or change theme according to your needs
-4. `git push` the whole repository, `dev/` and `dist/` are gitignored. (optional but recommend)
-
-5. create offline draft posts or posts using github issues on the browser (see [usage](#usage) for details)
+4. `git push` the whole repository if you want to
+5. Create offline draft **posts using cli** or using github **issues on the browser**
 6. use `npm run dev` to do theme development or see live changes while editing offline drafts.
 7. run `npm run push` to publish your blog.
 
 Please see [installation](#installation) and [usage](#usage) for more details.
 
-Note: `dev/` and `dist/` are gitignored.
+Note: `dev/` is gitignored.
 
 Paraphrasing a [HN comment](https://news.ycombinator.com/item?id=14170041) related to the use of github issues for blogposts
 
@@ -94,7 +88,7 @@ $ git clone https://github.com/geekodour/gitpushblog.git
 ```
 **2. Create a new github repository, name it whatever you like. we'll call it `<repo_name>`**
 
-**3. Point the cloned `gitpushblog` to `<repo_name>`**
+**3. Point the cloned `gitpushblog` remotes to `<repo_name>`**
 ```
 $ mv gitpushblog <repo_name>
 $ cd <repo_name>
@@ -114,7 +108,9 @@ repo: <repo_name>
 .
 .
 ```
-**5. Inside `<repo_name>/`, run `npm install`**, will take a while
+You might need to configure _config.yml according to theme needs but this will work for the default theme.
+
+**5. Inside `<repo_name>/`, run `npm install`**, this will take a while
 
 **6. Create few blogposts**
 
@@ -159,7 +155,7 @@ choose **gh-pages branch** as the source and save.
 **11. Visit `https://<username>.github.io/<repo_name>/`** , it might take a few seconds to show up the first time.
 
 You'll notice that the posts inside `/drafts` are not there, whereas they were showing locally.
-You'll need to `npm run upload` to upload drafts to github, which is discussed later in this readme.
+You'll need to `npm run upload` to upload drafts to github, which is discussed later in [usage](#usage).
 
 That's all for the QuickStart.
 
@@ -193,8 +189,7 @@ $ git clone https://github.com/geekodour/gitpushblog.git
 ```
 2. Create a Github repository named `<repo_name>`, I recommend naming it **'blog'**, in our case `<repo_name>` will be **'blog'**.
 
-Now, If you are planning to make this blog your **userpage/profilepage** then head over to GitHub and create a new repository named **`username.github.io`**, where `username` is your GitHub username.
-If the first part of the repository doesn’t exactly match your username, it won’t work, so make sure to get it right.
+Now, If you are planning to make this blog your **userpage/profilepage** then head over to GitHub and create a new repository named **`username.github.io`**, where `username` is your GitHub username. If the first part of the repository doesn’t exactly match your username, it won’t work, so make sure to get it right.
 If you already have a `username.github.io` repository, then I suggest you keep a backup of it before proceeding.
 So, you'll have two new repositories now, one `<repo_name>` and another `username.github.io`.
 
@@ -205,23 +200,7 @@ $ cd <repo_name>
 $ git remote remove origin
 $ git remote add origin https://github.com/<username>/<repo_name>.git
 ```
-
-4. open `_config.yml` and change the following:
-```
-.
-.
-    userpage: false
-    baseurl: "/<repo_name>"
-
-username: <username>
-author: <username>
-repo: <repo_name>
-.
-.
-```
-**NOTE:** If you're planning to use **userpages/profilepages** for the blog, then set `userpage` to `true` and `baseurl` to `""`, please also
-see the 2nd point in [installing by cloning](https://github.com/geekodour/gitpushblog#installing-gitpushblog-by-cloning) if you are planning
-to use it for **userpage/profilepage**
+4. open `_config.yml` and change according to your needs, read [configuration](#configuration) to know how to modify `_config.yml`
 
 5. inside `<repo_name>`, run `npm install`
 
@@ -235,26 +214,12 @@ See [usage](#usage) for usage instructions.
 2. In the forked version, go to settings and **enable** `issues`
 3. You can also change the repository name to something like **'blog'** if you want to.
 4. Now clone the forked repository, and `cd` inside it and run `npm install`
-5. open `_config.yml` and change the following and save.
-```
-.
-.
-    userpage: false
-    baseurl: "/<repo_name>"
-
-username: <username>
-author: <username>
-repo: <repo_name>
-.
-.
-```
-**NOTE:** If you're planning to use **userpages/profilepages** for the blog, then set `userpage` to `true` and `baseurl` to `""`, please also
-see the 2nd point in [installing by cloning](https://github.com/geekodour/gitpushblog#installing-gitpushblog-by-cloning) if you are planning
-to use it for **userpage/profilepage**
+5. open `_config.yml` and change according to your needs, read [configuration](#configuration) to know how to modify `_config.yml`
+6. inside `<repo_name>`, run `npm install`
 
 That's all for the install.
 
-See usage for usage instructions.
+See [usage](#usage) for usage instructions.
 
 ## Usage
 gitpushblog uses **npm scripts**.
@@ -319,12 +284,14 @@ using local configurations only.
 
 But the repository on github which `git remote origin` points to, in our case does not know about these repository changes.
 If you want to push these changes then do the `origin` then do,
+(**you'll probably have to use `git push --force origin master`
+if you're pushing for the first time after changing the remote origin in installation**)
 ```
 $ git add -A
 $ git commit -m 'commit message'
 $ git push origin master
 ```
-`/dev` and `/dist` are gitignored but are forced added by `npm run push` because it's necessary then. recommendation is to keep it
+`/dev` is gitignored but are forced added by `npm run push` because it's necessary then. recommendation is to keep it
 that way.
 
 **Note:** You can also push repository changes if you want to keep an online copy of your draft but don't want to publish it to the blog yet.
@@ -350,7 +317,29 @@ for `npm run upload` to work. Read: [`Setting GITHUB_AUTH_TOKEN`](#setting-githu
 - **`npm run push:only`** : Only pushes the `/dist` directory to `gh-pages` branch if using userpages then to the `master` branch of `username.github.io` repository.
 
 ## Configuration
-All configurations are done in _confg.yml
+All configurations are done in `/_confg.yml`
+
+### Userpages and repo pages
+`npm run push` will push contents of `/dist` to **master** branch of **username.github.io** repository if `meta.username` is `true`.
+The `baseurl` should be a empty string when using userpages.
+
+Otherwise it will push contents of `/dist` to the `gh-pages` branch of the repository the `origin` is pointing to, which we set during
+installation, when using `repopages` there is the problem of `baseurl` so you need to set it to `/<repo_name>`
+
+So, if you're planning to use **userpages** for the blog, then set `meta.userpage` to `true` and `meta.baseurl` to `""`,
+please also see the 2nd point in [installing by cloning](https://github.com/geekodour/gitpushblog#installing-gitpushblog-by-cloning)
+if you are planning to use it for **userpage**
+
+### Themes
+Themes are located in `/themes`, currently all the available themes are included in there.
+`meta.blog_theme` is the name of directory which includes the theme files inside `/themes`
+
+If you want to get started with building themes, then read the [building theme docs]() and
+Themes are managed by git subtree command(see theme docs).
+
+### Comments
+There is `comment` field in `_config.yml`, the theme uses these values in comments to insert,remove comments, include github comments
+or disqus comments. The settings are pretty self explanatory.
 
 ### `_config.yml` explanations
 
@@ -367,15 +356,15 @@ explanation: github-blog-api filters issues based on author, so if someone else 
 - `posts_per_page` : number of posts to fetch at once (max 100), used by static generator and javascript in the theme
 - `comments_per_page` : number of comments to fetch at once (max 100), used by static generator and javascript in the theme
 
-- `comments.disabled` : if `true` no comments will show up, no one can comment.
-- `comments.isGithub` : if `true` github comments will be shown.
-- `comments.isGithubAuth` : if `true` a will show a comment box, where you can comment by authenticating with your github account.
+- `comment.disabled` : if `true` no comments will show up, no one can comment.
+- `comment.isGithub` : if `true` github comments will be shown.
+- `comment.isGithubAuth` : if `true` a will show a comment box, where you can comment by authenticating with your github account.
 
 **NOTE: This is super experimental and I think is **dangerous** too, please check the issue regarding this
 if you'd like to help, I recommend you set it to `false` for now**
-- `comments.isDisqus` : if `true` will let the theme declare `divs` and containers for the disqus commenting system,
+- `comment.isDisqus` : if `true` will let the theme declare `divs` and containers for the disqus commenting system,
 disqus is already integrated in default theme, so just set this to `true` and `isGithub` to `false` if you want disqus comments.
-- `comments.disqus_id` : your disqus id
+- `comment.disqus_id` : your disqus id
 
 - `firebaseConfig.*` : these firebase configuration options that you get from firebase, again this is highly experimental, recomment not using it for now.
 If you want to experiment, then read [setting up githubAuth and commenting with firebase](#setting-up-githubauth-and-commenting-with-firebase)
@@ -444,7 +433,7 @@ On running `npm run dev` or `npm run generate`, the output of these templates in
 ├── about.html
 └── projects.html
 ```
-you can read the themes, currently there are two themes **gitpushblogdefault** and **minimal**, they can be found in the `/themes` directory.
+you can read the themes, currently there are two themes **gitpushblogdefault**,**KeepItSimple20**,**the-plain** and **lagom** they can be found in the `/themes` directory.
 
 # Todo
 - [ ] homepage, themes to have a landing page other than the blog page
@@ -455,6 +444,13 @@ you can read the themes, currently there are two themes **gitpushblogdefault** a
 - It will be awesome if anyone can help in creating some themes, you can create themes using [nunjucks](https://mozilla.github.io/nunjucks/)
 for now.
 - There are a lot of issues, check them out. It will be really great if you can help :smile:
+
+## Limitations
+- Probably does not work on Windows as of now.
+- Uses only nunjucks for now, let me know if to add support of any other templating engine.
+- I am thinking to add gatsby(react) support.
+- Currently only works with github pages (want to keep it that way)
+- See issues for others.
 
 # Contributors
 - [@CodeDotJS](https://github.com/CodeDotJS)
