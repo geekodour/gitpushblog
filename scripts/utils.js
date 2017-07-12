@@ -4,14 +4,15 @@ const mkdirp = require('mkdirp');
 const marked = require('marked');
 const fs = require('fs');
 const map = require('async/map');
-const slugify = require('slugify');
+//const slugify = require('slugify');
 const path = require('path');
 const yamlFront = require('yaml-front-matter');
 const _nunjucks = require('./nunjucks_config.js');
 const init = require('./init');
 
 // init nunjucks and blog and env variables
-const {nunjucks,bc} = init.init();
+const {nunjucks,bc,tc,slug} = init.init();
+console.log("TC:",tc);
 
 // inits
 const ROOT_DIR = process.env.ROOT_DIR;
@@ -27,7 +28,8 @@ const contextObject = {
 const createPostObject = (fileName,cb) =>{
          let content = fs.readFileSync(path.join(ROOT_DIR,'drafts',fileName),{encoding:"utf8"});
          const post = yamlFront.loadFront(content);
-         post.slug = slugify(post.title);
+         post.slug = slug(post.title);
+         console.log(post.slug);
          post.html = marked(post.__content);
          post.body = post.__content;
          post.fileName = fileName;

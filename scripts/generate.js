@@ -10,7 +10,6 @@ const mkdirp = require('mkdirp');
 
 const fs = require('fs');
 const path = require('path');
-const slugify = require('slugify');
 
 // import configuration files
 const init = require('./init');
