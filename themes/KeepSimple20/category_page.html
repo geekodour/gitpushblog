@@ -1,4 +1,5 @@
 {% extends 'snippets/base.html' %}
+{% block title %}{{ label.name }}{% endblock title %}
 
 {% block inlinejavascript %}
   {{ super() }}
@@ -15,7 +16,7 @@
 	   	     <article class="entry">
 		       <header class="entry-header">
 		       	<h4 class="entry-title">
-                  <a href="{{ "/posts/"|addbaseurl }}{{ post.slug }}" title="" rel="category tag">{{ post.title }}</a>
+                  <a href="{{ '/posts/'|addbaseurl }}{{ post.slug }}" title="" rel="">{{ post.title }}</a>
 		       	</h4>
 		       	<div class="entry-meta">
 		       		<ul>

@@ -7,8 +7,10 @@ It is sort of like [Jekyll](https://jekyllrb.com/), but currently does very limi
 see a [live demo here](https://geekodour.github.io/) else get started with the [quickstart guide](#quick-start)
 more examples:
 1. https://geekodour.github.io/gitpushblog
-2. https://geekodour.github.io/gitpushblog
-3. https://geekodour.github.io/gitpushblog
+2. https://geekodour.github.io/
+3. https://geekodour.github.io/gitpushblog-example
+
+**Requires Node4.4 or above**
 
 
 ## Table of contents
@@ -18,6 +20,7 @@ more examples:
 - [Installation](#installation)
 - [Usage](#usage)
 - [Configuration](#configuration)
+- [Troubleshooting](#troubleshooting)
 - [Templates and Theme Details](#templates-and-theme-details)
 - [Todo](#todo)
 - [Contribute](#contribute)
@@ -86,7 +89,7 @@ the static content.
 ```
 $ git clone https://github.com/geekodour/gitpushblog.git
 ```
-**2. Create a new github repository, name it whatever you like. we'll call it `<repo_name>`**
+**2. Create a new github repository, name it whatever you like, I recommend naming it `blog`. we'll call it `<repo_name>`**
 
 **3. Point the cloned `gitpushblog` remotes to `<repo_name>`**
 ```
@@ -120,7 +123,7 @@ $ npm run new hello_world_draft.md
 ```
 *github issue post*
 
-go to `https://github.com/<username>/<repo_name>` and create a new issue. Remember, issues are our blogposts.
+go to `https://github.com/<username>/<repo_name>`, It will be an empty repositoty and create a new issue. Remember, issues are our blogposts.
 give it a title of **"I am a title from github issues"**
 give it a comment body of of
 ```
@@ -383,6 +386,10 @@ give it the whole `repo` scope permission and give a name to your token and you'
 GITHUB_AUTH_TOKEN=YOUR_TOKEN_HERE_NO_SPACES
 ```
 4. you're done, `.env` file is gitignored, so it will remain local to your system always.
+
+## TroubleShooting
+If you get a node-sass error about bindings not found,
+run this command `npm rebuild node-sass`
 
 ## Templates and Theme details
 The templates are created using [nunjucks](https://mozilla.github.io/nunjucks/). The directory structure
