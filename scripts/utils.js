@@ -11,8 +11,8 @@ const _nunjucks = require('./nunjucks_config.js');
 const init = require('./init');
 
 // init nunjucks and blog and env variables
+// tc: theme_config, bc: blog_config
 const {nunjucks,bc,tc,slug} = init.init();
-console.log("TC:",tc);
 
 // inits
 const ROOT_DIR = process.env.ROOT_DIR;
@@ -21,6 +21,7 @@ const DIR_NAME = process.env.NODE_ENV === 'production'?'dist':'dev'; // output d
 
 const contextObject = {
           bc: bc,
+          tc: tc,
           baseurl: process.env.NODE_ENV === 'development'?'':bc.meta.baseurl
 }
 
