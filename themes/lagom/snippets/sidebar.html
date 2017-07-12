@@ -1,13 +1,10 @@
 <nav>
   <h1>Hi.</h1>
-  <a href="/">
-    {% if site.data.theme.social.gravatar %}
-    <img src="http://www.gravatar.com/avatar/{{ site.data.theme.social.gravatar }}?s=200" id="gravatar" alt="My photo"/>
-    {% else %}
-    <img src="/logo.png" id="logo" alt="Blog logo"/>
-    {% endif %}
+  <a href="{{ '/'|addbaseurl }}">
+    <!--<img src="http://www.gravatar.com/avatar/{{ site.data.theme.social.gravatar }}?s=200" id="gravatar" alt="My photo"/>-->
+    <img src="{{ '/assets/img/logo.png'|addbaseurl }}" id="logo" alt="Blog logo"/>
   </a>
-  <h2>I'm <a href="/">{{ site.data.theme.name }}</a>.</h2>
+  <h2>I'm somebody that I used to know.</h2>
   <div id="bio">
     <p>A brief bio or something witty.</p>
     <p>
@@ -15,6 +12,6 @@
     </p>
   </div>
   <div id="social">
-    {% include social.html %}
+    {% include 'snippets/social.html' %}
   </div>
 </nav>

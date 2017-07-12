@@ -1,0 +1,29 @@
+{% extends 'snippets/base.html' %}
+
+{% block inlinejavascript %}
+  {{ super() }}
+  window.blogInfo.pageType = 'post';
+  window.blogInfo.postId = '{{ post.id }}';
+{% endblock %}
+
+
+{% block pagecontent %}
+<p class="meta">
+  {{ post.date|date }}
+  <a href="{{ '/'|addbaseurl }}">
+    <i class="home fa fa-home"></i>
+  </a>
+</p>
+
+<h1 class="title">{{ post.title }}</h1>
+
+<div id="post">
+  {{ post.html|safe }}
+</div>
+
+<div id="related">
+  <h3>Other Posts</h3>
+  {% include 'snippets/post_bottom_navigation.html' %}
+</div>
+{% include 'snippets/comment.html' %}
+{% endblock %}

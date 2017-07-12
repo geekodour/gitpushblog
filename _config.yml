@@ -1,6 +1,6 @@
 meta:
     blog_name: iamthenameoftheblog
-    blog_theme: the-plain
+    blog_theme: lagom
     engine: nunjucks
     userpage: false
     baseurl: "/gitpushblog"
@@ -9,7 +9,7 @@ username: geekodour
 author: geekodour
 repo: gitpushblog
 
-posts_per_page: 6
+posts_per_page: 3
 comments_per_page: 3
 
 comment:

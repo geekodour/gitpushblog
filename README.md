@@ -255,7 +255,7 @@ content.
 Don't forget to do `npm run push` to push the changes to the actual blog.
 
 **IMPORTANT: You'll need to have your github `personal access token` set to the `GITHUB_AUTH_TOKEN` env. variable
-for `npm run upload` to work. Read: [`Setting GITHUB_AUTH_TOKEN`](#setting-github_auth_token)**
+for `npm run upload` to work. Read: [`Setting GITHUB_AUTH_TOKEN`](#setting-up-github_auth_token-env)**
 
 - **Pushing blog changes**
 
@@ -335,7 +335,8 @@ Themes are located in `/themes`, currently all the available themes are included
 `meta.blog_theme` is the name of directory which includes the theme files inside `/themes`
 
 If you want to get started with building themes, then read the [building theme docs]() and
-Themes are managed by git subtree command(see theme docs).
+Themes are managed by git subtree command(see theme docs). It takes less than
+15mins to turn a Jekyell theme into a theme that gitpushblog supports.
 
 ### Comments
 There is `comment` field in `_config.yml`, the theme uses these values in comments to insert,remove comments, include github comments

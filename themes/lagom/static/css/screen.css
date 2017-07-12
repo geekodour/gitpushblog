@@ -13,7 +13,7 @@ body {
   color: #222222;
   line-height: 24px;
   margin: 0;
-  border-top: 7px solid {{ site.data.theme.highlight_color }};
+  border-top: 7px solid blue;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -48,17 +48,17 @@ ul {
 }
 
 a {
-  color: {{ site.data.theme.highlight_color }};
+  color: blue;
   text-decoration: none;
 }
 
 a:hover {
-  color: {{ site.data.theme.highlight_color }};
+  color: blue;
   text-decoration: underline;
 }
 
 a:visited {
-  color: {{ site.data.theme.highlight_color }};
+  color: blue;
 }
 
 table {
@@ -181,7 +181,7 @@ nav h1, nav h2 {
 }
 
 #home h2 {
-  color: {{ site.data.theme.highlight_color }};
+  color: blue;
 }
 
 #logo, #gravatar {
@@ -214,7 +214,7 @@ nav h1, nav h2 {
 
 #stalker a:hover {
   text-decoration: none;
-  color: {{ site.data.theme.highlight_color }};
+  color: blue;
 }
 
 i.fa-hn {
