@@ -46,7 +46,7 @@
     {% if bc.comment.isGithubAuth %} <script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script> {% endif %}
     {% if bc.comment.isDisqus %} <script id="dsq-count-scr" src="//geekodour.disqus.com/count.js" async></script> {% endif %}
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-    <script src={{ "/assets/main.js"|addbaseurl }}></script>
+    <script src="{{ '/assets/main.js'|addbaseurl }}"></script>
   {% endblock javascript %}
 
 </body>

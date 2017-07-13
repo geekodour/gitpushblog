@@ -1,14 +1,15 @@
-<ul class="post-nav group">
-        <li class="prev">
-                <a rel="prev" href="{{ '/posts/'|addbaseurl }}{{ posts[postIndex-1].slug }}">
-                        <strong>Previous Article</strong>
-                        {{ posts[postIndex-1].title }}
-                </a>
-        </li>
-        <li class="next">
-                <a rel="prev" href="{{ '/posts/'|addbaseurl }}{{ posts[postIndex+1].slug }}">
-                        <strong>Next Article</strong>
-                        {{ posts[postIndex+1].title }}
-                </a>
-        </li>
-</ul>
+<div class="page-navigation" style="text-align: left">
+    {% if posts[postIndex+1] %}
+    <a rel="prev" href="{{ '/posts/'|addbaseurl }}{{ posts[postIndex+1].slug }}">
+            <strong>Next Article:</strong>
+            {{ posts[postIndex+1].title }}
+    </a>
+    {% endif %}
+    <br/>
+    {% if posts[postIndex-1] %}
+    <a rel="prev" href="{{ '/posts/'|addbaseurl }}{{ posts[postIndex-1].slug }}">
+            <strong>Previous Article:</strong>
+            {{ posts[postIndex-1].title }}
+    </a>
+    {% endif %}
+</div>

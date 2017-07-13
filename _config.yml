@@ -1,6 +1,6 @@
 meta:
     blog_name: iamthenameoftheblog
-    blog_theme: the-plain
+    blog_theme: lagom
     engine: nunjucks
     userpage: true
     baseurl: gitpushblog

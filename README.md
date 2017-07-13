@@ -60,10 +60,11 @@ need to run **5 to 7**.
 1. You clone/fork this repository and set the git correct remotes
 2. Then configure `_config.yml` according to your needs
 3. Add,remove or change theme according to your needs
-4. `git push` the whole repository if you want to
+4. `git push` the whole repository if you want to.
 5. Create offline draft **posts using cli** or using github **issues on the browser**
 6. use `npm run dev` to do theme development or see live changes while editing offline drafts.
-7. run `npm run push` to publish your blog.
+7. run `npm run push` to publish your blog, you don't need to `git add` it will do that and figure out the repository
+to push to in its own based on the configurations in `_config.yml`
 
 Please see [installation](#installation) and [usage](#usage) for more details.
 
@@ -121,9 +122,11 @@ You might need to configure _config.yml according to theme needs but this will w
 ```
 $ npm run new hello_world_draft.md
 ```
+This will create a file inside `/drafts` with appropriate template.
+
 *github issue post*
 
-go to `https://github.com/<username>/<repo_name>`, It will be an empty repositoty and create a new issue. Remember, issues are our blogposts.
+go to `https://github.com/<username>/<repo_name>`, It will be an empty repositotymcreate a new issue by going in the issue tab. Remember, issues are our blogposts.
 give it a title of **"I am a title from github issues"**
 give it a comment body of of
 ```
@@ -132,7 +135,7 @@ I am some text inside heading
 ```
 then submit the issue. Now we've created two very basic blogposts,
 one in the offline `/drafts` directory another directly in Github.
-let's see gitpushblog in action now.
+let's see **gitpushblog** in action now.
 
 **7. After installation is complete, run `npm run dev`**
 
@@ -144,7 +147,7 @@ if you make changes in your draft or theme and reload, the changes will reflect 
 ```
 $ npm run push
 ```
-git will ask for credentials before the push if using HTTPS, give it.
+git will ask for credentials before the push if using HTTPS, give it. This will push the `/dist` directory, it will do the `git add` and `git commit` for you.
 the push will be done to the `gh-pages` branch of the repository, it will create one if does not already exist.
 
 Additionally, You can also push the working repository to Github using **git add,commit and push origin master** if you want to.
