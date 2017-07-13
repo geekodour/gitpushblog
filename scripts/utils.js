@@ -86,15 +86,24 @@ const generateCategoryTemplates = (labels,posts,dirName=DIR_NAME) => {
 }
 
 const generatePageTemplate = (dirName=DIR_NAME) => {
-        var pageTemplatesFiles = fs.readdirSync(path.join(THEME_DIR,'pages'));
+        const pageTemplatesFiles = fs.readdirSync(path.join(THEME_DIR,'pages'));
         pageTemplatesFiles.forEach(function(fileName){
-          var renderContent = nunjucks.render(path.join('pages',fileName),
+          let renderContent = nunjucks.render(path.join('pages',fileName),
                     Object.assign(contextObject,{})
           );
           fs.writeFileSync(path.join(ROOT_DIR,dirName,fileName),renderContent);
         });
 }
 
+const generateFeedTemplate = (posts,dirName=DIR_NAME) => {
+        if(fs.existsSync(path.join(THEME_DIR,'feed.xml'))){
+          const renderContent = nunjucks.render('feed.xml',
+                    Object.assign(contextObject,{ posts : posts })
+          );
+
+          fs.writeFileSync(path.join(ROOT_DIR,dirName,'feed.xml'),renderContent);
+        }
+}
 
 const getOfflineFileContents = () => {
         return new Promise((resolve,reject)=>{
@@ -130,6 +139,7 @@ module.exports = {
         generateIndexTemplate,
         generateCategoryTemplates,
         generatePageTemplate,
+        generateFeedTemplate,
         getOfflineFileContents,
         generatePagination
 };

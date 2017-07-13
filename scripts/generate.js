@@ -53,6 +53,9 @@ function generateTemplates(){
 
         // category pages
         utils.generateCategoryTemplates(labels,flatPosts,'dist')
+
+        // feed template
+        utils.generateFeedTemplate(flatPosts,'dev')
 }
 
 function startGenerate(){
