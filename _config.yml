@@ -1,9 +1,9 @@
 meta:
     blog_name: iamthenameoftheblog
-    blog_theme: lagom
+    blog_theme: the-plain
     engine: nunjucks
     userpage: true
-    baseurl: gitpushblog
+    baseurl: blog
 
 username: geekodour
 author: geekodour
