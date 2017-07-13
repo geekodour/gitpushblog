@@ -88,22 +88,22 @@ const getCommentHTML = comment => {
   // for disqus, no style is required
   if(bc.comment.isGithub){
     return `
-    <li class="depth-1">
-       <div class="avatar">
-          <img width="50" height="50" class="avatar" src="${comment.user.avatar_url}" alt="">
+       <div style="padding-top:2em">
+       <div class="avatar" style="float:left">
+          <img width="50" height="50" class="" src="${comment.user.avatar_url}" alt="">
+       </div>
+       <div class="" style="padding-left:1em">
+          <cite>${comment.user.username}</cite>
+          <div class="comment-meta">
+             <time class="comment-time" datetime="${comment.created_at}">${comment.created_at}</time>
+          </div>
        </div>
        <div class="comment-content">
-           <div class="comment-info">
-              <cite>${comment.user.username}</cite>
-              <div class="comment-meta">
-                 <time class="comment-time" datetime="${comment.created_at}">${comment.created_at}</time>
-              </div>
-           </div>
            <div class="comment-text">
              ${comment.html}
            </div>
-        </div>
-    </li>
+       </div>
+       </div>
     `;
   }
   else{

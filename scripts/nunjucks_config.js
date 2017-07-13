@@ -36,14 +36,14 @@ module.exports = {
           nunjucks.addFilter('addbaseurl', function(str, count) {
              // baseurl filter
              if( process.env.NODE_ENV === "development"){
-                  return `${str}`;
+                  return str;
              }
              else{
-                 if(bc.meta.baseurl){
+                 if(!bc.meta.userpage){
                    return `/${bc.meta.baseurl}${str}`;
                  }
                  else{
-                   return `${str}`;
+                   return str;
                  }
              }
           });

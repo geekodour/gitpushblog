@@ -1,146 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <!-- http redirect for github pages -->
-    <script type="text/javascript">
-        var host = 'srijancse.github.io';
-        if ((host === window.location.host) && (window.location.protocol === 'http:')) {
-            window.location.protocol = 'http'; // without ':' for firefox compatibility
-        }
-    </script>
-    <!-- styles -->
-    <link rel="stylesheet" href=" /css/main.css ">
-    <link href='http://fonts.googleapis.com/css?family=Inconsolata:400,700|Lato:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta content="Srijan Agarwal: Web Developer" property="og:title">
-    <meta content="Srijan Agarwal: Web Developer" property="twitter:title">
-    <meta content="website" property="og:type">
-    <meta content="Srijan Agarwal" property="og:site_name">
-    <meta property="fb:admins" content="1103227056" />
-    <meta name="google-site-verification" content="bnuGRmgx_XG_VFyzEgt7GUg9BX6349k3A2aGUZjn2wY" />
-    <!-- title and desc -->
-    <title>Srijan Agarwal</title>
-    <meta name="description" content="I write code, read papers, and think thoughts.">
+{% extends 'snippets/base.html' %}
 
-    <link rel="canonical" href="http://srijancse.github.io/">
-    <link rel="alternate" type="application/rss+xml" title="Srijan Agarwal" href="http://srijancse.github.io/feed.xml">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <script>
-      (adsbygoogle = window.adsbygoogle || []).push({
-        google_ad_client: "ca-pub-3981900510519098",
-        enable_page_level_ads: true
-      });
-    </script>
-</head>
+{% block inlinejavascript %}
+  {{ super() }}
+  window.blogInfo.pageType = 'page';
+{% endblock %}
 
-<body class="width mx-auto px3 my4">
-    <!-- Begin Jekyll SEO tag v2.2.3 -->
-<title>Srijan Agarwal | I write code, read papers, and think thoughts.</title>
-<meta property="og:title" content="Srijan Agarwal" />
-<meta name="author" content="Srijan Agarwal" />
-<meta property="og:locale" content="en_US" />
-<meta name="description" content="I write code, read papers, and think thoughts." />
-<meta property="og:description" content="I write code, read papers, and think thoughts." />
-<link rel="canonical" href="http://srijancse.github.io/" />
-<meta property="og:url" content="http://srijancse.github.io/" />
-<meta property="og:site_name" content="Srijan Agarwal" />
-<script type="application/ld+json">
-{"@context":"http://schema.org","@type":"WebSite","name":"Srijan Agarwal","headline":"Srijan Agarwal","author":{"@type":"Person","name":"Srijan Agarwal"},"description":"I write code, read papers, and think thoughts.","url":"http://srijancse.github.io/"}</script>
-<!-- End Jekyll SEO tag -->
+{% block pagecontent %}
+<article>
 
-<b> <header>
-    <h1>
-        <a href="/">Srijan Agarwal</a>
-    </h1>
-</header>
- </b>
-<section class="index">
-    <div class="image-wrap">
-        <div class="image-block">
-            <img src="/images/me.jpg" alt="profile image">
-        </div>
-	<p>Hi, I'm a Web Developer and Computer Science Engineering student at <a href="http://amrita.edu">Amrita University, Amritapuri Campus</a>. Currently a <b> Software Engineering Intern </b> at <a href="https://typeset.io">Typeset</a>, <a href="http://www.wikitolearn.org">WikiToLearn </a> <b>Core Developer</b>, and <b>Developer Advocate</b> at <a href="http://www.thinkfoss.com">ThinkFOSS</a>.
-	</p>
+	<h1 class="title">Hi I am Hrishikesh</h1>
+
+	<div class="divider"></div>
+
+    This little place in the internet is about me
+</article>
+
+<div class="page-navigation">
+	<a class="home" href="{{ '/'|addbaseurl }}" title="Back to Homepage">Home</a>
 </div>
-    <p>I'm on Twitter <a class="underline-link" href="http://twitter.com/srijancse" rel="me">@srijancse</a> and GitHub <a class="underline-link" href="http://github.com/srijancse" rel="me">@srijancse</a>. You can also drop me an email at <a href="mailto:srijanagarwal.cse@gmail.com" rel="me">srijanagarwal.cse@gmail.com</a>. My public key is <a href="http://keybase.io/srijancse"><tt>2416 141C BCC1 397B</tt></a>.</p>
-    <p>Open Source Enthusiast. Google Summer of Code'16 Student. Google Code-In Mentor'16. JavaScript Fanatic. </p>
-    <p>My interests are Open Source, Web Applications, Business Engineering, Virtual and Augmented Reality, Big Data and FinTech. I mostly code in <b>JavaScript</b>, <b>Python</b> and <b>PHP</b>. Check out my <a href="/pdfs/SrijanResume.pdf">resume</a>!</p>
-    <h1 id="writing"><a href="/writing/">Writing</a></h1>
-    <ul>
-        <li><a href="/writing/analysing-ot/"> Analysing different Operational Transformation algorithms for collaborative editing </a> </li>
-        <li><a href="/writing/operational-transformation/"> Operational Transformation (Part 2) : Real-Time collaborative editing algorithm </a> </li>
-        <li><a href="/writing/collaborative-editing/"> How Real-Time Collaborative Editors work? [Operational Transformation] </a> </li>
-        <li><a href="/writing/contribute-to-open-source/">How to start contributing to Open Source and crack Google Summer of Code?</a></li>
-        <li><a href="/writing/deploying-nodejs-app/"> Deploy a Node.js app in minutes using Heroku. </a> </li>
-        <li><a href="/writing/JSES6-Awesome-Features/"> Awesome features you   must be using in JavaScript ES6! </a> </li>
-        <li><a href="/writingle/A-lot-like-me/"> A lot like me. </a> </li>
-        <li><a href="/writing/Experiences-With-Node/"> My Experiences with Node.js! </a> </li>
-        <li><a href="/writing/"><emph>more...</emph></a></li>
-    </ul>
-    <h1 id="code"><a href="http://github.com/srijancse">Code</a></h1>
-    <ul>
-        <li><a href="http://github.com/srijancse/OfflineExtension">OfflineExtension</a>: Google Summer of Code'16 Project. Mediawiki Extension for adding offline support to Wiki Editor.</li>
-        <li><a href="http://github.com/srijancse/ShareAssignment">ShareAssignment</a>: Web Application based on Python and Django framework. This app will help students in sharing and learning from other students and quickly completing their assignments.</li>
-        <li><a href="http://github.com/srijancse/welcomer">Welcomer</a>: A chrome extension for welcoming user in a new tab!</li>
-        <li><a href="http://github.com/srijancse"><emph>more...</emph></a></li>
-    </ul>
-
-    <h1 id="code"><a href="/wri"
-
-    <h1 id="talks"><a href="/writing/">Talks and Sprints</a></h1>
-    <ul>
-        <li><a href="/writing/fossasiasummit/"> FOSSASIA Summit 2017, Singapore. </a> </li>
-        <li><a href="/writing/conf-kde-in/"> KDE India Conference 2017, IIT Guwahati. </a> </li>
-        <li><a href="/writing/WTLIndiaConf2017/"> WikiToLearn India Conference 2017, The LNMIIT, Jaipur. </a> </li>
-        <li><a href="/writing/FUDCon-PhnomPenh/"> FUDCon APAC 2016, Phnom Penh, Cambodia. </a> </li>
-        <li><a href="/writing/MediaWikiToLearn-hackathon-auac/"> MediaWikiToLearn Hackathon at Amrita University, Amritapuri Campus. </a></li>
-        <li><a href="/writing/Mediawiki-hackathon-bphc/"> MediaWiki Hackathon at BITS Pilani Hyderabad Campus. </a></li>
-
-    </ul>
-    <h1 id="Publications"><a href="/writing/">Open Source Publications</a></h1>
-    <ul>
-      <li><a href="pdfs/abot.pdf"> Abot - An Open Source tool to make your own Digital Assistant </a> </li>
-      <li><a href="pdfs/raspberrypi.pdf"> Make your own Tor Proxy Router using Raspberry Pi </a> </li>
-      <li><a href="pdfs/Vagrant.pdf"> Automating Your Development Environment With Vagrant </a> </li>
-      <li><a href="pdfs/h2o.pdf"> Deep Learning for IOT using H2O </a> </li>
-      <li><a href="pdfs/Jekyll.pdf"> Deploying a Jekyll blog in Docker </a> </li>
-    </ul>
-</section>
-  <br><br><center>
-    <a href="http://www.facebook.com/srijancse"><i class="fa fa-facebook-square fa-2x" aria-hidden="true"></a></i> &nbsp;
-    <a href="http://www.linkedin.com/in/srijancse"><i class="fa fa-linkedin fa-2x" aria-hidden="true"></a></i> &nbsp;
-    <a href="http://www.instagram.com/sircasm_/"><i class="fa fa-instagram fa-2x" aria-hidden="true"></a></i> &nbsp;
-    <a href="http://www.medium.com/@srijancse"><i class="fa fa-medium fa-2x" aria-hidden="true"></a></i> &nbsp;
-    <a href="http://www.twitter.com/srijancse"><i class="fa fa-twitter fa-2x" aria-hidden="true"> </a></i> &nbsp;
-
-  </center> </br> </br>
-
-    <script>
-    (function() {
-        (function(i, s, o, g, r, a, m) {
-            i['GoogleAnalyticsObject'] = r;
-            i[r] = i[r] || function() {
-                (i[r].q = i[r].q || []).push(arguments)
-            }, i[r].l = 1 * new Date();
-            a = s.createElement(o),
-                m = s.getElementsByTagName(o)[0];
-            a.async = 1;
-            a.src = g;
-            m.parentNode.insertBefore(a, m)
-        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
-
-        var GOOGLE_ANALYTICS_TRACKING_ID = "UA-83244237-1";
-
-        ga('create', GOOGLE_ANALYTICS_TRACKING_ID, 'auto');
-        ga('send', 'pageview');
-    })();
-</script>
-
-</body>
-
-</html>
+{% endblock %}

@@ -103,7 +103,7 @@ $ git remote add origin https://github.com/<username>/<repo_name>.git
 .
 .
     userpage: false
-    baseurl: "/<repo_name>"
+    baseurl: <repo_name>
 
 username: <username>
 author: <username>

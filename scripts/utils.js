@@ -55,21 +55,25 @@ const generatePostTemplate = (post,labels,posts,currentPostIndex)=>{
 }
 
 const generateIndexTemplate = (posts,labels,pagination,fileName) => {
-        // index template generation
-        const renderContent = nunjucks.render('index.html',
-          Object.assign(contextObject,{
+
+
+        let blogWritePath = path.join(ROOT_DIR,DIR_NAME,fileName)
+        const indexContextObject = {
             posts: posts,
             labels: labels,
             pagination:pagination
-          })
-        );
-
-        let blogWritePath = path.join(ROOT_DIR,DIR_NAME,fileName)
+        };
 
         if(fs.existsSync(path.join(THEME_DIR,'pages','index.html'))){
           mkdirp.sync(path.join(ROOT_DIR,DIR_NAME,'blog'));
           blogWritePath = path.join(ROOT_DIR,DIR_NAME,'blog',fileName);
+          indexContextObject.hasHomepage = true;
         }
+
+        // index template generation
+        const renderContent = nunjucks.render('index.html',
+          Object.assign(contextObject, indexContextObject)
+        );
 
         fs.writeFile(blogWritePath, renderContent, (err) => {
             if(err) { return console.log(err); }
