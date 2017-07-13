@@ -40,22 +40,22 @@ function generateTemplates(){
                 // generate fileName
                 fileName = cur_page === 0 ? `index.html` : `${cur_page+1}.html`;
                 // generate index template
-                utils.generateIndexTemplate(post_arr,labels,pagination,fileName,'dist');
+                utils.generateIndexTemplate(post_arr,labels,pagination,fileName);
         });
 
         // post pages
         flatPosts.forEach((post,currentPostIndex) => {
-                utils.generatePostTemplate(post,labels,flatPosts,currentPostIndex,'dist');
+                utils.generatePostTemplate(post,labels,flatPosts,currentPostIndex);
         });
 
         // other pages
-        utils.generatePageTemplate('dist');
+        utils.generatePageTemplate();
 
         // category pages
-        utils.generateCategoryTemplates(labels,flatPosts,'dist')
+        utils.generateCategoryTemplates(labels,flatPosts)
 
         // feed template
-        utils.generateFeedTemplate(flatPosts,'dev')
+        utils.generateFeedTemplate(flatPosts)
 }
 
 function startGenerate(){

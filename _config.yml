@@ -3,7 +3,7 @@ meta:
     blog_theme: the-plain
     engine: nunjucks
     userpage: false
-    baseurl: "/gitpushblog"
+    baseurl: "gitpushblog"
 
 username: geekodour
 author: geekodour
@@ -16,7 +16,7 @@ comment:
     disabled: false
     isGithub: true
     isDisqus: false
-    isGithubAuth: false
+    isGithubAuth: true
     disqus_id: geekodour
 
 others:

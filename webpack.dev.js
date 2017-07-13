@@ -12,11 +12,14 @@ const extractSass = new ExtractTextPlugin({
     filename: "[name].css"
 });
 
+const ignorePlugin = new webpack.IgnorePlugin(/unicode\/category\/So/);
+
 const commonChunkOptimize = new webpack.optimize.CommonsChunkPlugin({
     name: 'common',
     filename: 'bundle.common.js',
     chunks: []
 });
+// end plugin inits
 
 
 module.exports = {
@@ -97,6 +100,7 @@ module.exports = {
     ]
   },
   plugins: [
+        ignorePlugin,
         commonChunkOptimize,
         extractSass
   ]

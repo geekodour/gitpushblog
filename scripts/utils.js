@@ -30,7 +30,6 @@ const createPostObject = (fileName,cb) =>{
          let content = fs.readFileSync(path.join(ROOT_DIR,'drafts',fileName),{encoding:"utf8"});
          const post = yamlFront.loadFront(content);
          post.slug = slug(post.title);
-         console.log(post.slug);
          post.html = marked(post.__content);
          post.body = post.__content;
          post.fileName = fileName;
@@ -39,7 +38,7 @@ const createPostObject = (fileName,cb) =>{
 }
 
 // exported functions
-const generatePostTemplate = (post,labels,posts,currentPostIndex,dirName=DIR_NAME)=>{
+const generatePostTemplate = (post,labels,posts,currentPostIndex)=>{
       let fileName = `${post.slug}.html`;
       let renderContent = nunjucks.render('post_page.html',
         Object.assign(contextObject,{
@@ -49,27 +48,35 @@ const generatePostTemplate = (post,labels,posts,currentPostIndex,dirName=DIR_NAM
           postIndex: currentPostIndex
         })
       );
-      fs.writeFile(path.join(ROOT_DIR,dirName,'posts',fileName), renderContent, (err) => {
+
+      fs.writeFile(path.join(ROOT_DIR,DIR_NAME,'posts',fileName), renderContent, (err) => {
           if(err) { console.log("disk error"); }
       });
 }
 
-const generateIndexTemplate = (posts,labels,pagination,fileName,dirName=DIR_NAME) => {
+const generateIndexTemplate = (posts,labels,pagination,fileName) => {
         // index template generation
-        var renderContent = nunjucks.render('index.html',
+        const renderContent = nunjucks.render('index.html',
           Object.assign(contextObject,{
             posts: posts,
             labels: labels,
             pagination:pagination
           })
         );
-        // should we make this writeFile sync? or make all writeFile async?
-        fs.writeFile(path.join(ROOT_DIR,dirName,fileName), renderContent, (err) => {
+
+        let blogWritePath = path.join(ROOT_DIR,DIR_NAME,fileName)
+
+        if(fs.existsSync(path.join(THEME_DIR,'pages','index.html'))){
+          mkdirp.sync(path.join(ROOT_DIR,DIR_NAME,'blog'));
+          blogWritePath = path.join(ROOT_DIR,DIR_NAME,'blog',fileName);
+        }
+
+        fs.writeFile(blogWritePath, renderContent, (err) => {
             if(err) { return console.log(err); }
         });
 }
 
-const generateCategoryTemplates = (labels,posts,dirName=DIR_NAME) => {
+const generateCategoryTemplates = (labels,posts) => {
         labels.forEach((label)=>{
           let postsWithLabel = posts.filter(post => post.labels.map(label=>label.name).indexOf(label.name)>-1 );
           const renderContent = nunjucks.render('category_page.html',
@@ -79,29 +86,29 @@ const generateCategoryTemplates = (labels,posts,dirName=DIR_NAME) => {
                       posts: postsWithLabel
                     })
           );
-          fs.writeFile(path.join(ROOT_DIR,dirName,'category',`${label.slug}.html`),renderContent, (err) => {
+          fs.writeFile(path.join(ROOT_DIR,DIR_NAME,'category',`${label.slug}.html`),renderContent, (err) => {
             if(err) { return console.log(err); }
           });
         });
 }
 
-const generatePageTemplate = (dirName=DIR_NAME) => {
+const generatePageTemplate = () => {
         const pageTemplatesFiles = fs.readdirSync(path.join(THEME_DIR,'pages'));
         pageTemplatesFiles.forEach(function(fileName){
           let renderContent = nunjucks.render(path.join('pages',fileName),
                     Object.assign(contextObject,{})
           );
-          fs.writeFileSync(path.join(ROOT_DIR,dirName,fileName),renderContent);
+          fs.writeFileSync(path.join(ROOT_DIR,DIR_NAME,fileName),renderContent);
         });
 }
 
-const generateFeedTemplate = (posts,dirName=DIR_NAME) => {
+const generateFeedTemplate = (posts) => {
         if(fs.existsSync(path.join(THEME_DIR,'feed.xml'))){
           const renderContent = nunjucks.render('feed.xml',
                     Object.assign(contextObject,{ posts : posts })
           );
 
-          fs.writeFileSync(path.join(ROOT_DIR,dirName,'feed.xml'),renderContent);
+          fs.writeFileSync(path.join(ROOT_DIR,DIR_NAME,'feed.xml'),renderContent);
         }
 }
 

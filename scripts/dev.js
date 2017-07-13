@@ -42,22 +42,22 @@ function generateTemplates(){
                 // generate fileName
                 fileName = cur_page === 0 ? `index.html` : `${cur_page+1}.html`;
                 // generate index template
-                utils.generateIndexTemplate(post_arr,labels,pagination,fileName,'dev');
+                utils.generateIndexTemplate(post_arr,labels,pagination,fileName);
         });
 
         // post pages
         flatPosts.forEach((post,currentPostIndex) => {
-                utils.generatePostTemplate(post,labels,flatPosts,currentPostIndex,'dev');
+                utils.generatePostTemplate(post,labels,flatPosts,currentPostIndex);
         });
 
         // other pages
-        utils.generatePageTemplate('dev');
+        utils.generatePageTemplate();
 
         // category pages
-        utils.generateCategoryTemplates(labels,flatPosts,'dev')
+        utils.generateCategoryTemplates(labels,flatPosts)
 
         // feed template
-        utils.generateFeedTemplate(flatPosts,'dev')
+        utils.generateFeedTemplate(flatPosts)
 
 }
 

@@ -444,7 +444,7 @@ On running `npm run dev` or `npm run generate`, the output of these templates in
 you can read the themes, currently there are two themes **gitpushblogdefault**,**KeepItSimple20**,**the-plain** and **lagom** they can be found in the `/themes` directory.
 
 # Todo
-- [ ] homepage, themes to have a landing page other than the blog page
+- [x] homepage, themes to have a landing page other than the blog page
 - [ ] offline syntax highlighting, this maybe: https://www.npmjs.com/package/marky-markdown https://www.npmjs.com/package/pygments
 
 # Contribute
