@@ -42,7 +42,7 @@ function generateTemplates(){
                 // generate fileName
                 fileName = cur_page === 0 ? `index.html` : `${cur_page+1}.html`;
                 // generate index template
-                utils.generateIndexTemplate(post_arr,labels,pagination,'dev',fileName);
+                utils.generateIndexTemplate(post_arr,labels,pagination,fileName,'dev');
         });
 
         // post pages

@@ -54,7 +54,7 @@ const generatePostTemplate = (post,labels,posts,currentPostIndex,dirName=DIR_NAM
       });
 }
 
-const generateIndexTemplate = (posts,labels,pagination,dirName=DIR_NAME,fileName) => {
+const generateIndexTemplate = (posts,labels,pagination,fileName,dirName=DIR_NAME) => {
         // index template generation
         var renderContent = nunjucks.render('index.html',
           Object.assign(contextObject,{
