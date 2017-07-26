@@ -2,7 +2,7 @@
 - A static blog generator.
 - A set of npm scripts that make it easy to build a blog using the **githubAPI** and **nunjucks**.
 
-It is sort of like [Jekyll](https://jekyllrb.com/), but currently does very limited stuff and is in its early stage.
+It is sort of like [Jekyll](https://jekyllrb.com/), but currently does very limited stuff and is in its early stage and probably broken but works.
 
 see a [live demo here](https://geekodour.github.io/) else get started with the [quickstart guide](#quick-start)
 more examples:
@@ -38,6 +38,15 @@ more examples:
 - Easily add,remove and edit themes. **(Need help creating themes if possible)**
 - Edit posts from mobile easily using any github client or browser
 - Make a post using Github or using the commandline.
+- **update:** now support homepage
+
+## For the impatient
+gitpushblog is a set of scripts that will generate some static files into another directory(`/dist`), and then
+it will push those files to the appropriate branch of the appropriate reositoty based on the configuration file (`_config.yml`)
+It also supports various themes, jekyell themes can be converted to gitpush blog themes easily.
+You may want to watch this video if that does not explain it well.
+[!]()
+
 
 ## Basic idea
 
@@ -395,12 +404,16 @@ If you get a node-sass error about bindings not found,
 run this command `npm rebuild node-sass`
 
 ## Templates and Theme details
+**NOTE: If you put a index.html file inside `/pages` then it will be used as the homepage and all the blog related html files(i.e `/index.html`,`/post_page.html`) will be moved to a directory named `/blog`**, see themes for examples.
+
 The templates are created using [nunjucks](https://mozilla.github.io/nunjucks/). The directory structure
 of a theme looks somethng like this:
 ```
 .
 ├── index.html
 ├── post_page.html
+├── feed.xml
+├── _config.yml
 ├── category_page.html
 │
 ├── pages
