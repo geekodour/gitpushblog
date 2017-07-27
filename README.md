@@ -231,6 +231,7 @@ gitpushblog uses github api to generate static content, but does not use github 
 **Rebuilding the blog refers to running any of `npm run` `dev`,`generate`,`push`**
 
 - **Running in development**
+
 `npm run dev` is a very handy command that runs a development version of the blog in watch mode on port 3000.
 It can be useful when writing an offline draft or editing the theme.
 
@@ -240,16 +241,20 @@ It can be useful when writing an offline draft or editing the theme.
     directory with appropriate template.
 
 - **Editing a post**
+
 You need to edit the post/issue in github directly and then rebuild the blog to see changes.
 
 - **Deleting a post**
+
 You have to close the post/issue to delete the post.
 
 - **Generating minified files to `/dist`**
+
 You don't usually have to run this because `npm run push` already runs this command.
 It basically does excatly what `npm run dev` does, but with disabled watchmode+minified+correct baseurl+in the `/dist` directory.
 
 - **Pushing blog changes**
+
 `npm run push` is the command. **It pushes the contents of the `/dist` directory to the appropriate repository:branch**
 It also runs the `npm run generate` command which creates the `/dist` directory in the first place.
 
@@ -344,19 +349,18 @@ explanation: github-blog-api filters issues based on author, so if someone else 
 
 - `comment.disabled` : if `true` no comments will show up, no one can comment.
 - `comment.isGithub` : if `true` github comments will be shown.
+**`isGithubAuth` is super experimental, please check the issue regarding this if you'd like to help, I recommend you set it to `false` for now**
 - `comment.isGithubAuth` : if `true` a will show a comment box, where you can comment by authenticating with your github account.
-
-**NOTE: This is super experimental and I think is **dangerous** too, please check the issue regarding this
-if you'd like to help, I recommend you set it to `false` for now**
 - `comment.isDisqus` : if `true` will let the theme declare `divs` and containers for the disqus commenting system,
 disqus is already integrated in default theme, so just set this to `true` and `isGithub` to `false` if you want disqus comments.
 - `comment.disqus_id` : your disqus id
 
+**`firebaseConfig` is experimental, please check the issue regarding this if you'd like to help, I recommend you don't set anything in there for now**
 - `firebaseConfig.*` : these firebase configuration options that you get from firebase, again this is highly experimental, recomment not using it for now.
 If you want to experiment, then read [setting up githubAuth and commenting with firebase](#setting-up-githubauth-and-commenting-with-firebase)
 
 
-### Setting up githubAuth and commenting with firebase
+### Setting up GithubAuth and commenting with firebase
 Follow [this guide](https://firebase.google.com/docs/web/setup) from firebase to get the credentials and put the ones needed in `_config.yml`
 
 ### Setting up GITHUB_AUTH_TOKEN Env
@@ -374,10 +378,12 @@ If you get a node-sass error about bindings not found,
 run this command `npm rebuild node-sass`
 
 ## Templates and Theme details
-**NOTE: If you put a index.html file inside `/pages` then it will be used as the homepage and all the blog related html files(i.e `/index.html`,`/post_page.html`) will be moved to a directory named `/blog`**, see themes for examples.
+Use `npm run theme <theme_name>` to generate new themes with some basic boilerplate in `/themes`.
 
 The templates are created using [nunjucks](https://mozilla.github.io/nunjucks/). The directory structure
-of a theme looks somethng like this:
+of a theme looks something like this:
+
+
 ```
 .
 ├── index.html
@@ -388,24 +394,28 @@ of a theme looks somethng like this:
 │
 ├── pages
 │   ├── about.html
+│   ├── ...
 │   └── projects.html
 │
 ├── snippets
 │   ├── aboutbox.html
 │   ├── base.html
 │   ├── footer.html
-│   ├── labelsBox.html
+│   ├── ...
+│   ├── ...
 │   └── navbar.html
 │
 └── static
     ├── css
-    │   └── main.sass
+    │   ├── main.sass
+    │   └── prism.css
     └── js
         ├── main.js
         ├── services.js
+        ├── prism.js
         └── utils.js
 ```
-On running `npm run dev` or `npm run generate`, the output of these templates in `/dev` and `/dist` look something like this:
+On running `npm run dev` or `npm run generate`, the output of these templates in `/dev` and `/dist` look something **like** this:
 ```
 .
 ├── index.html
@@ -427,11 +437,11 @@ On running `npm run dev` or `npm run generate`, the output of these templates in
 ├── about.html
 └── projects.html
 ```
-you can read the themes, currently there are two themes **gitpushblogdefault**,**KeepItSimple20**,**the-plain** and **lagom** they can be found in the `/themes` directory.
+**If you put a index.html file inside `/pages` then it will be used as the homepage and all the blog related html files(i.e `/index.html`,`/post_page.html`) will be moved to a directory named `/blog`**, see themes for examples.
+For more theme based information, please see [theme docs]()
 
 # Todo
-- [x] homepage, themes to have a landing page other than the blog page
-- [ ] offline syntax highlighting, this maybe: https://www.npmjs.com/package/marky-markdown https://www.npmjs.com/package/pygments
+- [ ] will add soon
 
 # Contribute
 - PRs and everything else is welcome
@@ -450,7 +460,6 @@ for now.
 - Easily add,remove and edit themes. **(Need help creating themes if possible)**
 - Edit posts from mobile easily using any github client or browser
 - Make a post using Github or using the commandline.
-- **update:** now support homepage
 
 ## Limitations
 - Probably does not work on Windows as of now.
