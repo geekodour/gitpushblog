@@ -17,18 +17,24 @@ const callback = (err) => {
 if(bc.meta.userpage){
 
   let subtreecommand = `git subtree split --prefix dist`;
+  // same commit message for every commit
   let commitmessage = `blog updates`;
 
+  // remove this line after removing dist from gitignore
   exec(`git add --force dist`);
   exec(`git commit -m '${commitmessage}'`);
+
   exec(`git push https://github.com/${bc.username}/${bc.username}.github.io.git \`${subtreecommand}\`:master --force`, callback);
 
 } else {
+
+  // else clause: this is a repopage blog
 
   let subtreecommand = `git subtree push --prefix dist`;
   let commitmessage = `blog updates`;
 
   exec(`git add --force dist`);
   exec(`git commit -m '${commitmessage}'`);
+
   exec(`${subtreecommand} origin gh-pages`, callback);
 }

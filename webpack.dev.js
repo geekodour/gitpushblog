@@ -8,18 +8,15 @@ const bc = yaml.safeLoad(fs.readFileSync(path.join('_config.yml'), 'utf8'));
 const THEME_DIR = path.join(__dirname,'themes',bc.meta.blog_theme)
 
 // plugin inits
-const extractSass = new ExtractTextPlugin({
+
+// to extract css out of javascript
+const extractCss = new ExtractTextPlugin({
     filename: "[name].css"
 });
 
+// to ignore the unicode table(2mb) for unicode slug
 const ignorePlugin = new webpack.IgnorePlugin(/unicode\/category\/So/);
 
-// common chunks is not working most probably, have to check
-const commonChunkOptimize = new webpack.optimize.CommonsChunkPlugin({
-    name: 'common',
-    filename: 'bundle.common.js',
-    chunks: []
-});
 // end plugin inits
 
 
@@ -49,7 +46,7 @@ module.exports = {
       },
       {
             test: /\.(scss|sass)$/,
-            use: extractSass.extract({
+            use: extractCss.extract({
                 use: [{
                     loader: "css-loader"
                 },
@@ -64,7 +61,7 @@ module.exports = {
        },
        {
               test: /\.css$/,
-               use: extractSass.extract({
+               use: extractCss.extract({
                 use:
                   [
                    {loader:'css-loader'}
@@ -104,8 +101,7 @@ module.exports = {
   },
   plugins: [
         ignorePlugin,
-        commonChunkOptimize,
-        extractSass
+        extractCss
   ]
 
 }

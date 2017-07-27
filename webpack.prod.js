@@ -14,12 +14,6 @@ const extractSass = new ExtractTextPlugin({
 
 const ignorePlugin = new webpack.IgnorePlugin(/unicode\/category\/So/);
 
-const commonChunkOptimize = new webpack.optimize.CommonsChunkPlugin({
-    name: 'common',
-    filename: 'bundle.common.js',
-    chunks: []
-});
-
 const uglify =   new webpack.optimize.UglifyJsPlugin({
     compress: {
       warnings: false,
@@ -110,7 +104,6 @@ module.exports = {
   },
   plugins: [
         ignorePlugin,
-        commonChunkOptimize,
         extractSass,
         uglify
   ]
