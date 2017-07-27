@@ -1,13 +1,14 @@
 meta:
     blog_name: iamthenameoftheblog
-    blog_theme: the-plain
+    blog_theme: default-plain
+    blog_description: "a simple blog"
     engine: nunjucks
     userpage: true
-    baseurl: blog
+    baseurl: blog # repository name
 
 username: geekodour
-author: geekodour
-repo: gitpushblog
+author: geekodour # username of author
+repo: gitpushblog # if you're doing this for userpage, this this will be the repository name username.github.io
 
 posts_per_page: 3
 comments_per_page: 3
@@ -16,12 +17,15 @@ comment:
     disabled: false
     isGithub: true
     isDisqus: false
-    isGithubAuth: false
+    isGithubAuth: true
     disqus_id: geekodour
 
 others:
-   template_cat_posts: true
+   template_cat_posts: true # if set to true, contents of catagory pages will be generated offline, if false then ajax will be used
 
+# recommended that you DON'T set anything to firebase right now, this is unstable
+# disabling firebase also means you should set `isGithubAuth` to false.
+# If you still want to test it(it works), then use your firebase credentials
 firebaseConfig:
     apiKey: AIzaSyAZSJ1d1Sr9MnTK-__3D8SrwXjjQf6EML4
     authDomain: myblog-2b0ba.firebaseapp.com

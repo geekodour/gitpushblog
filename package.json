@@ -9,6 +9,7 @@
     "dev": "npm-run-all --parallel clean:dev webpack:dev build:dev",
     "upload": "node scripts/upload.js",
     "new": "node scripts/newdraft.js",
+    "theme": "node scripts/newtheme.js",
     "prepush": "npm run generate",
     "push": "node scripts/push.js",
     "push:only": "node scripts/push.js",

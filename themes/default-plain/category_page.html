@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block pagecontent %}
-           <h2>Posts tagged "{{ label.name }}"</h2>
+<article>
            {% if bc.others.template_cat_posts %}
                {% for post in posts %}
                  <div class="">
@@ -23,5 +23,5 @@
                <div id="loadmore_button" class="button is-loading">Load more</div>
              </div>
            {% endif %}
-
+</article>
 {% endblock %}

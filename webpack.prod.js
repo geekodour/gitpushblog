@@ -8,10 +8,11 @@ const bc = yaml.safeLoad(fs.readFileSync(path.join('_config.yml'), 'utf8'));
 const THEME_DIR = path.join(__dirname,'themes',bc.meta.blog_theme)
 
 // plugin inits
-const extractSass = new ExtractTextPlugin({
+const extractCss = new ExtractTextPlugin({
     filename: "[name].css"
 });
 
+// to ignore the unicode table(2mb) for unicode slug
 const ignorePlugin = new webpack.IgnorePlugin(/unicode\/category\/So/);
 
 const uglify =   new webpack.optimize.UglifyJsPlugin({
@@ -24,7 +25,8 @@ const uglify =   new webpack.optimize.UglifyJsPlugin({
 
 module.exports = {
   entry: {
-        main: path.join(THEME_DIR,'static','js','main.js'),
+        vendors: [path.join(THEME_DIR,'static','js','prism.js')],
+        main: path.join(THEME_DIR,'static','js','main.js')
   },
 
   output: {
@@ -43,7 +45,7 @@ module.exports = {
       },
       {
             test: /\.(sass|scss)$/,
-            use: extractSass.extract({
+            use: extractCss.extract({
                 use: [{
                     loader: "css-loader",
                     options: { minimize: true }
@@ -61,7 +63,7 @@ module.exports = {
        },
        {
               test: /\.css$/,
-               use: extractSass.extract({
+               use: extractCss.extract({
                 use:
                   [
                     {
@@ -104,7 +106,7 @@ module.exports = {
   },
   plugins: [
         ignorePlugin,
-        extractSass,
+        extractCss,
         uglify
   ]
 

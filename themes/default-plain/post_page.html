@@ -1,0 +1,30 @@
+{% extends 'snippets/base.html' %}
+{% block title %}{{ post.title }} - {{ bc.meta._blog_name }}{% endblock title %}
+
+{% block inlinejavascript %}
+  {{ super() }}
+  window.blogInfo.pageType = 'post';
+  window.blogInfo.postId = '{{ post.id }}';
+{% endblock %}
+
+{% block pagecontent %}
+<article>
+
+	<div class="post-meta">
+		<h1>{{ post.title }}</h1>
+		<time>{{ post.date|date }}</time>
+        {% for label in post.labels %}
+          <a href="{{ '/category/'|addbaseurl }}{{ label.slug }}" title="" rel="category tag">{{ label.name }}</a>
+        {% endfor %}
+	</div>
+
+    <div class="post-content">
+        {{ post.html|safe }}
+    </div>
+
+{% include 'snippets/post_bottom_navigation.html' %}
+{% include 'snippets/comment.html' %}
+</article>
+
+
+{% endblock %}
