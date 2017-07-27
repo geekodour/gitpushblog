@@ -1,8 +1,9 @@
 meta:
     blog_name: iamthenameoftheblog
     blog_theme: 'leonids-clone'
-    blog_description: 'a simple blog'
-    engine: nunjucks
+    blog_description: 'a simple blog' # optional
+    domain: 'geekodour.github.io' # optional
+    engine: nunjucks # optional
     userpage: false
     baseurl: blog # repository name
 

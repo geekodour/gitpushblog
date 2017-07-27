@@ -8,22 +8,20 @@
 {% endblock %}
 
 {% block pagecontent %}
-<article>
+<div id="post">
+  <header class="post-header">
+    <h1 title="{{ post.title }}">{{ post.title }}</h1>
+    <span class="post-meta">
+      <span class="post-date"> {{ post.date|date }} </span>
+    </span>
+  </header>
 
-	<div class="post-meta">
-		<h1>{{ post.title }}</h1>
-		<time>{{ post.date|date }}</time>
-        {% for label in post.labels %}
-          <a href="{{ '/category/'|addbaseurl }}{{ label.slug }}" title="" rel="category tag">{{ label.name }}</a>
-        {% endfor %}
-	</div>
+  <article class="post-content">
+    {{ post.html|safe }}
+  </article>
+</div>
 
-    <div class="post-content">
-        {{ post.html|safe }}
-    </div>
-
-</article>
-
+{% include 'snippets/share_buttons.html' %}
 {% include 'snippets/post_bottom_navigation.html' %}
 {% include 'snippets/comment.html' %}
 

@@ -8,18 +8,31 @@
 
 {% block pagecontent %}
 
-	<ul>
 	  {% for post in posts %}
-	    <li>
-	    	<div class="post-date">
-	    		<span>{{ post.date|date }}</span>
-	    	</div>
-	    	<div class="title">
-                <a href="{{ '/posts/'|addbaseurl }}{{ post.slug }}">{{ post.title }}</a>
-	    	</div>
-	    </li>
+        <section class="post">
+          <header class="post-header">
+            <p class="post-meta">
+              <span class="post-date">
+                {{ post.date|date }}
+              </span>
+              {% if post.labels.length > 0 %}
+              •
+              {% for label in post.labels %}
+              <a class="post-cat" href="{{ '/category/'|addbaseurl }}{{ label.slug }}">{{ label.name }}</a>
+              {% endfor %}
+              {% endif %}
+            </p>
+            <h4>
+              <a href="{{ '/posts/'|addbaseurl }}{{ post.slug }}" class="post-title">{{ post.title }}</a>
+            </h4>
+          </header>
+          <div class="post-description">
+            <p>
+              {{ post.body|truncate(200) }}
+            </p>
+          </div>
+        </section>
 	  {% endfor %}
-    </ul>
 
     {% include 'snippets/pagination.html' %}
 
