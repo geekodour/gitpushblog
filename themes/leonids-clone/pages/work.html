@@ -1,0 +1,17 @@
+{% extends 'snippets/base.html' %}
+
+{% block inlinejavascript %}
+  {{ super() }}
+  window.blogInfo.pageType = 'page';
+{% endblock %}
+
+{% block pagecontent %}
+
+<article>
+	<h1 class="">My work</h1>
+	<h3 class="">OpenSource Contributions</h3>
+	<h3 class="">Personal Projects</h3>
+	<h3 class="">Client Work</h3>
+</article>
+
+{% endblock %}

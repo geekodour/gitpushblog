@@ -1,0 +1,22 @@
+<div class="cover-card table-cell table-middle">
+  <a href="{{ '/'|addbaseurl }}" class="author_name"> {{ bc.author }} </a>
+  <span class="author_job">{{ tc.owner.job }}</span>
+  <span class="author_bio mbm">{{ tc.owner.bio }}</span>
+  <nav class="nav">
+    <ul class="nav-list">
+      <li class="nav-item">
+        <a class="" href="{{ '/'|addbaseurl }}">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="" href="{{ '/about'|addbaseurl }}">About</a>
+      </li>
+      <li class="nav-item">
+        <a class="" href="{{ '/work'|addbaseurl }}">Work</a>
+      </li>
+      <li class="nav-item">
+        <a id="signout_button" class="" href="" style="display:none">Signout</a>
+      </li>
+    </ul>
+  </nav>
+  {% include 'snippets/social-links.html' %}
+</div>

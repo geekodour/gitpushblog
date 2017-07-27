@@ -1,6 +1,6 @@
 meta:
     blog_name: iamthenameoftheblog
-    blog_theme: 'default-plain'
+    blog_theme: 'leonids-clone'
     blog_description: 'a simple blog'
     engine: nunjucks
     userpage: false
