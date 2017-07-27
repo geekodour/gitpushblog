@@ -1,0 +1,15 @@
+{% extends 'snippets/base.html' %}
+
+{% block inlinejavascript %}
+  {{ super() }}
+  window.blogInfo.pageType = 'page';
+{% endblock %}
+
+{% block pagecontent %}
+
+<article>
+	<h1 class="">About Page</h1>
+    I am about page
+</article>
+
+{% endblock %}

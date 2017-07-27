@@ -1,0 +1,26 @@
+{% extends 'snippets/base.html' %}
+{% block title %}{{ bc.meta.blog_name }}{% endblock title %}
+
+{% block inlinejavascript %}
+  {{ super() }}
+  window.blogInfo.pageType = 'index';
+{% endblock %}
+
+{% block pagecontent %}
+
+	<ul>
+	  {% for post in posts %}
+	    <li>
+	    	<div class="post-date">
+	    		<span>{{ post.date|date }}</span>
+	    	</div>
+	    	<div class="title">
+                <a href="{{ '/posts/'|addbaseurl }}{{ post.slug }}">{{ post.title }}</a>
+	    	</div>
+	    </li>
+	  {% endfor %}
+    </ul>
+
+    {% include 'snippets/pagination.html' %}
+
+{% endblock %}

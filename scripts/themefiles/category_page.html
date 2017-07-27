@@ -1,0 +1,27 @@
+{% extends 'snippets/base.html' %}
+{% block title %}{{ label.name }} - {{ bc.meta._blog_name }}{% endblock title %}
+
+{% block inlinejavascript %}
+  {{ super() }}
+  window.blogInfo.pageType = 'category';
+  window.blogInfo.label = '{{label.name}}';
+{% endblock %}
+
+{% block pagecontent %}
+
+           {% if bc.others.template_cat_posts %}
+               {% for post in posts %}
+                 <div class="">
+                   <a href="{{ '/posts/'|addbaseurl }}{{ post.slug }}">{{ post.title }}</a>
+                 </div>
+               {% endfor %}
+           {% endif %}
+
+           <!-- if others.template_cat_posts is false then will add a loadmore button for ajax -->
+           {% if not bc.others.template_cat_posts %}
+             <div id="loadmore_button_container" class="" style="text-align:center">
+               <div id="loadmore_button" class="button is-loading">Load more</div>
+             </div>
+           {% endif %}
+
+{% endblock %}

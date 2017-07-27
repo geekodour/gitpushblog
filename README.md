@@ -2,6 +2,12 @@
 - A static blog generator.
 - A set of npm scripts that make it easy to build a blog using the **githubAPI** and **nunjucks**.
 
+gitpushblog is a set of scripts that will generate some static files into another directory(`/dist`), and then
+it will push those files to the appropriate branch of the appropriate reositoty based on the configuration file (`_config.yml`)
+It also supports various themes, jekyell themes can be converted to gitpushblog themes easily.
+You may want to watch this video if that does not explain it well.
+[!]()
+
 It is sort of like [Jekyll](https://jekyllrb.com/), but currently does very limited stuff and is in its early stage and probably broken but works.
 
 see a [live demo here](https://geekodour.github.io/) else get started with the [quickstart guide](#quick-start)
@@ -14,7 +20,6 @@ more examples:
 
 
 ## Table of contents
-- [Features](#features)
 - [Basic idea](#basic-idea)
 - [Quick start guide](#quick-start)
 - [Installation](#installation)
@@ -23,30 +28,10 @@ more examples:
 - [Troubleshooting](#troubleshooting)
 - [Templates and Theme Details](#templates-and-theme-details)
 - [Todo](#todo)
+- [Features](#features)
 - [Contribute](#contribute)
 - [Limitations](#limitations)
 - [Contributors](#contributors)
-
-## Features
-- Uses npm scripts
-- Built with webpack and preprocessor support
-- easily create themes
-- Github and Disqus Comments
-- IndexPages,pagination, postpages, simple pages
-- Offline markdown draft support, live editing(needs reload)
-- Works hasslefree with github repository pages and profile pages.
-- Easily add,remove and edit themes. **(Need help creating themes if possible)**
-- Edit posts from mobile easily using any github client or browser
-- Make a post using Github or using the commandline.
-- **update:** now support homepage
-
-## For the impatient
-gitpushblog is a set of scripts that will generate some static files into another directory(`/dist`), and then
-it will push those files to the appropriate branch of the appropriate reositoty based on the configuration file (`_config.yml`)
-It also supports various themes, jekyell themes can be converted to gitpush blog themes easily.
-You may want to watch this video if that does not explain it well.
-[!]()
-
 
 ## Basic idea
 
@@ -468,6 +453,19 @@ you can read the themes, currently there are two themes **gitpushblogdefault**,*
 - It will be awesome if anyone can help in creating some themes, you can create themes using [nunjucks](https://mozilla.github.io/nunjucks/)
 for now.
 - There are a lot of issues, check them out. It will be really great if you can help :smile:
+
+## Features
+- Uses npm scripts
+- Built with webpack and preprocessor support
+- easily create themes
+- Github and Disqus Comments
+- IndexPages,pagination, postpages, simple pages
+- Offline markdown draft support, live editing(needs reload)
+- Works hasslefree with github repository pages and profile pages.
+- Easily add,remove and edit themes. **(Need help creating themes if possible)**
+- Edit posts from mobile easily using any github client or browser
+- Make a post using Github or using the commandline.
+- **update:** now support homepage
 
 ## Limitations
 - Probably does not work on Windows as of now.

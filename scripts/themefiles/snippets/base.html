@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+	<head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>{% block title %}{{ bc.meta.blog_name }}{% endblock title %}</title>
+      <meta name="description" content="">
+
+      <link rel="icon" href="{{ '/assets/favicon.png'|addbaseurl }}">
+      <link rel="stylesheet" href="{{ '/assets/main.css'|addbaseurl }}">
+      <link rel="canonical" href="{{ '/'|addbaseurl }}">
+      <link rel="alternate" type="application/atom+xml" title="{{ bc.meta.blog_name }}" href="{{ '/feed.xml'|addbaseurl }}"/>
+
+      <script>
+        {% block inlinejavascript %}
+          // window.blogInfo gets passed into each page
+          // 3 properties of blogInfo are available of every page
+          // bc: blog _config.yml as javascript object
+          // tc: theme _config.yml as javascript object
+          // baseurl: baseurl of the site
+          window.blogInfo = {
+                  bc: {{ bc|stringify|safe }},
+                  tc: {{ bc|stringify|safe }},
+                  baseurl: '{{ baseurl }}'
+          };
+        {% endblock %}
+      </script>
+
+	</head>
+
+	<body>
+
+		{% include 'snippets/navbar.html' %}
+
+        {% block pagecontent %}{% endblock %}
+
+		{% include 'snippets/footer.html' %}
+
+
+        {% block javascript %}
+          {% if bc.comment.isGithubAuth %} <script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script> {% endif %}
+          {% if bc.comment.isDisqus %} <script id="dsq-count-scr" src="//geekodour.disqus.com/count.js" async></script> {% endif %}
+
+          <script src="{{ '/assets/main.js'|addbaseurl }}"></script>
+        {% endblock javascript %}
+
+	</body>
+
+</html>

@@ -92,6 +92,10 @@ const uploadPosts = () => {
     })
 }
 
+const generateTheme = () => {
+        //
+}
+
 module.exports = {
   uploadPosts
 }

@@ -1,0 +1,23 @@
+# Theme Settings
+title:              "The Plain"
+description:        "The Plain is a minimalist Jekyll theme, that's it. Can't say anymore..."
+google_verify:      epFgX0s_0RM3CdjwFcsewfXzPov2g8s9ZBOLyaIUH-o # Put your Google Verification here
+google_analytics:   UA-XXXXXXX-X # Put your Google Analytics code
+
+# Author Info
+author_name:        "YOUR_NAME" # Your name here
+author_email:       datboi@gmail.com # Your email here
+author_gravatar:    2b38b1b0e7e08b69379bd61582adf0c8 # Your Gravatar md5 hash here for logo
+twitter_username:   geekodour # Your Twitter username here
+github_username:    geekodour # Your GitHub username here
+
+# Site Settings
+baseurl:            "" # Base URL must end WITHOUT a slash, default: ""
+permalink:          /notes/:title # Post permalink
+timezone:           Asia/Kuala_Lumpur
+
+# Site Build ( Offline markdown syntax highlight is not supported yet )
+highlighter:        rouge
+markdown:           kramdown
+kramdown:
+    input:          GFM
