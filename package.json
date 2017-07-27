@@ -15,6 +15,7 @@
     "build:dev": "node scripts/dev.js",
     "build:dist": "node scripts/generate.js",
     "webpack:dev": "webpack --env=dev --progress --colors --watch",
+    "webpack:dev-debug": "webpack --env=dev --progress --colors --watch --display-error-details",
     "webpack:dist": "webpack --env=prod --progress --colors",
     "clean:dev": "rimraf './dev/*'",
     "clean:dist": "rimraf './dist/*'"
@@ -38,6 +39,7 @@
     "bulma": "0.4.1",
     "chalk": "1.1.3",
     "chokidar": "1.7.0",
+    "clipboard": "1.7.1",
     "cp": "0.2.0",
     "css-loader": "0.28.2",
     "dotenv": "4.0.0",

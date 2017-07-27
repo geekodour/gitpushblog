@@ -14,6 +14,7 @@ const extractSass = new ExtractTextPlugin({
 
 const ignorePlugin = new webpack.IgnorePlugin(/unicode\/category\/So/);
 
+// common chunks is not working most probably, have to check
 const commonChunkOptimize = new webpack.optimize.CommonsChunkPlugin({
     name: 'common',
     filename: 'bundle.common.js',
@@ -25,7 +26,9 @@ const commonChunkOptimize = new webpack.optimize.CommonsChunkPlugin({
 module.exports = {
   devtool: 'cheap-module-source-map',
 
+  // this will throw error if you're don't have prism.js alongside your main.js
   entry: {
+        vendors: [path.join(THEME_DIR,'static','js','prism.js')],
         main: path.join(THEME_DIR,'static','js','main.js')
   },
 
