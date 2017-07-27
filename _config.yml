@@ -1,9 +1,9 @@
 meta:
     blog_name: iamthenameoftheblog
-    blog_theme: default-plain
-    blog_description: "a simple blog"
+    blog_theme: 'default-plain'
+    blog_description: 'a simple blog'
     engine: nunjucks
-    userpage: true
+    userpage: false
     baseurl: blog # repository name
 
 username: geekodour
@@ -17,7 +17,7 @@ comment:
     disabled: false
     isGithub: true
     isDisqus: false
-    isGithubAuth: true
+    isGithubAuth: false
     disqus_id: geekodour
 
 others:
