@@ -1,7 +1,7 @@
 meta:
-    blog_name: iamthenameoftheblog
-    blog_theme: 'default-plain'
-    blog_description: 'a simple blog' # optional
+    blog_name: gitpushblog issue blog
+    blog_theme: 'leonids-clone'
+    blog_description: 'a blog with all the open issues from gitpushblog' # optional
     domain: 'geekodour.github.io' # optional, username.github.io or if you use a custom domain then that.
     engine: nunjucks # optional
     userpage: false # is the blog to be hosted in username.github.io ?
