@@ -36,8 +36,12 @@ if(bc.meta.userpage){
   let subtreecommand = `git subtree push --prefix dist`;
   let commitmessage = `blog updates`;
 
-  exec(`git add -A`);
-  exec(`git commit -m '${commitmessage}'`);
+  try {
+    exec(`git add -A`);
+    exec(`git commit -m '${commitmessage}'`);
+  }
+  finally {
+    exec(`${subtreecommand} origin gh-pages`, callback);
+  }
 
-  exec(`${subtreecommand} origin gh-pages`, callback);
 }
