@@ -16,6 +16,8 @@ const callback = (err) => {
 
 if(bc.meta.userpage){
 
+  log(chalk.bold.green(`Pushing changes to master branch of ${bc.username}/${bc.username}.github.io`));
+
   let subtreecommand = `git subtree split --prefix dist`;
   // same commit message for every commit
   let commitmessage = `blog updates`;
@@ -28,6 +30,8 @@ if(bc.meta.userpage){
 
 } else {
 
+  log(chalk.bold.green(`Pushing changes to gh-pages branch of ${bc.username}/${bc.repo}`));
+
   // else clause: this is a repopage blog
 
   let subtreecommand = `git subtree push --prefix dist`;
@@ -36,5 +40,6 @@ if(bc.meta.userpage){
   exec(`git add --force dist`);
   exec(`git commit -m '${commitmessage}'`);
 
-  exec(`${subtreecommand} origin gh-pages`, callback);
+  exec(`git push origin \`${subtreecommand}\`:gh-pages --force`, callback);
+  // exec(`${subtreecommand} origin gh-pages`, callback);
 }
