@@ -40,6 +40,5 @@ if(bc.meta.userpage){
   exec(`git add --force dist`);
   exec(`git commit -m '${commitmessage}'`);
 
-  exec(`git push origin \`${subtreecommand}\`:gh-pages --force`, callback);
-  // exec(`${subtreecommand} origin gh-pages`, callback);
+  exec(`${subtreecommand} origin gh-pages`, callback);
 }
