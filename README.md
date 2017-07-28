@@ -15,12 +15,24 @@ It is sort of like [Jekyll](https://jekyllrb.com/), but currently does very limi
 
 *Requires Node4.4 or above*
 
+```
+$ npm run help
+
+Usage: npm run [SCRIPT NAME]
+
+Commands:
+  dev                   Start a development server in port 3000, output in /dev
+  generate              Generate minified version for the public site, output in /dist
+  push                  Pushes contents of `/dist` to the appropriate branch of repository
+  draft [FILE NAME]     Create a markdown file with minimal boilerplate text inside /drafts
+  theme [THEME NAME]    Create a theme directory with minimal boilerplate files inside /themes
+```
+
 ## Features
 - Uses npm scripts
 - Built with webpack and preprocessor support
 - easily create themes
 - Github and Disqus Comments
-- IndexPages,pagination, postpages, simple pages
 - Offline markdown draft support, live editing(needs reload)
 - Works hasslefree with github repository pages and profile pages.
 - Easily add,remove and edit themes. **( Need help creating themes )**
@@ -125,6 +137,7 @@ repo: <repo_name>
 .
 .
 ```
+Optionally you set custom theme in `meta.blog_theme`, it takes the name of the directory inside `/themes`, currently only 2 themes available.
 
 **5. Inside `<repo_name>/`, run `npm install`** (this will take a while)
 
@@ -132,7 +145,7 @@ repo: <repo_name>
 
 - Offline draft post
 ```
-$ npm run new hello_world_draft.md
+$ npm run draft hello_world_draft.md
 ```
 This will create a file inside `/drafts` with appropriate template, update the file if you want to.
 
@@ -260,7 +273,7 @@ It can be useful when writing an offline draft or editing the theme.
 
 - **Writing a new post**
   - Create a github issue in `<repo_name>` repository.
-  - `npm run new <filename.md>` inside `<repo_name>` directory, a new file will be created inside the `/drafts`
+  - `npm run draft <filename.md>` inside `<repo_name>` directory, a new file will be created inside the `/drafts`
     directory with appropriate template.
 
 - **Editing a post**

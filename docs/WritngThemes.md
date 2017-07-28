@@ -12,3 +12,7 @@ then you can do the following to push changes to the theme repository.
 ```
 $ git subtree push --prefix themes/the-plain https://github.com/<username>/the-plain.git master --squash
 ```
+
+While writing themes, keep in mind if you have a `index.html` inside `/pages` then it will be the homepage and
+the `index.html` in the root directory will go inside a directory named `/blog` in the output directory after `npm run dev/generate`,
+otherwise the `index.html` in the themes root will be the homepage.
