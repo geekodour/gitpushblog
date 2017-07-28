@@ -2,7 +2,7 @@ meta:
     blog_name: iamthenameoftheblog
     blog_theme: 'default-plain'
     blog_description: 'a simple blog' # optional
-    domain: 'geekodour.github.io' # optional
+    domain: 'geekodour.github.io' # optional, username.github.io or if you use a custom domain then that.
     engine: nunjucks # optional
     userpage: true
     baseurl: gitpushblog # repository name
@@ -27,6 +27,7 @@ others:
 # recommended that you DON'T set anything to firebase right now, this is unstable
 # disabling firebase also means you should set `isGithubAuth` to false.
 # If you still want to test it(it works), then use your firebase credentials
+# see issue: https://github.com/geekodour/gitpushblog/issues/74
 firebaseConfig:
     apiKey: AIzaSyAZSJ1d1Sr9MnTK-__3D8SrwXjjQf6EML4
     authDomain: myblog-2b0ba.firebaseapp.com

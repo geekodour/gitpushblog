@@ -383,13 +383,13 @@ explanation: github-blog-api filters issues based on author, so if someone else 
 
 - `comment.disabled` : if `true` no comments will show up, no one can comment.
 - `comment.isGithub` : if `true` github comments will be shown.
-**`isGithubAuth` is super experimental, please check the issue regarding this if you'd like to help, I recommend you set it to `false` for now**
+**`isGithubAuth` is super experimental, please check [the issue](https://github.com/geekodour/gitpushblog/issues/74) regarding this if you'd like to help, I recommend you set it to `false` for now**
 - `comment.isGithubAuth` : if `true` a will show a comment box, where you can comment by authenticating with your github account.
 - `comment.isDisqus` : if `true` will let the theme declare `divs` and containers for the disqus commenting system,
 disqus is already integrated in default theme, so just set this to `true` and `isGithub` to `false` if you want disqus comments.
 - `comment.disqus_id` : your disqus id
 
-**`firebaseConfig` is experimental, please check the issue regarding this if you'd like to help, I recommend you don't set anything in there for now**
+**`firebaseConfig` is experimental, please check [the issue](https://github.com/geekodour/gitpushblog/issues/74) regarding this if you'd like to help, I recommend you don't set anything in there for now**
 - `firebaseConfig.*` : these firebase configuration options that you get from firebase, again this is highly experimental, recomment not using it for now.
 If you want to experiment, then read [setting up githubAuth and commenting with firebase](#setting-up-githubauth-and-commenting-with-firebase)
 
