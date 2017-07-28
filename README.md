@@ -94,7 +94,7 @@ the static content.
 $ git clone https://github.com/geekodour/gitpushblog.git <repo_name>
 ```
 
-**3. Point the cloned `gitpushblog` remotes to `<repo_name>`**
+**3. Point the cloned `gitpushblog` remotes to `<repo_name>` and npm install**
 ```
 $ cd <repo_name>
 $ git remote remove origin

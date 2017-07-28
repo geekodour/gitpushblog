@@ -9,7 +9,7 @@ meta:
 
 username: geekodour
 author: geekodour # username of author
-repo: geekodour.github.io # if you're doing this for userpage, this this will be the repository name username.github.io
+repo: gitpushblog # if you're doing this for userpage, this this will be the repository name username.github.io
 
 posts_per_page: 3
 comments_per_page: 3
