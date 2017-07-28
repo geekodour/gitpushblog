@@ -8,7 +8,7 @@ It also supports various themes, jekyell themes can be converted to gitpushblog 
 
 It is sort of like [Jekyll](https://jekyllrb.com/), but currently does very limited stuff and is in its early stage and probably broken but works fine.
 
-- [live demo 1](https://geekodour.github.io/)
+- [live demo 1](https://geekodour.github.io/posts/first-post-in-my-blog-using-gitpushblog)
 - [live demo 2](https://geekodour.github.io/gitpushblog)
 
 **Get started with the [quickstart guide](#quick-start)**
