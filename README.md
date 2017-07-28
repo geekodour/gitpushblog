@@ -140,9 +140,7 @@ repo: <repo_name>
 ```
 Optionally you set custom theme in `meta.blog_theme`, it takes the name of the directory inside `/themes`, currently only 2 themes available.
 
-**5. Inside `<repo_name>/`, run `npm install`** (this will take a while)
-
-**6. Create few blogposts**
+**5. Create few blogposts**
 
 - Offline draft post
 ```
@@ -164,13 +162,13 @@ then submit the issue. Now we've created two very basic blogposts,
 one in the offline `/drafts` directory another directly in Github.
 let's see **gitpushblog** in action now.
 
-**7. After installation is complete, run `npm run dev`**
+**6. After installation is complete, run `npm run dev`**
 
-**8. Visit `localhost:3000` in your browser**
+**7. Visit `localhost:3000` in your browser**
 You'll now see a development build of the blog,
 if you make changes in your draft or theme and reload, the changes will reflect immediately.
 
-**9. Now it's time to push our blog to Github**
+**8. Now it's time to push our blog to Github**
 ```
 $ npm run push
 ```
@@ -180,12 +178,12 @@ the push will be done to the `gh-pages` branch of the repository, it will create
 Additionally, You can also push the working repository to Github using **git add,commit and push origin master** if you want to.
 (use `git push --force origin master` if `git push origin master` fails)
 
-**10. Make gh-pages branch the publishing branch**
+**9. Make gh-pages branch the publishing branch**
 
 Head over to the settings page of your `<repo_name>` repository in Github, in the **Github Pages** section,
 choose **gh-pages branch** as the source and save.
 
-**11. Visit `https://<username>.github.io/<repo_name>/`** , it might take a few seconds to show up the first time.
+**10. Visit `https://<username>.github.io/<repo_name>/`** , it might take a few seconds to show up the first time.
 
 You'll notice that the posts inside `/drafts` are not there, whereas they were showing locally.
 You'll need to `npm run upload` to upload drafts to github, which is discussed later in [usage](#usage).
