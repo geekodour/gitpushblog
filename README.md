@@ -13,7 +13,7 @@ It is sort of like [Jekyll](https://jekyllrb.com/), but currently does very limi
 
 **Get started with the [quickstart guide](#quick-start)**
 
-*Requires Node4.4 or above*
+*Requrements:  Node4.4 or above and `node-sass` package installed globally*
 
 ```
 $ npm run help
@@ -25,6 +25,7 @@ Commands:
   generate              Generate minified version for the public site, output in /dist
   push                  Pushes contents of `/dist` to the appropriate branch of repository
   draft [FILE NAME]     Create a markdown file with minimal boilerplate text inside /drafts
+  upload                Lets you select which drafts to upload to github issues from /drafts
   theme [THEME NAME]    Create a theme directory with minimal boilerplate files inside /themes
 ```
 
@@ -109,20 +110,20 @@ $ git clone https://github.com/geekodour/gitpushblog.git <repo_name>
 **3. Point the cloned `gitpushblog` remotes to `<repo_name>` and npm install or yarn**
 ```
 $ cd <repo_name>
-$ git remote remove origin
+$ sudo rm -r .git && git init
 $ git remote add origin https://github.com/<username>/<repo_name>.git
-
-The command for an username geekodour and <repo_name> blog will be as follows,
-$ git remote add origin https://github.com/geekodour/blog.git
-
 $ npm install
-
-npm install takes very long,
-so I recommend using yarn instead because it's very fast.
-to install dependencies using yarn, just run the following
 $ yarn
-
 ```
+**Notes:**
+- `$ sudo rm -r .git && git init` will not work in windows, you just have to delete the `.git` directory and the `git init` in the same directory after that.
+- The command for an username geekodour and <repo_name> blog will be as follows,
+
+`$ git remote add origin https://github.com/geekodour/blog.git`
+- npm install **takes very long**, so I recommend using **yarn** instead because it's very fast.
+to install dependencies using yarn, just run the following
+
+`$ yarn`
 
 **4. Open `_config.yml` and update the following:**
 ```
@@ -233,12 +234,19 @@ $ git clone https://github.com/geekodour/gitpushblog.git <repo_name>
 3. Point the cloned `gitpushblog` to `<repo_name>`
 ```
 $ cd <repo_name>
-$ git remote remove origin
+$ sudo rm -r .git && git init
 $ git remote add origin https://github.com/<username>/<repo_name>.git
 ```
-4. open `_config.yml` and change according to your needs, read [configuration](#configuration) to know how to modify `_config.yml`
+**Notes:**
+- `$ sudo rm -r .git && git init` will not work in windows, you just have to delete the `.git` directory and then `git init` in the same directory after that.
+- The command for an username geekodour and <repo_name> blog will be as follows,
 
-5. inside `<repo_name>`, run `npm install` or `yarn` (`yarn` is recommended)
+`$ git remote add origin https://github.com/geekodour/blog.git`
+
+
+4. Open `_config.yml` and change according to your needs, read [configuration](#configuration) to know how to modify `_config.yml`
+
+5. Inside `<repo_name>`, run `npm install` or `yarn` (`yarn` is recommended)
 
 That's all for the install.
 

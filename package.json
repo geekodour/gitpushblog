@@ -52,7 +52,6 @@
     "marked": "0.3.6",
     "mkdirp": "0.5.1",
     "ncp": "2.0.0",
-    "node-sass": "4.5.3",
     "npm-run-all": "4.0.2",
     "nunjucks": "3.0.0",
     "ora": "1.2.0",

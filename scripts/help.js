@@ -7,5 +7,6 @@ Commands:
   generate              Generate minified version for the public site, output in /dist
   push                  Pushes contents of /dist to the appropriate branch of repository
   draft [FILE NAME]     Create a markdown file with minimal boilerplate text inside /drafts
+  upload                Lets you select which drafts to upload to github issues from /drafts
   theme [THEME NAME]    Create a theme directory with minimal boilerplate files inside /themes
 `);

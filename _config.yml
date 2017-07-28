@@ -4,22 +4,22 @@ meta:
     blog_description: 'a simple blog' # optional
     domain: 'geekodour.github.io' # optional, username.github.io or if you use a custom domain then that.
     engine: nunjucks # optional
-    userpage: true
-    baseurl: gitpushblog # repository name
+    userpage: false # is the blog to be hosted in username.github.io ?
+    baseurl: gitpushblog # [repository name], if userpage is set to true than baseurl will be ignored because it will be "" anyways.
 
 username: geekodour
-author: geekodour # username of author
-repo: gitpushblog # if you're doing this for userpage, this this will be the repository name username.github.io
+author: geekodour # [username of author]
+repo: gitpushblog # [repository name], if you're doing this for userpage, this this will be the repository name username.github.io
 
 posts_per_page: 3
 comments_per_page: 3
 
 comment:
     disabled: false
-    isGithub: true
+    isGithub: true # existing github comments will show up under post
     isDisqus: false
-    isGithubAuth: false
-    disqus_id: geekodour
+    isGithubAuth: false # if true, comment box appears under posts to comment using the githubapi once authenticated, see issue #74
+    disqus_id: geekodour # get your disqus_id from disqus.com
 
 others:
    template_cat_posts: true # if set to true, contents of catagory pages will be generated offline, if false then ajax will be used
