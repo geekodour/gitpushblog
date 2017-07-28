@@ -38,7 +38,6 @@ if(bc.meta.userpage){
   log(chalk.bold.green(`Pushing changes to gh-pages branch of ${bc.username}/${bc.repo}`));
 
   let subtreecommand = `git subtree push --prefix dist`;
-        //let subtreecommand = `git subtree split --prefix dist`;
   let commitmessage = `blog updates`;
 
   try {
@@ -47,7 +46,6 @@ if(bc.meta.userpage){
   }
   finally {
     exec(`${subtreecommand} origin gh-pages`, callback);
-          //exec(`git push origin \`${subtreecommand}\`:gh-pages --force`, callback);
   }
 
 }
