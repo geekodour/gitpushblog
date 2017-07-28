@@ -5,6 +5,12 @@
     <description>a blog with all the open issues from gitpushblog</description>
     <link>/gitpushblog</link>
         <item>
+          <title>npm run push fails sometimes</title>
+          <description></description>
+          <pubDate>2017-07-28T16:21:52Z</pubDate>
+          <link>/gitpushblog/posts/npm-run-push-fails-sometimes</link>
+        </item>
+        <item>
           <title>You need to set process.NODE_ENV in every script </title>
           <description></description>
           <pubDate>2017-07-28T14:12:55Z</pubDate>
