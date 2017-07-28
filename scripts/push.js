@@ -37,7 +37,8 @@ if(bc.meta.userpage){
   // else clause: this is a repopage blog
   log(chalk.bold.green(`Pushing changes to gh-pages branch of ${bc.username}/${bc.repo}`));
 
-  let subtreecommand = `git subtree push --prefix dist`;
+  //let subtreecommand = `git subtree push --prefix dist`;
+  let subtreecommand = `git subtree split --prefix dist`;
   let commitmessage = `blog updates`;
 
   try {
