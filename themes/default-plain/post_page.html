@@ -10,13 +10,18 @@
 {% block pagecontent %}
 <article>
 
-	<div class="post-meta">
-		<h1>{{ post.title }}</h1>
-		<time>{{ post.date|date }}</time>
-        {% for label in post.labels %}
-          <a href="{{ '/category/'|addbaseurl }}{{ label.slug }}" title="" rel="category tag">{{ label.name }}</a>
-        {% endfor %}
+
+    <div class="center">
+	    <div class="post-meta">
+	    	<h1>{{ post.title }}</h1>
+	    	<time>{{ post.date|date }}</time>
+            {% for label in post.labels %}
+              <a href="{{ '/category/'|addbaseurl }}{{ label.slug }}" title="" rel="category tag">{{ label.name }}</a>
+            {% endfor %}
+	    </div>
 	</div>
+
+    <div class="divider"></div>
 
     <div class="post-content">
         {{ post.html|safe }}
