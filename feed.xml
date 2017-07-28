@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>gitpushblog issue blog</title>
+    <description>a blog with all the open issues from gitpushblog</description>
+    <link>/gitpushblog</link>
+        <item>
+          <title>You need to set process.NODE_ENV in every script </title>
+          <description></description>
+          <pubDate>2017-07-28T14:12:55Z</pubDate>
+          <link>/gitpushblog/posts/you-need-to-set-processnode_env-in-every-script</link>
+        </item>
+        <item>
+          <title>Issue with using githubAuth and firebase</title>
+          <description></description>
+          <pubDate>2017-07-28T14:01:58Z</pubDate>
+          <link>/gitpushblog/posts/issue-with-using-githubauth-and-firebase</link>
+        </item>
+        <item>
+          <title>exception handling for _config.yml</title>
+          <description></description>
+          <pubDate>2017-07-07T04:28:04Z</pubDate>
+          <link>/gitpushblog/posts/exception-handling-for-_configyml</link>
+        </item>
+        <item>
+          <title>README improvements and questions</title>
+          <description></description>
+          <pubDate>2017-06-10T05:30:15Z</pubDate>
+          <link>/gitpushblog/posts/readme-improvements-and-questions</link>
+        </item>
+  </channel>
+</rss>
