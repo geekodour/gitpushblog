@@ -94,16 +94,21 @@ the static content.
 $ git clone https://github.com/geekodour/gitpushblog.git <repo_name>
 ```
 
-**3. Point the cloned `gitpushblog` remotes to `<repo_name>` and npm install**
+**3. Point the cloned `gitpushblog` remotes to `<repo_name>` and npm install or yarn**
 ```
 $ cd <repo_name>
 $ git remote remove origin
 $ git remote add origin https://github.com/<username>/<repo_name>.git
+
+The command for an username geekodour and <repo_name> blog will be as follows,
+$ git remote add origin https://github.com/geekodour/blog.git
+
 $ npm install
 
-The 3rd command for an username geekodour and <repo_name> blog will be as follows,
-
-$ git remote add origin https://github.com/geekodour/blog.git
+npm install takes very long,
+so I recommend using yarn instead because it's very fast.
+to install dependencies using yarn, just run the following
+$ yarn
 
 ```
 
@@ -220,7 +225,7 @@ $ git remote add origin https://github.com/<username>/<repo_name>.git
 ```
 4. open `_config.yml` and change according to your needs, read [configuration](#configuration) to know how to modify `_config.yml`
 
-5. inside `<repo_name>`, run `npm install`
+5. inside `<repo_name>`, run `npm install` or `yarn` (`yarn` is recommended)
 
 That's all for the install.
 
@@ -230,9 +235,8 @@ See [usage](#usage) for usage instructions.
 ### Installing gitpushblog (by forking)
 1. Fork this repository
 2. In the forked version, go to settings and **enable** `issues`,you may also change the repository name to something like **'blog'**.
-4. Now clone the forked repository, and `cd` inside it and run `npm install`
+4. Now clone the forked repository, and `cd` inside it and run `npm install` or `yarn` (`yarn` is recommended)
 5. open `_config.yml` and change according to your needs, read [configuration](#configuration) to know how to modify `_config.yml`
-6. inside `<repo_name>`, run `npm install`
 
 That's all for the install.
 
