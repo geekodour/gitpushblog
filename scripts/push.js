@@ -45,7 +45,8 @@ if(bc.meta.userpage){
     exec(`git commit -m '${commitmessage}'`);
   }
   finally {
-    exec(`${subtreecommand} origin gh-pages`, callback);
+    // exec(`${subtreecommand} origin gh-pages`, callback);
+    exec(`git push origin \`${subtreecommand}\`:gh-pages --force`, callback);
   }
 
 }
