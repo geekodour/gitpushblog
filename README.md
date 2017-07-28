@@ -99,6 +99,12 @@ $ git clone https://github.com/geekodour/gitpushblog.git <repo_name>
 $ cd <repo_name>
 $ git remote remove origin
 $ git remote add origin https://github.com/<username>/<repo_name>.git
+$ npm install
+
+The 3rd command for an username geekodour and <repo_name> blog will be as follows,
+
+$ git remote add origin https://github.com/geekodour/blog.git
+
 ```
 
 **4. Open `_config.yml` and update the following:**
