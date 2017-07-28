@@ -23,10 +23,14 @@ if(bc.meta.userpage){
   // same commit message for every commit
   let commitmessage = `blog updates`;
 
-  exec(`git add -A`);
-  exec(`git commit -m '${commitmessage}'`);
+  try {
+    exec(`git add -A`);
+    exec(`git commit -m '${commitmessage}'`);
+  }
+  finally {
+    exec(`git push https://github.com/${bc.username}/${bc.username}.github.io.git \`${subtreecommand}\`:master --force`, callback);
+  }
 
-  exec(`git push https://github.com/${bc.username}/${bc.username}.github.io.git \`${subtreecommand}\`:master --force`, callback);
 
 } else {
 
