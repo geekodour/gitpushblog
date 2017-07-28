@@ -13,6 +13,11 @@
     <h1 title="{{ post.title }}">{{ post.title }}</h1>
     <span class="post-meta">
       <span class="post-date"> {{ post.date|date }} </span>
+      •
+      {% for label in post.labels %}
+      <a class="post-cat" href="{{ '/category/'|addbaseurl }}{{ label.slug }}">{{ label.name }}</a>
+      •
+      {% endfor %}
     </span>
   </header>
 
@@ -21,8 +26,8 @@
   </article>
 </div>
 
-{% include 'snippets/share_buttons.html' %}
 {% include 'snippets/post_bottom_navigation.html' %}
+{% include 'snippets/share_buttons.html' %}
 {% include 'snippets/comment.html' %}
 
 {% endblock %}

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+
+	<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Creating issue comments with Auth token requires private repo permission - </title>
+        <meta name="description" content="a simple blog">
+        <link rel="icon" href="/gitpushblog/assets/favicon.png">
+        <link rel="stylesheet" href="/gitpushblog/assets/main.css">
+        <link rel="canonical" href="/gitpushblog/">
+        <link rel="alternate" type="application/atom+xml" title="iamthenameoftheblog" href="/gitpushblog/feed.xml"/>
+        <script>
+              // window.blogInfo gets passed into each page
+            // 3 properties of blogInfo are available of every page
+            // bc: blog _config.yml as javascript object
+            // tc: theme _config.yml as javascript object
+            // baseurl: baseurl of the site
+            window.blogInfo = {
+                    bc: {"meta":{"blog_name":"iamthenameoftheblog","blog_theme":"leonids-clone","blog_description":"a simple blog","domain":"geekodour.github.io","engine":"nunjucks","userpage":false,"baseurl":"gitpushblog"},"username":"geekodour","author":"geekodour","repo":"gitpushblog","posts_per_page":3,"comments_per_page":3,"comment":{"disabled":false,"isGithub":true,"isDisqus":false,"isGithubAuth":false,"disqus_id":"geekodour"},"others":{"template_cat_posts":true},"firebaseConfig":{"apiKey":"AIzaSyAZSJ1d1Sr9MnTK-__3D8SrwXjjQf6EML4","authDomain":"myblog-2b0ba.firebaseapp.com","projectId":"myblog-2b0ba"}},
+                    tc: {"title":"Theme Name","description":"Theme Description that can be long","google_verify":"epFgX0s_0RM3Cds9ZBOLyaIUH-o","google_analytics":"UA-XXXXXXX-X","timezone":"Asia/Kuala_Lumpur","owner":{"name":"Leonids","avatar":"leonids-logo.png","job":"Student","bio":"the struggle is real","email":"zourenyuan@gmail.com","disqus-shortname":"renyuanzblog","twitter":"geekodour","facebook":null,"google":{"plus":null,"analytics":"UA-651910-2","verify":null,"ad-client":null,"ad-slot":null},"bing-verify":null,"github":"geekodour","stackoverflow":null,"linkedin":null,"xing":null,"instagram":"pramoddubeyallahabad","lastfm":null,"tumblr":null,"pinterest":null,"foursquare":null,"steam":null,"dribbble":null,"youtube":null,"soundcloud":null,"weibo":null,"flickr":null,"codepen":null}},
+                    baseurl: 'gitpushblog'
+            };
+
+  window.blogInfo.pageType = 'post';
+  window.blogInfo.postId = '23';
+        </script>
+	</head>
+
+	<body>
+
+         <div class="row">
+           <div class="col s12 m3">
+             <div class="table cover">
+<div class="cover-card table-cell table-middle">
+  <a href="/gitpushblog/" class="author_name"> geekodour </a>
+  <span class="author_job">Student</span>
+  <span class="author_bio mbm">the struggle is real</span>
+  <nav class="nav">
+    <ul class="nav-list">
+      <li class="nav-item">
+        <a class="" href="/gitpushblog/">Home</a>
+        <span>/</span>
+      </li>
+      <li class="nav-item">
+        <a class="" href="/gitpushblog/about">About</a>
+        <span>/</span>
+      </li>
+      <li class="nav-item">
+        <a class="" href="/gitpushblog/work">Work</a>
+      </li>
+      <li class="nav-item">
+        <a id="signout_button" class="" href="" style="display:none">Signout</a>
+      </li>
+    </ul>
+  </nav>
+<div class="social-links">
+  <ul>
+<li><a href="http://twitter.com/geekodour" class="social-link-item" target="_blank"><i class="fa fa-fw fa-twitter"></i></a></li><li><a href="http://instagram.com/pramoddubeyallahabad" class="social-link-item" target="_blank"><i class="fa fa-fw fa-instagram"></i></a></li><li><a href="http://github.com/geekodour" class="social-link-item" target="_blank"><i class="fa fa-fw fa-github"></i></a></li>  </ul>
+</div>
+</div>
+             </div>
+           </div>
+           <div class="col s12 m9">
+             <div class="post-listing">
+<div id="post">
+  <header class="post-header">
+    <h1 title="Creating issue comments with Auth token requires private repo permission">Creating issue comments with Auth token requires private repo permission</h1>
+    <span class="post-meta">
+      <span class="post-date"> 9/6/2017 </span>
+      •
+      <a class="post-cat" href="/gitpushblog/category/help-wanted">help wanted</a>
+      •
+      <a class="post-cat" href="/gitpushblog/category/question">question</a>
+      •
+    </span>
+  </header>
+
+  <article class="post-content">
+    <p>Firebase Github Auth is used to enable insite commenting for <code>github comments</code>, but the auth provider needs <code>repo</code> scope to create an issue comment, i.e a post comment on the site.
+A <a href="https://developer.github.com/apps/building-integrations/setting-up-and-registering-oauth-apps/about-scopes-for-oauth-apps/"><code>repo</code> scope </a> in asks for private repo access.
+We don&#39;t need private repo access of the user, we just need the user to be able to comment on the repo of the author of the blog.
+What kind of permissions can we use here?</p>
+
+  </article>
+</div>
+
+<!-- navigation buttons for pervious and next posts -->
+<div class="page-navigation" style="text-align: left">
+
+    <a rel="prev" href="/gitpushblog/posts/need-to-have-a-proper-markdown-extractor-for-offline-use">
+            <strong>Next Article:</strong> Need to have a proper markdown extractor for offline use
+    </a>
+
+    <br/>
+
+    <a rel="prev" href="/gitpushblog/posts/readme-improvements-and-questions">
+            <strong>Previous Article:</strong> README improvements and questions
+    </a>
+
+</div>
+<div class="share-buttons">
+  <h6>Share on: </h6>
+  <ul>
+    <li>
+      <a href="https://twitter.com/intent/tweet?text=geekodour.github.io/gitpushblog/posts/creating-issue-comments-with-auth-token-requires-private-repo-permission" class="twitter btn" title="Share on Twitter"><i class="fa fa-twitter"></i><span> Twitter</span></a>
+    </li>
+    <li>
+      <a href="https://www.facebook.com/sharer/sharer.php?u=geekodour.github.io/gitpushblog/posts/creating-issue-comments-with-auth-token-requires-private-repo-permission" class="facebook btn" title="Share on Facebook"><i class="fa fa-facebook"></i><span> Facebook</span></a>
+    </li>
+    <!--<li>
+      <a href="https://plus.google.com/share?url=geekodour.github.io/gitpushblog/posts/creating-issue-comments-with-auth-token-requires-private-repo-permission" class="google-plus btn" title="Share on Google Plus"><i class="fa fa-google-plus"></i><span> Google+</span></a>
+      </li>--!>
+    <li>
+      <a href="https://news.ycombinator.com/submitlink?u=geekodour.github.io/gitpushblog/posts/creating-issue-comments-with-auth-token-requires-private-repo-permission" class="hacker-news btn" title="Share on Hacker News"><i class="fa fa-hacker-news"></i><span> Hacker News</span></a>
+    </li>
+    <li>
+      <a href="https://www.reddit.com/submit?url=geekodour.github.io/gitpushblog/posts/creating-issue-comments-with-auth-token-requires-private-repo-permission" class="reddit btn" title="Share on Reddit"><i class="fa fa-reddit"></i><span> Reddit</span></a>
+    </li>
+  </ul>
+</div><!-- end share-buttons -->
+<!-- NOTE: the classes used in this snippet are used in the client side javascript -->
+<!-- So it's recommended you make your styles over these classes or add more class but not remove them -->
+<div id="comments" class="comments">
+
+  <!-- if GithubAuth is enabled and github comments are enabled, the following div will show a comment box -->
+    <div class="goto-github" style="text-align:center">
+        <a id="" class="button" href="https://github.com/geekodour/gitpushblog/issues/23">Go to github issue to comment</a>
+    </div>
+
+
+  <!-- github comments/disqus comments container, added by client javascript -->
+  <div id="comments_container" class="commentlist"></div>
+  <!-- end of github comments/disqus container -->
+
+  <!-- loadmore buttons for github comments -->
+    <div id="loadmore_button_container" class="" style="text-align:center">
+      <div id="loadmore_button" class="button is-loading">Load more</div>
+    </div>
+
+</div>
+
+<div class="footer">
+  <span class="">&copy; geekodour</span>
+  <span class=""></span>
+</div>
+             </div>
+           </div>
+         </div>
+
+
+          <script src="/gitpushblog/assets/vendors.js"></script>
+          <script src="/gitpushblog/assets/main.js"></script>
+
+	</body>
+
+</html>

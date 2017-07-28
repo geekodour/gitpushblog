@@ -18,7 +18,7 @@
               {% if post.labels.length > 0 %}
               •
               {% for label in post.labels %}
-              <a class="post-cat" href="{{ '/category/'|addbaseurl }}{{ label.slug }}">{{ label.name }}</a>
+              <a class="post-cat" href="{{ '/category/'|addbaseurl }}{{ label.slug }}">{{ label.name }}</a> •
               {% endfor %}
               {% endif %}
             </p>

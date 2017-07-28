@@ -5,7 +5,7 @@ meta:
     domain: 'geekodour.github.io' # optional
     engine: nunjucks # optional
     userpage: false
-    baseurl: blog # repository name
+    baseurl: gitpushblog # repository name
 
 username: geekodour
 author: geekodour # username of author

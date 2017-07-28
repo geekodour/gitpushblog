@@ -24,3 +24,22 @@
 @import "pages/tags";
 @import "pages/archive";
 @import "pages/post";
+
+/*
+* custom scss
+*/
+section.post {
+  margin : 0;
+  border-bottom: 1px dotted #454545;
+}
+
+.post-content {
+  word-wrap: break-word;
+}
+.goto-github {
+  padding: 1em;
+  background-color: #f60;
+  a {
+    color: #fff;
+  }
+}
