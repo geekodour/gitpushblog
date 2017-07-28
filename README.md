@@ -5,7 +5,6 @@
 gitpushblog is a set of scripts that will generate some static files into another directory(`/dist` or `/dev`), and then
 it will push those files to the appropriate branch of the appropriate reositoty based on the configuration file (`_config.yml`)
 It also supports various themes, jekyell themes can be converted to gitpushblog themes easily.
-You may want to watch this video if that does not explain it well.  [!]()
 
 It is sort of like [Jekyll](https://jekyllrb.com/), but currently does very limited stuff and is in its early stage and probably broken but works fine.
 
@@ -338,9 +337,7 @@ if you are planning to use it for **userpage**
 Themes are located in `/themes`, currently all the available themes are included in there.
 `meta.blog_theme` is the name of directory which includes the theme files inside `/themes`
 
-If you want to get started with building themes, then read the [building theme docs]() and
-Themes are managed by git subtree command(see theme docs). It takes less than
-15mins to turn a Jekyell theme into a theme that gitpushblog supports.
+If you want to build your own theme or convert html template/jekyell theme to a gitpushblog theme, then read the [building theme docs](https://github.com/geekodour/gitpushblog/blob/master/docs/WritngThemes.md) and themes can be managed by git subtree command if you wish to create a separate repositoty for the theme. It takes ~15mins to turn a Jekyell theme into a theme that gitpushblog supports.
 
 ### Comments
 There is `comment` field in `_config.yml`, the theme uses these values in comments to insert,remove comments, include github comments
@@ -352,10 +349,10 @@ or disqus comments. The settings are pretty self explanatory.
 - `meta.blog_theme` : Name of the directory inside `/themes` to use as the theme
 - `meta.engine` : This should be `nunjucks` as that's the only templating engine that's supported as of now.
 - `meta.userpage` : should be set to true if blog is a `userpage`
-- `meta.baseurl` : `"/<repo_name>"`, it is required for `repopages`, for `userpages` set it to `""`, read [more about baseurl](https://byparker.com/blog/2014/clearing-up-confusion-around-baseurl/)
+- `meta.baseurl` : `<repo_name>`, it is required for `repopages`, for `userpages` set it to `""`, read [more about baseurl](https://byparker.com/blog/2014/clearing-up-confusion-around-baseurl/)
 
 - `username` : github username
-- `author` : github username.
+- `author` : github username
 explanation: github-blog-api filters issues based on author, so if someone else creates an issue, only the ones you created will show up.
 - `repo` : `<repo_name>`, name of the repository, where you want gitpushblog to be.
 - `posts_per_page` : number of posts to fetch at once (max 100), used by static generator and javascript in the theme
@@ -462,7 +459,6 @@ For more theme based information, please see [theme docs]()
 - It will be awesome if anyone can help in creating some themes, you can create themes using [nunjucks](https://mozilla.github.io/nunjucks/)
 for now.
 - There are a lot of issues, check them out. It will be really great if you can help :smile:
-
 
 ## Limitations
 - Probably does not work on Windows as of now.
