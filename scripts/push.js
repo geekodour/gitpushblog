@@ -22,22 +22,20 @@ if(bc.meta.userpage){
   // same commit message for every commit
   let commitmessage = `blog updates`;
 
-  // remove this line after removing dist from gitignore
-  exec(`git add --force dist`);
+  exec(`git add -A`);
   exec(`git commit -m '${commitmessage}'`);
 
   exec(`git push https://github.com/${bc.username}/${bc.username}.github.io.git \`${subtreecommand}\`:master --force`, callback);
 
 } else {
 
-  log(chalk.bold.green(`Pushing changes to gh-pages branch of ${bc.username}/${bc.repo}`));
-
   // else clause: this is a repopage blog
+  log(chalk.bold.green(`Pushing changes to gh-pages branch of ${bc.username}/${bc.repo}`));
 
   let subtreecommand = `git subtree push --prefix dist`;
   let commitmessage = `blog updates`;
 
-  exec(`git add --force dist`);
+  exec(`git add -A`);
   exec(`git commit -m '${commitmessage}'`);
 
   exec(`${subtreecommand} origin gh-pages`, callback);

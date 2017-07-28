@@ -1,15 +1,15 @@
 meta:
     blog_name: iamthenameoftheblog
-    blog_theme: 'leonids-clone'
+    blog_theme: 'default-plain'
     blog_description: 'a simple blog' # optional
     domain: 'geekodour.github.io' # optional
     engine: nunjucks # optional
-    userpage: false
+    userpage: true
     baseurl: gitpushblog # repository name
 
 username: geekodour
 author: geekodour # username of author
-repo: gitpushblog # if you're doing this for userpage, this this will be the repository name username.github.io
+repo: geekodour.github.io # if you're doing this for userpage, this this will be the repository name username.github.io
 
 posts_per_page: 3
 comments_per_page: 3

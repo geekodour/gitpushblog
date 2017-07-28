@@ -3,36 +3,6 @@
   <channel>
     <title>iamthenameoftheblog</title>
     <description>a simple blog</description>
-    <link>/gitpushblog</link>
-        <item>
-          <title>exception handling for _config.yml</title>
-          <description></description>
-          <pubDate>2017-07-07T04:28:04Z</pubDate>
-          <link>/gitpushblog/posts/exception-handling-for-_configyml</link>
-        </item>
-        <item>
-          <title>Use Auth0 for GithubAuth instead of firebase</title>
-          <description></description>
-          <pubDate>2017-06-16T21:16:35Z</pubDate>
-          <link>/gitpushblog/posts/use-auth0-for-githubauth-instead-of-firebase</link>
-        </item>
-        <item>
-          <title>README improvements and questions</title>
-          <description></description>
-          <pubDate>2017-06-10T05:30:15Z</pubDate>
-          <link>/gitpushblog/posts/readme-improvements-and-questions</link>
-        </item>
-        <item>
-          <title>Creating issue comments with Auth token requires private repo permission</title>
-          <description></description>
-          <pubDate>2017-06-09T09:00:19Z</pubDate>
-          <link>/gitpushblog/posts/creating-issue-comments-with-auth-token-requires-private-repo-permission</link>
-        </item>
-        <item>
-          <title>Need to have a proper markdown extractor for offline use</title>
-          <description></description>
-          <pubDate>2017-06-09T07:21:12Z</pubDate>
-          <link>/gitpushblog/posts/need-to-have-a-proper-markdown-extractor-for-offline-use</link>
-        </item>
+    <link></link>
   </channel>
 </rss>
